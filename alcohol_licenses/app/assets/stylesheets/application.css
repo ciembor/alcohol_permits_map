@@ -1033,6 +1033,35 @@ body {
   transform: rotate(45deg) skew(-8deg, -8deg) scale(0.9);
 }
 
+.map-language-switch {
+  background: #ffffff;
+  display: flex;
+  overflow: hidden;
+}
+
+.map-language-switch a {
+  align-items: center;
+  border: 0;
+  color: #17202a;
+  display: flex !important;
+  font-size: 11px;
+  font-weight: 800;
+  height: 30px;
+  justify-content: center;
+  line-height: 1;
+  text-decoration: none;
+  width: 30px;
+}
+
+.map-language-switch a + a {
+  border-left: 1px solid rgba(23, 32, 42, 0.12);
+}
+
+.map-language-switch a.is-active {
+  background: #17202a;
+  color: #ffffff;
+}
+
 .license-map-page .leaflet-control-layers-toggle {
   background-size: 18px 18px;
   height: 30px;

@@ -1,7 +1,9 @@
 class GeocodingReviewsController < ApplicationController
   before_action :ensure_local_request
 
-  def index; end
+  def index
+    @review_i18n = I18n.t('geocoding_reviews.js')
+  end
 
   def categories
     finder = candidate_finder

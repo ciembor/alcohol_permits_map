@@ -18,43 +18,46 @@
   data-raw-records-url="<%= map_raw_records_path %>"
   data-statistics-url="<%= map_statistics_path %>"
   data-statistics-static-url="<%= map_statistics_static_path %>"
+  data-locale="<%= I18n.locale %>"
+  data-i18n="<%= @map_i18n.to_json %>"
+  data-language-urls="<%= language_urls.to_json %>"
 >
   <div id="license-map" class="license-map"></div>
-  <div id="map-status" class="map-loading is-loading" aria-live="polite" aria-label="Ładowanie danych"></div>
-  <section class="map-panel" aria-label="Sterowanie mapą">
+  <div id="map-status" class="map-loading is-loading" aria-live="polite" aria-label="<%= t('maps.loading_label') %>"></div>
+  <section class="map-panel" aria-label="<%= t('maps.panel_label') %>">
     <div id="map-panel-content" class="map-panel__row">
       <div class="map-panel__header">
-        <h1>Zezwolenia na sprzedaż<br>alkoholu w Krakowie</h1>
+        <h1><%= t('maps.page_title_html').html_safe %></h1>
       </div>
-      <div class="sim-controls" aria-label="SIM">
+      <div class="sim-controls" aria-label="<%= t('maps.sim_label') %>">
         <label>
-          <span>SIM</span>
+          <span><%= t('maps.sim_label') %></span>
           <select id="sim-scope">
-            <option value="krakow">Kraków</option>
+            <option value="krakow"><%= t('maps.krakow') %></option>
           </select>
         </label>
         <label id="sim-area-field" class="sim-controls__area">
-          <span>Obszar</span>
+          <span><%= t('maps.area_label') %></span>
           <select id="sim-area" disabled>
-            <option value="">Wszystkie obszary</option>
+            <option value=""><%= t('maps.all_areas') %></option>
           </select>
         </label>
       </div>
-      <div id="report-summary" class="report-summary" aria-label="Podsumowanie raportu"></div>
-      <div class="map-legend" aria-label="Legenda">
-        <strong class="map-legend__title">zezwolenia:</strong>
-        <label><input type="checkbox" name="business_category" value="detal" checked><i class="legend-symbol legend-symbol--detail"></i><span data-filter-count="business_category:detal">sprzedaż detaliczna</span></label>
-        <label><input type="checkbox" name="business_category" value="gastronomia" checked><i class="legend-symbol legend-symbol--gastronomy"></i><span data-filter-count="business_category:gastronomia">gastronomia</span></label>
-        <label><input type="checkbox" name="license_category" value="A" checked><i class="legend-color legend-color--a"></i><span data-filter-count="license_category:A">A (do 4,5% oraz piwo)</span></label>
-        <label><input type="checkbox" name="license_category" value="B" checked><i class="legend-color legend-color--b"></i><span data-filter-count="license_category:B">B (4,5-18%)</span></label>
-        <label><input type="checkbox" name="license_category" value="C" checked><i class="legend-color legend-color--c"></i><span data-filter-count="license_category:C">C (powyżej 18%)</span></label>
+      <div id="report-summary" class="report-summary" aria-label="<%= t('maps.report_summary_label') %>"></div>
+      <div class="map-legend" aria-label="<%= t('maps.legend_label') %>">
+        <strong class="map-legend__title"><%= t('maps.legend_title') %></strong>
+        <label><input type="checkbox" name="business_category" value="detal" checked><i class="legend-symbol legend-symbol--detail"></i><span data-filter-count="business_category:detal"><%= t('maps.detail') %></span></label>
+        <label><input type="checkbox" name="business_category" value="gastronomia" checked><i class="legend-symbol legend-symbol--gastronomy"></i><span data-filter-count="business_category:gastronomia"><%= t('maps.gastronomy') %></span></label>
+        <label><input type="checkbox" name="license_category" value="A" checked><i class="legend-color legend-color--a"></i><span data-filter-count="license_category:A"><%= t('maps.license_a') %></span></label>
+        <label><input type="checkbox" name="license_category" value="B" checked><i class="legend-color legend-color--b"></i><span data-filter-count="license_category:B"><%= t('maps.license_b') %></span></label>
+        <label><input type="checkbox" name="license_category" value="C" checked><i class="legend-color legend-color--c"></i><span data-filter-count="license_category:C"><%= t('maps.license_c') %></span></label>
         <div class="map-legend__more">
-          <button id="statistics-toggle" class="statistics-toggle" type="button" aria-expanded="false" aria-controls="statistics-panel">Więcej statystyk</button>
+          <button id="statistics-toggle" class="statistics-toggle" type="button" aria-expanded="false" aria-controls="statistics-panel"><%= t('maps.more_statistics') %></button>
         </div>
       </div>
     </div>
     <div class="map-panel__actions">
-      <button id="map-panel-toggle" class="map-panel__toggle" type="button" aria-expanded="true" aria-controls="map-panel-content" aria-label="Ukryj panel">‹</button>
+      <button id="map-panel-toggle" class="map-panel__toggle" type="button" aria-expanded="true" aria-controls="map-panel-content" aria-label="<%= t('maps.hide_panel') %>">‹</button>
     </div>
   </section>
 
@@ -63,33 +66,33 @@
       <%= image_tag 'maciej.png', alt: '', class: 'map-author__avatar' %>
       <span>&copy; Maciej Ciemborowicz</span>
     </a>
-    <a class="site-brand" href="https://www.facebook.com/DobraNocKrakow" aria-label="Dobra Noc Kraków na Facebooku">
+    <a class="site-brand" href="https://www.facebook.com/DobraNocKrakow" aria-label="Dobra Noc Kraków">
       <%= image_tag 'logo.jpg', alt: '', class: 'site-brand__logo' %>
       <span>Dobra Noc Kraków</span>
     </a>
   </p>
 
-  <section id="statistics-panel" class="statistics-panel" aria-label="Statystyki" hidden>
+  <section id="statistics-panel" class="statistics-panel" aria-label="<%= t('maps.statistics_label') %>" hidden>
     <div class="statistics-panel__header">
-      <strong>Statystyki</strong>
-      <div class="statistics-panel__metric-switch" aria-label="Metryka wykresu">
-        <button type="button" data-statistics-metric="premises" class="is-active">lokale</button>
-        <button type="button" data-statistics-metric="licenses">zezwolenia</button>
-        <button type="button" data-statistics-metric="premises_per_1000">lokale / 1000 zameldowanych</button>
-        <button type="button" data-statistics-metric="premises_per_km2">lokale / km²</button>
-        <button type="button" data-statistics-metric="licenses_per_1000">zezwolenia / 1000 zameldowanych</button>
-        <button type="button" data-statistics-metric="licenses_per_km2">zezwolenia / km²</button>
+      <strong><%= t('maps.statistics_title') %></strong>
+      <div class="statistics-panel__metric-switch" aria-label="<%= t('maps.metric_label') %>">
+        <button type="button" data-statistics-metric="premises" class="is-active"><%= t('maps.metric.premises') %></button>
+        <button type="button" data-statistics-metric="licenses"><%= t('maps.metric.licenses') %></button>
+        <button type="button" data-statistics-metric="premises_per_1000"><%= t('maps.metric.premises_per_1000') %></button>
+        <button type="button" data-statistics-metric="premises_per_km2"><%= t('maps.metric.premises_per_km2') %></button>
+        <button type="button" data-statistics-metric="licenses_per_1000"><%= t('maps.metric.licenses_per_1000') %></button>
+        <button type="button" data-statistics-metric="licenses_per_km2"><%= t('maps.metric.licenses_per_km2') %></button>
       </div>
-      <button id="statistics-close" class="statistics-panel__close" type="button" aria-label="Zamknij statystyki">×</button>
+      <button id="statistics-close" class="statistics-panel__close" type="button" aria-label="<%= t('maps.close_statistics') %>">×</button>
     </div>
     <div id="statistics-content" class="statistics-panel__content"></div>
   </section>
 
-  <section class="time-slider" aria-label="Oś czasu">
+  <section class="time-slider" aria-label="<%= t('maps.timeline_label') %>">
     <div class="time-slider__meta">
       <strong id="selected-report"><%= @initial_report&.strftime('%d.%m.%Y') %></strong>
     </div>
-    <input id="report-slider" type="range" aria-label="Data raportu">
+    <input id="report-slider" type="range" aria-label="<%= t('maps.report_date_label') %>">
     <div id="report-ticks" class="year-ticks"></div>
   </section>
 </main>
@@ -107,8 +110,30 @@
     var rawStaticUrl = page.dataset.rawStaticUrl;
     var statisticsUrl = page.dataset.statisticsUrl;
     var statisticsStaticUrl = page.dataset.statisticsStaticUrl;
+    var i18n = JSON.parse(page.dataset.i18n || '{}');
+    var languageUrls = JSON.parse(page.dataset.languageUrls || '{}');
+    var currentLocale = page.dataset.locale || 'pl';
+    var numberLocale = i18n.locale || 'pl-PL';
     var rawReportCache = {};
     var map = L.map('license-map', { attributionControl: false, zoomControl: false }).setView([50.0573, 19.9373], 14);
+    L.Control.LanguageSwitch = L.Control.extend({
+      options: {
+        position: 'topright'
+      },
+
+      onAdd: function () {
+        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control map-language-switch');
+        container.setAttribute('aria-label', t('language_label'));
+        container.innerHTML = [
+          languageSwitchLink('pl', 'PL'),
+          languageSwitchLink('en', 'EN')
+        ].join('');
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.disableScrollPropagation(container);
+        return container;
+      }
+    });
+    new L.Control.LanguageSwitch().addTo(map);
     L.control.zoom({ position: 'topright' }).addTo(map);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19
@@ -132,7 +157,7 @@
       onAdd: function () {
         var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control map-data-warning');
         var button = L.DomUtil.create('a', 'map-data-warning__button', container);
-        var tooltip = 'Mapa bazuje na oczyszczonych danych UMK, geokodowanych z wykorzystaniem Google Geocoding API, Google Places Text Search, OSM/Nominatim oraz ULDK. Mimo największych starań część lokalizacji może wyświetlać się w złych miejscach. Aby zobaczyć surowy adres z danych UMK kliknij na punkt, a następnie RAW. Lokalizacje są w trakcie weryfikacji.';
+        var tooltip = t('data_warning');
 
         container.setAttribute('aria-label', tooltip); 
         container.setAttribute('role', 'img');
@@ -157,12 +182,12 @@
       onAdd: function () {
         var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control map-symbol-legend');
         container.innerHTML = [
-          '<a class="map-symbol-legend__button" href="#" aria-label="Legenda"><span></span></a>',
+          '<a class="map-symbol-legend__button" href="#" aria-label="' + escapeHtml(t('legend_title')) + '"><span></span></a>',
           '<div class="map-symbol-legend__tooltip" role="tooltip">',
-            '<strong>Legenda</strong>',
-            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--detail"></i>sprzedaż detaliczna</span>',
-            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--gastronomy"></i>gastronomia</span>',
-            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--group"></i>wiele zezwoleń w jednym lokalu</span>',
+            '<strong>' + escapeHtml(t('legend_title')) + '</strong>',
+            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--detail"></i>' + escapeHtml(t('detail')) + '</span>',
+            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--gastronomy"></i>' + escapeHtml(t('gastronomy')) + '</span>',
+            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--group"></i>' + escapeHtml(t('many_licenses')) + '</span>',
           '</div>'
         ].join('');
         L.DomEvent.disableClickPropagation(container);
@@ -173,7 +198,7 @@
     });
     new L.Control.MapSymbolLegend().addTo(map);
     L.control.layers(null, {
-      'Gęstość lokali': simTintLayer
+      [t('layers_density')]: simTintLayer
     }, {
       collapsed: true,
       position: 'topright'
@@ -191,7 +216,7 @@
         var count = businessIds.size;
         var size = count < 100 ? 'small' : count < 1000 ? 'medium' : 'large';
         return L.divIcon({
-          html: '<div><span>' + count.toLocaleString('pl-PL') + '</span></div>',
+          html: '<div><span>' + formatInteger(count) + '</span></div>',
           className: 'marker-cluster marker-cluster-' + size,
           iconSize: L.point(40, 40)
         });
@@ -250,7 +275,7 @@
     panelToggle.addEventListener('click', function () {
       var collapsed = panel.classList.toggle('map-panel--collapsed');
       panelToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-      panelToggle.setAttribute('aria-label', collapsed ? 'Pokaż panel' : 'Ukryj panel');
+      panelToggle.setAttribute('aria-label', collapsed ? '<%= j t('maps.show_panel') %>' : '<%= j t('maps.hide_panel') %>');
       panelToggle.textContent = collapsed ? '›' : '‹';
       window.setTimeout(function () { map.invalidateSize(); }, 160);
     });
@@ -278,6 +303,17 @@
         scheduleStatisticsLoad(true);
       });
     });
+
+    function t(key) {
+      return String(key).split('.').reduce(function (memo, part) {
+        return memo && memo[part] !== undefined ? memo[part] : null;
+      }, i18n) || key;
+    }
+
+    function languageSwitchLink(locale, label) {
+      var active = String(locale) === String(currentLocale);
+      return '<a href="' + escapeHtml(languageUrls[locale] || '#') + '" class="' + (active ? 'is-active' : '') + '" lang="' + escapeHtml(locale) + '" aria-label="' + escapeHtml(t('language_label') + ': ' + label) + '">' + escapeHtml(label) + '</a>';
+    }
 
     function reportFromSlider() {
       var value = Number(slider.value);
@@ -332,7 +368,7 @@
         return String(date.getFullYear());
       }
 
-      return date.toLocaleString('pl-PL', {
+      return date.toLocaleString(numberLocale, {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
@@ -539,7 +575,7 @@
         return point.sim_units || [point.sim_unit];
       }).filter(Boolean), districtSortKey);
 
-      simScope.innerHTML = ['<option value="krakow">Kraków</option>'].concat(units.map(function (unit) {
+      simScope.innerHTML = ['<option value="krakow"><%= j t('maps.krakow') %></option>'].concat(units.map(function (unit) {
         return '<option value="' + escapeHtml(unit) + '">' + escapeHtml(simUnitLabel(unit)) + '</option>';
       })).join('');
       simScope.value = units.indexOf(selectedScope) === -1 ? 'krakow' : selectedScope;
@@ -555,7 +591,7 @@
 
       simArea.disabled = !selectedSimUnit;
       simAreaField.classList.toggle('is-disabled', !selectedSimUnit);
-      simArea.innerHTML = ['<option value="">Wszystkie obszary</option>'].concat(areas.map(function (area) {
+      simArea.innerHTML = ['<option value="">' + escapeHtml(t('all_areas')) + '</option>'].concat(areas.map(function (area) {
         return '<option value="' + escapeHtml(area) + '">' + escapeHtml(area) + '</option>';
       })).join('');
       simArea.value = areas.indexOf(selectedArea) === -1 ? '' : selectedArea;
@@ -564,7 +600,7 @@
     function uniqueSorted(values, labelCallback) {
       var valuesSet = new Set(values);
       return Array.from(valuesSet).sort(function (left, right) {
-        return labelCallback(left).localeCompare(labelCallback(right), 'pl', { numeric: true });
+        return labelCallback(left).localeCompare(labelCallback(right), String(currentLocale || 'pl'), { numeric: true });
       });
     }
 
@@ -805,12 +841,12 @@
     function popupLicenseCount(point) {
       var count = Number(point.license_count || 1);
       return '<span><strong class="license-popup__license-count">' +
-        count.toLocaleString('pl-PL') + ' ' + licenseWord(count) +
-        '</strong> w tym punkcie</span>';
+        formatInteger(count) + ' ' + licenseWord(count) +
+        '</strong> ' + escapeHtml(t('in_this_point')) + '</span>';
     }
 
     function popupMetaRow(point) {
-      var expires = point.expires_at ? '<span>do ' + escapeHtml(point.expires_at) + '</span>' : '<span></span>';
+      var expires = point.expires_at ? '<span>' + escapeHtml(t('valid_until')) + ' ' + escapeHtml(point.expires_at) + '</span>' : '<span></span>';
       var raw = hasRawRecords(point) ? '<a href="#" data-raw-records>RAW</a>' : '';
       if (!point.expires_at && !raw) return '';
 
@@ -843,9 +879,9 @@
 
       var popup = document.createElement('div');
       popup.className = 'raw-record-popup';
-      popup.innerHTML = '<div class="raw-record-popup__panel" role="dialog" aria-modal="true" aria-label="Surowy rekord">' +
-        '<div class="raw-record-popup__header"><strong>RAW</strong><button type="button" aria-label="Zamknij">×</button></div>' +
-        '<pre>Ładowanie...</pre>' +
+      popup.innerHTML = '<div class="raw-record-popup__panel" role="dialog" aria-modal="true" aria-label="' + escapeHtml(t('raw_record')) + '">' +
+        '<div class="raw-record-popup__header"><strong>RAW</strong><button type="button" aria-label="' + escapeHtml(t('close')) + '">×</button></div>' +
+        '<pre>' + escapeHtml(t('loading')) + '</pre>' +
       '</div>';
 
       popup.addEventListener('click', function (event) {
@@ -865,7 +901,7 @@
         })
         .catch(function () {
           var pre = popup.querySelector('pre');
-          if (pre) pre.textContent = 'Nie udało się pobrać RAW.';
+          if (pre) pre.textContent = t('raw_error');
         });
     }
 
@@ -904,7 +940,7 @@
     function popupUncertaintyBadge(point) {
       if (!point.location_uncertain) return '';
 
-      return '<div class="license-popup__uncertainty"><span>!</span><strong>Niepewna lokalizacja</strong></div>';
+      return '<div class="license-popup__uncertainty"><span>!</span><strong>' + escapeHtml(t('uncertain_location')) + '</strong></div>';
     }
 
     function popupBusinessDetails(point) {
@@ -928,9 +964,9 @@
 
     function popupBusinessCategoryRow(categoryDetail) {
       var count = Number(categoryDetail.license_count || 0);
-      var suffix = count ? ' (' + Number(count).toLocaleString('pl-PL') + ')' : '';
+      var suffix = count ? ' (' + formatInteger(count) + ')' : '';
       return '<span class="license-popup__license-row">' + escapeHtml(categoryDetail.business_category || '') + suffix +
-        ' / kat. ' + popupLicenseCategories(categoryDetail.license_categories || []) + '</span>';
+        ' / ' + escapeHtml(t('category_short')) + ' ' + popupLicenseCategories(categoryDetail.license_categories || []) + '</span>';
     }
 
     function popupLicenseCategories(categories) {
@@ -947,9 +983,9 @@
       var absolute = Math.abs(Number(count || 0));
       var lastTwo = absolute % 100;
       var last = absolute % 10;
-      if (absolute === 1) return 'licencja';
-      if (last >= 2 && last <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) return 'licencje';
-      return 'licencji';
+      if (absolute === 1) return t('license_words.one');
+      if (last >= 2 && last <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) return t('license_words.few');
+      return t('license_words.many');
     }
 
     function escapeHtml(value) {
@@ -967,7 +1003,7 @@
       var premises = premiseStats(points);
 
       reportSummary.innerHTML = [
-        '<strong class="report-summary__title">lokale (na podstawie zezwoleń):</strong>',
+        '<strong class="report-summary__title">' + escapeHtml(t('premises_based_on_licenses')) + '</strong>',
         summaryRows(premises).map(function (row) {
           return summaryPlainRow(row.label, row.count);
         }).join('')
@@ -976,7 +1012,7 @@
 
     function renderSummaryLoading() {
       reportSummary.innerHTML = [
-        '<strong class="report-summary__title">lokale (na podstawie zezwoleń):</strong>',
+        '<strong class="report-summary__title">' + escapeHtml(t('premises_based_on_licenses')) + '</strong>',
         summaryRows({ total: null, gastronomy: null, mixed: null, detail: null }).map(function (row) {
           return summaryPlainRow(row.label, null);
         }).join('')
@@ -1069,8 +1105,8 @@
     }
 
     function summaryPopulationRow(population) {
-      return '<span class="report-summary__population"><strong>zameldowani:</strong> ' +
-        Number(population.total || 0).toLocaleString('pl-PL') +
+      return '<span class="report-summary__population"><strong>' + escapeHtml(t('registered_label')) + '</strong> ' +
+        formatInteger(population.total || 0) +
         ' <em>(' + escapeHtml(summaryDateLabel(population.observed_on)) + ')</em></span>';
     }
 
@@ -1081,10 +1117,10 @@
 
     function summaryValue(value) {
       if (value === null || value === undefined) {
-        return '<span class="report-summary__value report-summary__value--loading" aria-label="Ładowanie liczby"></span>';
+        return '<span class="report-summary__value report-summary__value--loading" aria-label="' + escapeHtml(t('loading_number')) + '"></span>';
       }
 
-      return Number(value || 0).toLocaleString('pl-PL');
+      return formatInteger(value || 0);
     }
 
     function statisticRates(value, population) {
@@ -1093,7 +1129,7 @@
       var area = population && Number(population.area_km2);
 
       if (total) {
-        rates.push(formatRate((Number(value || 0) * 1000) / total) + ' / 1000 zameldowanych');
+        rates.push(formatRate((Number(value || 0) * 1000) / total) + ' / 1000 ' + t('registered'));
       }
       if (area) {
         rates.push(formatRate(Number(value || 0) / area) + ' / km²');
@@ -1106,47 +1142,47 @@
       var definitions = {
         premises: {
           base: 'premises',
-          chartTitle: 'Liczba lokali w czasie',
-          sectionTitle: 'Liczba lokali',
-          summaryLabel: 'Liczba lokali',
+          chartTitle: t('metric_definitions.premises.chartTitle'),
+          sectionTitle: t('metric_definitions.premises.sectionTitle'),
+          summaryLabel: t('metric_definitions.premises.sectionTitle'),
           unit: 'count'
         },
         licenses: {
           base: 'licenses',
-          chartTitle: 'Liczba zezwoleń w czasie',
-          sectionTitle: 'Liczba zezwoleń',
-          summaryLabel: 'Liczba zezwoleń',
+          chartTitle: t('metric_definitions.licenses.chartTitle'),
+          sectionTitle: t('metric_definitions.licenses.sectionTitle'),
+          summaryLabel: t('metric_definitions.licenses.sectionTitle'),
           unit: 'count'
         },
         premises_per_1000: {
           base: 'premises',
-          chartTitle: 'Liczba lokali na 1000 zameldowanych w czasie',
-          sectionTitle: 'Liczba lokali na 1000 zameldowanych',
-          summaryLabel: 'Liczba lokali na 1000 zameldowanych',
+          chartTitle: t('metric_definitions.premises_per_1000.chartTitle'),
+          sectionTitle: t('metric_definitions.premises_per_1000.sectionTitle'),
+          summaryLabel: t('metric_definitions.premises_per_1000.sectionTitle'),
           unit: 'rate',
           denominator: 'population'
         },
         premises_per_km2: {
           base: 'premises',
-          chartTitle: 'Liczba lokali na km² w czasie',
-          sectionTitle: 'Liczba lokali na km²',
-          summaryLabel: 'Liczba lokali na km²',
+          chartTitle: t('metric_definitions.premises_per_km2.chartTitle'),
+          sectionTitle: t('metric_definitions.premises_per_km2.sectionTitle'),
+          summaryLabel: t('metric_definitions.premises_per_km2.sectionTitle'),
           unit: 'rate',
           denominator: 'area'
         },
         licenses_per_1000: {
           base: 'licenses',
-          chartTitle: 'Liczba zezwoleń na 1000 zameldowanych w czasie',
-          sectionTitle: 'Liczba zezwoleń na 1000 zameldowanych',
-          summaryLabel: 'Liczba zezwoleń na 1000 zameldowanych',
+          chartTitle: t('metric_definitions.licenses_per_1000.chartTitle'),
+          sectionTitle: t('metric_definitions.licenses_per_1000.sectionTitle'),
+          summaryLabel: t('metric_definitions.licenses_per_1000.sectionTitle'),
           unit: 'rate',
           denominator: 'population'
         },
         licenses_per_km2: {
           base: 'licenses',
-          chartTitle: 'Liczba zezwoleń na km² w czasie',
-          sectionTitle: 'Liczba zezwoleń na km²',
-          summaryLabel: 'Liczba zezwoleń na km²',
+          chartTitle: t('metric_definitions.licenses_per_km2.chartTitle'),
+          sectionTitle: t('metric_definitions.licenses_per_km2.sectionTitle'),
+          summaryLabel: t('metric_definitions.licenses_per_km2.sectionTitle'),
           unit: 'rate',
           denominator: 'area'
         }
@@ -1165,7 +1201,7 @@
     }
 
     function formatStatisticValue(value, mode) {
-      if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'brak danych';
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return t('no_data');
 
       return mode.unit === 'rate' ? formatRate(value) : formatInteger(value);
     }
@@ -1175,7 +1211,7 @@
     }
 
     function formatSignedStatisticDelta(value, mode) {
-      if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'brak danych';
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return t('no_data');
 
       var number = Number(value);
       var formatted = mode.unit === 'rate' ? formatRate(Math.abs(number)) : formatInteger(Math.abs(number));
@@ -1184,14 +1220,14 @@
     }
 
     function formatSignedPercentDelta(value, baseline) {
-      if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'brak danych';
-      if (!baseline || !Number.isFinite(Number(baseline))) return 'brak danych';
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return t('no_data');
+      if (!baseline || !Number.isFinite(Number(baseline))) return t('no_data');
 
       var percent = ((Number(value) - Number(baseline)) * 100) / Number(baseline);
-      if (!Number.isFinite(percent)) return 'brak danych';
+      if (!Number.isFinite(percent)) return t('no_data');
       if (percent === 0) return '0,00%';
 
-      return (percent > 0 ? '+' : '') + percent.toLocaleString('pl-PL', {
+      return (percent > 0 ? '+' : '') + percent.toLocaleString(numberLocale, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }) + '%';
@@ -1201,7 +1237,7 @@
       statisticsPanel.hidden = false;
       statisticsPanel.classList.add('is-open');
       statisticsToggle.setAttribute('aria-expanded', 'true');
-      statisticsToggle.textContent = 'Pokaż mapę';
+      statisticsToggle.textContent = '<%= j t('maps.show_map') %>';
       statisticsChartRequested = true;
       renderStatisticsPanel();
       scheduleStatisticsLoad(true);
@@ -1211,7 +1247,7 @@
       statisticsPanel.classList.remove('is-open');
       statisticsPanel.hidden = true;
       statisticsToggle.setAttribute('aria-expanded', 'false');
-      statisticsToggle.textContent = 'Więcej statystyk';
+      statisticsToggle.textContent = '<%= j t('maps.more_statistics') %>';
     }
 
     function statisticsPanelOpen() {
@@ -1230,8 +1266,8 @@
       statisticsContent.innerHTML = [
         '<div class="statistics-summary-row">',
         '<div class="statistics-panel__metrics">',
-          statisticMetric('Powierzchnia', population && population.area_km2 ? formatArea(population.area_km2) + ' km²' : 'brak danych', ''),
-          statisticMetric('Liczba osób zameldowanych', population ? formatInteger(population.total) : 'brak danych', populationMeta(population)),
+          statisticMetric(t('area'), population && population.area_km2 ? formatArea(population.area_km2) + ' km²' : t('no_data'), ''),
+          statisticMetric(t('registered_count'), population ? formatInteger(population.total) : t('no_data'), populationMeta(population)),
         '</div>',
         '<div class="statistics-rate-sections">',
           statisticRateSection(mode.sectionTitle, statisticRows(selectedStats, population, mode)),
@@ -1255,7 +1291,7 @@
       if (!population) return '';
 
       var source = population.source_url ?
-        '<a href="' + escapeHtml(population.source_url) + '" target="_blank" rel="noopener">źródło</a>' :
+        '<a href="' + escapeHtml(population.source_url) + '" target="_blank" rel="noopener">' + escapeHtml(t('source')) + '</a>' :
         '';
 
       return '<span>' + escapeHtml(summaryDateLabel(population.observed_on)) + '</span>' + source;
@@ -1287,10 +1323,10 @@
 
     function statisticRowDefinitions(stats) {
       return [
-        { key: 'total', label: 'suma', count: stats.total },
-        { key: 'gastronomy', label: 'gastronomia', count: stats.gastronomy },
-        { key: 'mixed', label: 'gastronomia + sprzedaż detaliczna', count: stats.mixed },
-        { key: 'detail', label: 'sprzedaż detaliczna', count: stats.detail }
+        { key: 'total', label: t('total'), count: stats.total },
+        { key: 'gastronomy', label: t('gastronomy'), count: stats.gastronomy },
+        { key: 'mixed', label: t('mixed'), count: stats.mixed },
+        { key: 'detail', label: t('detail'), count: stats.detail }
       ];
     }
 
@@ -1361,7 +1397,7 @@
       if (value === null || value === undefined || !Number.isFinite(Number(value))) return '';
       if (Number(value) === 0) return '0,00%';
 
-      return (Number(value) > 0 ? '+' : '') + Number(value).toLocaleString('pl-PL', {
+      return (Number(value) > 0 ? '+' : '') + Number(value).toLocaleString(numberLocale, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }) + '%';
@@ -1369,11 +1405,11 @@
 
     function statisticsChartsHtml() {
       if (!statisticsChartRequested) {
-        return '<div class="statistics-panel__loading">Wybierz metrykę wykresu</div>';
+        return '<div class="statistics-panel__loading">' + escapeHtml(t('select_chart_metric')) + '</div>';
       }
 
       if (!currentStatistics) {
-        return '<div class="statistics-panel__loading">Ładowanie wykresów</div>';
+        return '<div class="statistics-panel__loading">' + escapeHtml(t('loading_charts')) + '</div>';
       }
 
       var series = currentStatistics.reports || [];
@@ -1405,7 +1441,7 @@
       });
       var numericValues = values.filter(function (value) { return Number.isFinite(value); });
       if (!numericValues.length) {
-        return '<div class="statistics-chart__empty">Brak danych</div>';
+        return '<div class="statistics-chart__empty">' + escapeHtml(t('chart_empty')) + '</div>';
       }
 
       var width = 840;
@@ -1507,17 +1543,17 @@
         '<span>' + escapeHtml(data.tooltipValue || '') + '</span>' +
       '</div>' +
       '<div class="statistics-chart-tooltip__rows">' +
-        statisticsChartTooltipRow('Δₜ', data.tooltipDelta, 'zmiana liczbowa względem poprzedniego pomiaru') +
-        statisticsChartTooltipRow('Δₜ%', data.tooltipDeltaPercent, 'zmiana procentowa względem poprzedniego pomiaru') +
-        statisticsChartTooltipRow('Δ₀', data.tooltipDeltaStart, 'zmiana liczbowa względem początku danych') +
-        statisticsChartTooltipRow('Δ₀%', data.tooltipDeltaStartPercent, 'zmiana procentowa względem początku danych') +
+        statisticsChartTooltipRow('Δₜ', data.tooltipDelta, t('change_previous_count')) +
+        statisticsChartTooltipRow('Δₜ%', data.tooltipDeltaPercent, t('change_previous_percent')) +
+        statisticsChartTooltipRow('Δ₀', data.tooltipDeltaStart, t('change_start_count')) +
+        statisticsChartTooltipRow('Δ₀%', data.tooltipDeltaStartPercent, t('change_start_percent')) +
       '</div>';
     }
 
     function statisticsChartTooltipRow(symbol, value, label) {
       return '<div class="statistics-chart-tooltip__row">' +
         '<span title="' + escapeHtml(label) + '">' + escapeHtml(symbol) + '</span>' +
-        '<strong>' + escapeHtml(value || 'brak danych') + '</strong>' +
+        '<strong>' + escapeHtml(value || t('no_data')) + '</strong>' +
       '</div>';
     }
 
@@ -1625,7 +1661,7 @@
         })
         .catch(function (error) {
           if (error.name === 'AbortError') return;
-          statisticsContent.innerHTML = '<div class="statistics-panel__loading">Nie udało się pobrać statystyk</div>';
+          statisticsContent.innerHTML = '<div class="statistics-panel__loading">' + escapeHtml(t('charts_error')) + '</div>';
         });
     }
 
@@ -1645,7 +1681,7 @@
         .then(function (response) { return response.json(); })
         .then(applyStatistics)
         .catch(function () {
-          statisticsContent.innerHTML = '<div class="statistics-panel__loading">Nie udało się pobrać statystyk</div>';
+          statisticsContent.innerHTML = '<div class="statistics-panel__loading">' + escapeHtml(t('charts_error')) + '</div>';
         });
     }
 
@@ -1730,28 +1766,28 @@
     }
 
     function formatRate(value) {
-      return Number(value || 0).toLocaleString('pl-PL', {
+      return Number(value || 0).toLocaleString(numberLocale, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
     }
 
     function formatArea(value) {
-      return Number(value || 0).toLocaleString('pl-PL', {
+      return Number(value || 0).toLocaleString(numberLocale, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
     }
 
     function formatInteger(value) {
-      return Number(value || 0).toLocaleString('pl-PL');
+      return Number(value || 0).toLocaleString(numberLocale);
     }
 
     function formatPercent(value) {
-      if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'brak danych';
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return t('no_data');
 
       var number = Number(value);
-      return (number > 0 ? '+' : '') + number.toLocaleString('pl-PL', {
+      return (number > 0 ? '+' : '') + number.toLocaleString(numberLocale, {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       }) + '%';
@@ -1760,7 +1796,7 @@
     function summaryDateLabel(value) {
       if (!value) return '';
 
-      return new Date(value + 'T00:00:00').toLocaleDateString('pl-PL', {
+      return new Date(value + 'T00:00:00').toLocaleDateString(numberLocale, {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
@@ -1778,18 +1814,18 @@
         return memo;
       }, { business_category: {}, license_category: {} });
 
-      filterCountLabel('business_category:detal', 'sprzedaż detaliczna', counts.business_category.detal);
-      filterCountLabel('business_category:gastronomia', 'gastronomia', counts.business_category.gastronomia);
-      filterCountLabel('license_category:A', 'A (do 4,5% oraz piwo)', counts.license_category.A);
-      filterCountLabel('license_category:B', 'B (4,5-18%)', counts.license_category.B);
-      filterCountLabel('license_category:C', 'C (powyżej 18%)', counts.license_category.C);
+      filterCountLabel('business_category:detal', '<%= j t('maps.detail') %>', counts.business_category.detal);
+      filterCountLabel('business_category:gastronomia', '<%= j t('maps.gastronomy') %>', counts.business_category.gastronomia);
+      filterCountLabel('license_category:A', '<%= j t('maps.license_a') %>', counts.license_category.A);
+      filterCountLabel('license_category:B', '<%= j t('maps.license_b') %>', counts.license_category.B);
+      filterCountLabel('license_category:C', '<%= j t('maps.license_c') %>', counts.license_category.C);
     }
 
     function filterCountLabel(key, label, value) {
       var element = page.querySelector('[data-filter-count="' + key + '"]');
       if (!element) return;
 
-      element.textContent = label + ' (' + Number(value || 0).toLocaleString('pl-PL') + ')';
+      element.textContent = label + ' (' + formatInteger(value || 0) + ')';
     }
 
     function updateVisibleState(fitInitialBounds) {
@@ -1822,7 +1858,7 @@
           currentPopulation = data.population;
           renderSimControls();
           updateVisibleState(false);
-          selectedReport.textContent = data.report_at ? reportLabel(data.report_at, false) : 'brak raportu';
+          selectedReport.textContent = data.report_at ? reportLabel(data.report_at, false) : t('no_report');
           clearLoadingStatus();
         })
         .catch(function () {
@@ -1859,7 +1895,7 @@
     function setLoadingStatus() {
       status.className = 'map-loading is-loading';
       status.textContent = '';
-      status.setAttribute('aria-label', 'Ładowanie danych');
+      status.setAttribute('aria-label', '<%= j t('maps.loading_label') %>');
     }
 
     function clearLoadingStatus() {
@@ -1871,7 +1907,7 @@
     function setErrorStatus() {
       status.className = 'map-loading is-error';
       status.textContent = '!';
-      status.setAttribute('aria-label', 'Nie udało się pobrać danych');
+      status.setAttribute('aria-label', t('fetch_error'));
     }
 
     function scheduleLoad() {

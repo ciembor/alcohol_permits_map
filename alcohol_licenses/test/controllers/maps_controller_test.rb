@@ -79,10 +79,24 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     get map_path
 
     assert_response :success
+    assert_select 'html[lang="pl"]'
     assert_select '#license-map'
     assert_select '#report-slider'
     assert_select '#sim-scope'
     assert_select '#sim-area'
+    assert_select 'h1', text: /Zezwolenia na sprzedaż/
+    assert_includes response.body, 'data-language-urls'
+  end
+
+  test 'renders map page in English' do
+    get map_path(locale: 'en')
+
+    assert_response :success
+    assert_select 'html[lang="en"]'
+    assert_select 'h1', text: /Alcohol-sale licenses/
+    assert_includes response.body, 'Premises density'
+    assert_includes response.body, 'data-language-urls'
+    assert_includes response.body, '&quot;pl&quot;:&quot;/map&quot;'
   end
 
   test 'returns geocoded license points for selected year' do

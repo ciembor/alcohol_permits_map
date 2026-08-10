@@ -8,12 +8,13 @@
   data-categories-url="<%= geocoding_reviews_categories_path %>"
   data-next-url="<%= geocoding_reviews_next_path %>"
   data-review-url-template="<%= geocoding_review_path('__ID__') %>"
+  data-i18n="<%= @review_i18n.to_json %>"
 >
   <div id="geocoding-review-map" class="geocoding-review-map"></div>
 
-  <aside class="geocoding-review-panel" aria-label="Kontrola geokodowania">
+  <aside class="geocoding-review-panel" aria-label="<%= t('geocoding_reviews.panel_label') %>">
     <header class="geocoding-review-panel__header">
-      <h1>Kontrola geokodowania</h1>
+      <h1><%= t('geocoding_reviews.title') %></h1>
     </header>
 
     <section>
@@ -21,11 +22,11 @@
     </section>
 
     <section id="review-status" class="geocoding-review-status" aria-live="polite">
-      Ładowanie kategorii...
+      <%= t('geocoding_reviews.loading_categories') %>
     </section>
   </aside>
 
-    <aside id="review-details" class="geocoding-review-details" aria-label="Szczegóły punktu" hidden>
+    <aside id="review-details" class="geocoding-review-details" aria-label="<%= t('geocoding_reviews.point_details') %>" hidden>
       <div class="geocoding-review-details__head">
         <h2 id="review-address"></h2>
         <span id="review-location-id"></span>
@@ -34,49 +35,49 @@
 
       <dl id="review-meta" class="geocoding-review-meta"></dl>
 
-      <section class="geocoding-review-distance-tool" aria-label="Porównanie odległości geokoderów">
+      <section class="geocoding-review-distance-tool" aria-label="<%= t('geocoding_reviews.distance_tool') %>">
         <div class="geocoding-review-distance-tool__controls">
           <label>
-            <span>Od</span>
+            <span><%= t('geocoding_reviews.from') %></span>
             <select id="distance-source-a"></select>
           </label>
           <label>
-            <span>Do</span>
+            <span><%= t('geocoding_reviews.to') %></span>
             <select id="distance-source-b"></select>
           </label>
         </div>
-        <output id="distance-result" class="geocoding-review-distance-tool__result">brak porównania</output>
+        <output id="distance-result" class="geocoding-review-distance-tool__result"><%= t('geocoding_reviews.no_comparison') %></output>
       </section>
 
       <div class="geocoding-review-actions">
-        <button id="review-accept" type="button">Zatwierdź bez zmiany</button>
-        <button id="review-unresolved" type="button">Nie rozstrzygaj</button>
+        <button id="review-accept" type="button"><%= t('geocoding_reviews.accept') %></button>
+        <button id="review-unresolved" type="button"><%= t('geocoding_reviews.unresolved') %></button>
       </div>
 
       <div id="review-quality-actions" class="geocoding-review-quality-actions" hidden>
-        <button type="button" data-quality-status="exact">dokładnie</button>
-        <button type="button" data-quality-status="nearest_area">najbliższa okolica (&lt; 25 m)</button>
-        <button type="button" data-quality-status="area">okolica (&gt; 25 m, &lt; 50 m)</button>
-        <button type="button" data-quality-status="far">daleko (&gt; 50 m, &lt; 100 m)</button>
-        <button type="button" data-quality-status="very_far">bardzo daleko (&gt; 100 m)</button>
-        <button type="button" data-quality-status="hard_to_tell">trudno powiedzieć</button>
+        <button type="button" data-quality-status="exact"><%= t('geocoding_reviews.exact') %></button>
+        <button type="button" data-quality-status="nearest_area"><%= t('geocoding_reviews.nearest_area') %></button>
+        <button type="button" data-quality-status="area"><%= t('geocoding_reviews.area') %></button>
+        <button type="button" data-quality-status="far"><%= t('geocoding_reviews.far') %></button>
+        <button type="button" data-quality-status="very_far"><%= t('geocoding_reviews.very_far') %></button>
+        <button type="button" data-quality-status="hard_to_tell"><%= t('geocoding_reviews.hard_to_tell') %></button>
       </div>
 
       <label class="geocoding-review-note">
-        <span>Notatka</span>
+        <span><%= t('geocoding_reviews.note') %></span>
         <textarea id="review-note" rows="3"></textarea>
       </label>
 
     <div>
-      <h3>Kandydaci</h3>
-        <div class="geocoding-review-candidate-legend" aria-label="Legenda kandydatów">
-          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--current"></i>Wybrane</span>
+      <h3><%= t('geocoding_reviews.candidates') %></h3>
+        <div class="geocoding-review-candidate-legend" aria-label="<%= t('geocoding_reviews.candidate_legend') %>">
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--current"></i><%= t('geocoding_reviews.selected') %></span>
           <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--google"></i>Google</span>
           <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--nominatim"></i>OSM</span>
           <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--gus"></i>GUS</span>
           <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--krakow_msip"></i>MSIP</span>
           <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--parcel"></i>ULDK</span>
-          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--manual"></i>Ręczne</span>
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--manual"></i><%= t('geocoding_reviews.manual') %></span>
       </div>
       <div id="review-candidates" class="geocoding-review-candidates"></div>
     </div>
@@ -92,6 +93,7 @@
     var categoriesUrl = page.dataset.categoriesUrl;
     var nextUrl = page.dataset.nextUrl;
     var reviewUrlTemplate = page.dataset.reviewUrlTemplate;
+    var i18n = JSON.parse(page.dataset.i18n || '{}');
     var activeCategory = 'random_sample';
     var currentCandidate = null;
     var activePosition = null;
@@ -130,6 +132,12 @@
     var unresolved = document.getElementById('review-unresolved');
     var standardActions = document.querySelector('.geocoding-review-actions');
     var qualityActions = document.getElementById('review-quality-actions');
+
+    function t(key) {
+      return String(key).split('.').reduce(function (memo, part) {
+        return memo && memo[part] !== undefined ? memo[part] : null;
+      }, i18n) || key;
+    }
 
     accept.addEventListener('click', function () {
       saveReview('verified');
@@ -182,12 +190,12 @@
       var priority = categoriesData.filter(function (category) { return category.group !== 'control'; });
       var control = categoriesData.filter(function (category) { return category.group === 'control'; });
 
-      categoryContainer.appendChild(renderCategorySection('Priorytetowe', priority));
+      categoryContainer.appendChild(renderCategorySection(t('priority'), priority));
 
       var controlSection = document.createElement('details');
       controlSection.className = 'geocoding-review-category-section geocoding-review-category-section--control';
       controlSection.open = control.some(function (category) { return category.key === activeCategory; });
-      controlSection.innerHTML = '<summary>Kontrolne</summary>';
+      controlSection.innerHTML = '<summary>' + escapeHtml(t('control')) + '</summary>';
       controlSection.appendChild(renderCategoryList(control));
       categoryContainer.appendChild(controlSection);
     }
@@ -212,10 +220,10 @@
         button.dataset.category = category.key;
         button.innerHTML = [
           '<strong>', escapeHtml(category.label), '</strong>',
-          '<span>', category.reviewed, '/', category.total, ' sprawdzone',
-          remaining ? ' · ' + remaining + ' pozostało' : ' · gotowe',
-          category.corrected ? ' · ' + category.corrected + ' poprawione' : '',
-          category.unresolved ? ' · ' + category.unresolved + ' nierozstrz.' : '',
+          '<span>', category.reviewed, '/', category.total, ' ', escapeHtml(t('checked')),
+          remaining ? ' · ' + remaining + ' ' + escapeHtml(t('remaining')) : ' · ' + escapeHtml(t('ready')),
+          category.corrected ? ' · ' + category.corrected + ' ' + escapeHtml(t('corrected')) : '',
+          category.unresolved ? ' · ' + category.unresolved + ' ' + escapeHtml(t('unresolved_short')) : '',
           '</span>'
         ].join('');
         button.addEventListener('click', function () {
@@ -231,7 +239,7 @@
     }
 
     function loadNext() {
-      status.textContent = 'Ładowanie punktu...';
+      status.textContent = t('loading_point');
       details.hidden = true;
       markers.clearLayers();
       activeMarker = null;
@@ -244,14 +252,14 @@
         .then(function (response) { return response.json(); })
         .then(function (data) {
           if (!data.candidate) {
-            status.textContent = 'Brak punktów w tej kategorii.';
+            status.textContent = t('no_points');
             return;
           }
           currentCandidate = data.candidate;
           renderCandidate(data.candidate);
         })
         .catch(function () {
-          status.textContent = 'Nie udało się załadować punktu.';
+          status.textContent = t('point_error');
         });
     }
 
@@ -259,9 +267,9 @@
       status.textContent = '';
       details.hidden = false;
       note.value = '';
-      addressTitle.textContent = candidate.address || 'bez adresu';
+      addressTitle.textContent = candidate.address || t('no_address');
       locationId.textContent = 'transformed_location #' + candidate.id;
-      businessName.textContent = candidateBusinessNames(candidate).join(' | ') || 'bez nazwy';
+      businessName.textContent = candidateBusinessNames(candidate).join(' | ') || t('no_name');
       activePosition = [candidate.current.lat, candidate.current.lng];
       activeSource = 'current';
 
@@ -283,17 +291,17 @@
       var normalized = candidate.normalized || {};
       var sim = candidate.sim || {};
       var items = [
-        ['Źródło', selected.source],
-        ['Strategia', selected.strategy],
-        ['Precyzja', selected.precision],
+        [t('source'), selected.source],
+        [t('strategy'), selected.strategy],
+        [t('precision'), selected.precision],
         ['SIM', [sim.district, sim.name].filter(Boolean).join(' / ')],
-        ['Typ adresu', normalized.address_kind],
-        ['Numer', normalized.building_number || normalized.unit_number || normalized.parcel_number],
-        ['Podmioty', candidateBusinessNames(candidate).join(' | ')]
+        [t('address_type'), normalized.address_kind],
+        [t('number'), normalized.building_number || normalized.unit_number || normalized.parcel_number],
+        [t('businesses'), candidateBusinessNames(candidate).join(' | ')]
       ];
 
       meta.innerHTML = items.map(function (item) {
-        return '<dt>' + escapeHtml(item[0]) + '</dt><dd>' + escapeHtml(item[1] || 'brak') + '</dd>';
+        return '<dt>' + escapeHtml(item[0]) + '</dt><dd>' + escapeHtml(item[1] || t('missing')) + '</dd>';
       }).join('');
     }
 
@@ -302,7 +310,7 @@
         return point && point.lat != null && point.lng != null;
       });
       var options = validPoints.map(function (point, index) {
-        return '<option value="' + index + '">' + escapeHtml(point.label || point.source || point.kind || 'geokoder') + '</option>';
+        return '<option value="' + index + '">' + escapeHtml(point.label || point.source || point.kind || t('geocoder')) + '</option>';
       }).join('');
 
       distanceSourceA.innerHTML = options;
@@ -317,14 +325,14 @@
 
       function updateDistance() {
         if (validPoints.length < 2) {
-          distanceResult.textContent = validPoints.length === 1 ? 'tylko jeden geokoder' : 'brak geokoderów';
+          distanceResult.textContent = validPoints.length === 1 ? t('one_geocoder') : t('no_geocoders');
           return;
         }
 
         var first = validPoints[Number(distanceSourceA.value)];
         var second = validPoints[Number(distanceSourceB.value)];
         if (!first || !second) {
-          distanceResult.textContent = 'brak porównania';
+          distanceResult.textContent = t('no_comparison');
           return;
         }
 
@@ -355,7 +363,7 @@
           '<small>', escapeHtml([candidate.source, candidate.strategy, candidate.precision].filter(Boolean).join(' · ')), '</small>',
           '</div>',
           '</div>',
-          '<button type="button" data-index="', index, '">Wybierz</button>',
+          '<button type="button" data-index="', index, '">', escapeHtml(t('choose')), '</button>',
           '</article>'
         ].join('');
       }).join('');
@@ -460,7 +468,7 @@
         });
         marker.bindPopup('<strong>' + escapeHtml(item.label || item.kind) + '</strong><br>' +
           escapeHtml([item.source, item.strategy, item.precision].filter(Boolean).join(' · ')) +
-          (withAction ? '<br><button type="button" data-pick-marker="1">Wybierz</button>' : ''));
+          (withAction ? '<br><button type="button" data-pick-marker="1">' + escapeHtml(t('choose')) + '</button>' : ''));
         marker.on('add', function () {
           if (withAction) bindCandidateMarkerButton(marker, item);
         });
@@ -549,7 +557,7 @@
         body.manual_precision = activeSource === 'drag' ? 'manual/verified_point' : 'manual/selected_candidate';
       }
 
-      status.textContent = 'Zapisywanie...';
+      status.textContent = t('saving');
 
       fetch(reviewUrlTemplate.replace('__ID__', currentCandidate.id), {
         method: 'POST',
@@ -571,7 +579,7 @@
           return loadNext();
         })
         .catch(function () {
-          status.textContent = 'Nie udało się zapisać decyzji.';
+          status.textContent = t('save_error');
         })
         .then(function () {
           saving = false;
@@ -620,7 +628,7 @@
     function activeIcon(dimmed) {
       return L.divIcon({
         className: 'geocoding-review-active-marker' + (dimmed ? ' geocoding-review-active-marker--dimmed' : ''),
-        html: '<div class="geocoding-review-pin"></div>' + (dimmed ? '' : '<button type="button" data-save-active>Wybierz</button>'),
+        html: '<div class="geocoding-review-pin"></div>' + (dimmed ? '' : '<button type="button" data-save-active>' + escapeHtml(t('choose')) + '</button>'),
         iconSize: [98, 64],
         iconAnchor: [18, 52]
       });
@@ -630,7 +638,7 @@
       if (withAction) {
         return L.divIcon({
           className: 'geocoding-review-candidate-marker geocoding-review-candidate-marker--with-action geocoding-review-candidate-marker--' + escapeClass(kind),
-          html: '<span></span><button type="button" data-pick-marker>Wybierz</button>',
+          html: '<span></span><button type="button" data-pick-marker>' + escapeHtml(t('choose')) + '</button>',
           iconSize: [96, 40],
           iconAnchor: [11, 20]
         });
@@ -648,8 +656,8 @@
       var uniqueNames = candidateBusinessNames(candidate);
 
       return [
-        '<strong>', escapeHtml(candidate.address || 'bez adresu'), '</strong>',
-        '<span>', escapeHtml(uniqueNames.slice(0, 3).join(' | ') || 'bez nazwy'), '</span>',
+        '<strong>', escapeHtml(candidate.address || t('no_address')), '</strong>',
+        '<span>', escapeHtml(uniqueNames.slice(0, 3).join(' | ') || t('no_name')), '</span>',
         '<small>', escapeHtml(markerData && markerData.label ? markerData.label : ''), '</small>'
       ].join('');
     }

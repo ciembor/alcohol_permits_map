@@ -1,33 +1,152 @@
-# Files in the config/locales directory are used for internationalization
-# and are automatically loaded by Rails. If you want to use locales other
-# than English, add the necessary files in this directory.
-#
-# To use the locales, use `I18n.t`:
-#
-#     I18n.t 'hello'
-#
-# In views, this is aliased to just `t`:
-#
-#     <%= t('hello') %>
-#
-# To use a different locale, set it with `I18n.locale`:
-#
-#     I18n.locale = :es
-#
-# This would use the information in config/locales/es.yml.
-#
-# The following keys must be escaped otherwise they will not be retrieved by
-# the default I18n backend:
-#
-# true, false, on, off, yes, no
-#
-# Instead, surround them with single quotes.
-#
-# en:
-#   'true': 'foo'
-#
-# To learn more, please read the Rails Internationalization guide
-# available at http://guides.rubyonrails.org/i18n.html.
-
 en:
-  hello: "Hello world"
+  app:
+    title: "Alcohol licenses in Kraków"
+    language:
+      label: "Language"
+      polish: "Polski"
+      english: "English"
+  maps:
+    page_title_html: "Alcohol-sale licenses<br>in Kraków"
+    loading_label: "Loading data"
+    panel_label: "Map controls"
+    sim_label: "SIM"
+    area_label: "Area"
+    krakow: "Kraków"
+    all_areas: "All areas"
+    report_summary_label: "Report summary"
+    legend_label: "Legend"
+    legend_title: "licenses:"
+    detail: "retail sales"
+    gastronomy: "gastronomy"
+    license_a: "A (up to 4.5% and beer)"
+    license_b: "B (4.5-18%)"
+    license_c: "C (over 18%)"
+    more_statistics: "More statistics"
+    show_map: "Show map"
+    hide_panel: "Hide panel"
+    show_panel: "Show panel"
+    statistics_label: "Statistics"
+    statistics_title: "Statistics"
+    metric_label: "Chart metric"
+    close_statistics: "Close statistics"
+    timeline_label: "Timeline"
+    report_date_label: "Report date"
+    population_source: "MSIP Registered residents"
+    population_unit: "registered residents"
+    metric:
+      premises: "premises"
+      licenses: "licenses"
+      premises_per_1000: "premises / 1,000 registered residents"
+      premises_per_km2: "premises / km²"
+      licenses_per_1000: "licenses / 1,000 registered residents"
+      licenses_per_km2: "licenses / km²"
+    js:
+      locale: "en-US"
+      language_label: "Language"
+      layers_density: "Premises density"
+      data_warning: "The map is based on cleaned City of Kraków data geocoded with Google Geocoding API, Google Places Text Search, OSM/Nominatim and ULDK. Despite careful processing, some locations may be displayed incorrectly. To see the raw address from City data, click a point and then RAW. Locations are under review."
+      legend_title: "Legend"
+      detail: "retail sales"
+      gastronomy: "gastronomy"
+      many_licenses: "many licenses in one premises"
+      all_areas: "All areas"
+      loading_number: "Loading value"
+      registered: "registered residents"
+      no_data: "no data"
+      source: "source"
+      area: "Area"
+      registered_count: "Registered residents"
+      total: "total"
+      mixed: "gastronomy + retail sales"
+      premises_based_on_licenses: "premises (based on licenses):"
+      registered_label: "registered:"
+      in_this_point: "at this point"
+      valid_until: "until"
+      raw_record: "Raw record"
+      close: "Close"
+      loading: "Loading..."
+      raw_error: "Could not fetch RAW."
+      uncertain_location: "Uncertain location"
+      category_short: "cat."
+      no_report: "no report"
+      fetch_error: "Could not fetch data"
+      select_chart_metric: "Choose chart metric"
+      loading_charts: "Loading charts"
+      charts_error: "Could not fetch statistics"
+      chart_empty: "No data"
+      change_previous_count: "numeric change from previous measurement"
+      change_previous_percent: "percent change from previous measurement"
+      change_start_count: "numeric change from the start of the data"
+      change_start_percent: "percent change from the start of the data"
+      license_words:
+        one: "license"
+        few: "licenses"
+        many: "licenses"
+      metric_definitions:
+        premises:
+          chartTitle: "Number of premises over time"
+          sectionTitle: "Number of premises"
+        licenses:
+          chartTitle: "Number of licenses over time"
+          sectionTitle: "Number of licenses"
+        premises_per_1000:
+          chartTitle: "Premises per 1,000 registered residents over time"
+          sectionTitle: "Premises per 1,000 registered residents"
+        premises_per_km2:
+          chartTitle: "Premises per km² over time"
+          sectionTitle: "Premises per km²"
+        licenses_per_1000:
+          chartTitle: "Licenses per 1,000 registered residents over time"
+          sectionTitle: "Licenses per 1,000 registered residents"
+        licenses_per_km2:
+          chartTitle: "Licenses per km² over time"
+          sectionTitle: "Licenses per km²"
+  geocoding_reviews:
+    title: "Geocoding review"
+    panel_label: "Geocoding review"
+    point_details: "Point details"
+    distance_tool: "Geocoder distance comparison"
+    from: "From"
+    to: "To"
+    no_comparison: "no comparison"
+    accept: "Accept without change"
+    unresolved: "Do not resolve"
+    exact: "exact"
+    nearest_area: "nearest area (< 25 m)"
+    area: "area (> 25 m, < 50 m)"
+    far: "far (> 50 m, < 100 m)"
+    very_far: "very far (> 100 m)"
+    hard_to_tell: "hard to tell"
+    note: "Note"
+    candidates: "Candidates"
+    candidate_legend: "Candidate legend"
+    selected: "Selected"
+    manual: "Manual"
+    loading_categories: "Loading categories..."
+    js:
+      priority: "Priority"
+      control: "Control"
+      checked: "checked"
+      remaining: "remaining"
+      ready: "ready"
+      corrected: "corrected"
+      unresolved_short: "unresolved"
+      loading_point: "Loading point..."
+      no_points: "No points in this category."
+      point_error: "Could not load point."
+      no_address: "no address"
+      no_name: "no name"
+      source: "Source"
+      strategy: "Strategy"
+      precision: "Precision"
+      address_type: "Address type"
+      number: "Number"
+      businesses: "Businesses"
+      missing: "none"
+      geocoder: "geocoder"
+      one_geocoder: "only one geocoder"
+      no_geocoders: "no geocoders"
+      no_comparison: "no comparison"
+      choose: "Choose"
+      saving: "Saving..."
+      save_error: "Could not save the decision."

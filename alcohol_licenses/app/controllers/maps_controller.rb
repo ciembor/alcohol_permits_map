@@ -4,6 +4,7 @@ class MapsController < ApplicationController
   def index
     @reports = available_reports
     @initial_report = @reports.last
+    @map_i18n = I18n.t('maps.js')
   end
 
   def licenses
@@ -338,9 +339,9 @@ class MapsController < ApplicationController
   def empty_population_snapshot
     {
       observed_on: nil,
-      source: 'MSIP Zameldowania stale',
+      source: I18n.t('maps.population_source'),
       source_url: Sim::PopulationSnapshot::SOURCE_URL,
-      unit: 'zameldowani na pobyt staly',
+      unit: I18n.t('maps.population_unit'),
       city: nil,
       districts: {},
       sim_units: {}
@@ -386,7 +387,7 @@ class MapsController < ApplicationController
       sim_locator: sim_locator
     )
 
-    reports.map do |report_at|
+    reports_with_changes(reports.map do |report_at|
       report_groups = grouped_premises.fetch(report_at, {}).values
       premises = premise_counts(report_groups)
       licenses = license_counts(report_groups)
@@ -395,10 +396,13 @@ class MapsController < ApplicationController
       {
         report_at: report_at.iso8601,
         date: report_at.to_date.iso8601,
+        premises: premises,
+        licenses: licenses,
         population: population,
+        rates: statistic_rates(premises.fetch(:total), population),
         value: statistic_metric_value(metric, premises, licenses, population)
       }
-    end
+    end)
   end
 
   def statistic_metric_value(metric, premises, licenses, population)
