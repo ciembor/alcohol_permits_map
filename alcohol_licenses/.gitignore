@@ -10,6 +10,7 @@
 # Ignore the default SQLite database.
 /db/*.sqlite3
 /db/*.sqlite3-journal
+/db/*.sqlite3.bak-*
 
 # Ignore all logfiles and tempfiles.
 /log/*
@@ -20,6 +21,9 @@
 # Ignore uploaded files in development
 /storage/*
 !/storage/.keep
+
+# Local manuscript workspace (source, generated PDF/TeX, figures)
+/paper/
 
 /node_modules
 /yarn-error.log
@@ -32,3 +36,6 @@
 
 *.DS_Store
 *.swp
+.idea/
+__pycache__/
+*.pyc

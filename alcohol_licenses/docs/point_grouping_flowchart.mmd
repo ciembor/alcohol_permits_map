@@ -1,0 +1,39 @@
+flowchart TD
+  pdf[PDF z BIP] --> extractor[Ekstrakcja PDF do CSV<br/>vendor/extractor/extractor.py]
+  xlsx[XLS / XLSX] --> spreadsheet[Import arkuszy<br/>SpreadsheetImporter]
+
+  extractor --> csv[CSV w vendor/data/files/output]
+  csv --> importCsv[bin/rails source_data:import_csv_reports]
+  spreadsheet --> importRows[bin/rails source_data:import_spreadsheet_reports]
+
+  importCsv --> rawTables[(businesses<br/>locations<br/>alcohol_licenses<br/>business_categories<br/>license_categories)]
+  importRows --> rawTables
+
+  rawTables --> streets[(streets<br/>slownik ulic SIMC)]
+  streets --> transform[bin/rails locations:normalize<br/>LocationTransformer::Transformer]
+  rawTables --> transform
+  corrections[(address_corrections<br/>opcjonalne korekty)] --> transform
+
+  transform --> transformed[(transformed_locations<br/>znormalizowany adres i typ adresu)]
+
+  transformed --> queries[TransformedLocation#geocoding_queries<br/>address_point / parcel / landmark / fallback]
+
+  queries --> nominatim[bin/rails geocoding:osm_missing_locations<br/>OSM Nominatim]
+  queries --> parcels[bin/rails geocoding:uldk_parcels]
+  queries --> google[bin/rails geocoding:google<br/>Google Maps / Places]
+
+  nominatim --> results[(geocoding_results)]
+  parcels --> results
+  google --> results
+
+  results --> select{Wybor wyniku<br/>selected = true}
+  select --> coordinates[(transformed_locations<br/>latitude / longtitude<br/>osm_latitude / osm_longitude)]
+
+  coordinates --> groupingInput[Geokodowane licencje dla report_at<br/>AlcoholLicense + Business + TransformedLocation]
+  groupingInput --> groupByCoords[Grupowanie po wspolrzednych<br/>latitude + longitude]
+  groupByCoords --> normalizeBusiness[Normalizacja nazw firm<br/>BusinessNameNormalizer]
+  normalizeBusiness --> clusterBusiness[Klasteryzacja firm w tym samym punkcie<br/>similarity >= 0.90 albo alias]
+  clusterBusiness --> createGroups[(license_point_groups)]
+  createGroups --> attachLicenses[Ustawienie alcohol_licenses.license_point_group_id]
+
+  attachLicenses --> groupedReady[Gotowe grupy punktow<br/>dla mapy i statystyk]

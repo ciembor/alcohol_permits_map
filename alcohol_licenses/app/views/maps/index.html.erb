@@ -1,0 +1,1905 @@
+<% content_for :head do %>
+  <link rel="icon" type="image/png" sizes="32x32" href="<%= asset_path('favicon-32.png') %>">
+  <link rel="icon" type="image/png" sizes="192x192" href="<%= asset_path('favicon-192.png') %>">
+  <link rel="apple-touch-icon" href="<%= asset_path('favicon-192.png') %>">
+  <meta property="og:image" content="<%= asset_path('og-image.png') %>">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+<% end %>
+
+<main
+  class="license-map-page"
+  data-reports="<%= @reports.map(&:iso8601).join(',') %>"
+  data-initial-report="<%= @initial_report&.iso8601 %>"
+  data-licenses-url="<%= map_licenses_path %>"
+  data-raw-records-url="<%= map_raw_records_path %>"
+  data-statistics-url="<%= map_statistics_path %>"
+  data-statistics-static-url="<%= map_statistics_static_path %>"
+>
+  <div id="license-map" class="license-map"></div>
+  <div id="map-status" class="map-loading is-loading" aria-live="polite" aria-label="Ładowanie danych"></div>
+  <section class="map-panel" aria-label="Sterowanie mapą">
+    <div id="map-panel-content" class="map-panel__row">
+      <div class="map-panel__header">
+        <h1>Zezwolenia na sprzedaż<br>alkoholu w Krakowie</h1>
+      </div>
+      <div class="sim-controls" aria-label="SIM">
+        <label>
+          <span>SIM</span>
+          <select id="sim-scope">
+            <option value="krakow">Kraków</option>
+          </select>
+        </label>
+        <label id="sim-area-field" class="sim-controls__area">
+          <span>Obszar</span>
+          <select id="sim-area" disabled>
+            <option value="">Wszystkie obszary</option>
+          </select>
+        </label>
+      </div>
+      <div id="report-summary" class="report-summary" aria-label="Podsumowanie raportu"></div>
+      <div class="map-legend" aria-label="Legenda">
+        <strong class="map-legend__title">zezwolenia:</strong>
+        <label><input type="checkbox" name="business_category" value="detal" checked><i class="legend-symbol legend-symbol--detail"></i><span data-filter-count="business_category:detal">sprzedaż detaliczna</span></label>
+        <label><input type="checkbox" name="business_category" value="gastronomia" checked><i class="legend-symbol legend-symbol--gastronomy"></i><span data-filter-count="business_category:gastronomia">gastronomia</span></label>
+        <label><input type="checkbox" name="license_category" value="A" checked><i class="legend-color legend-color--a"></i><span data-filter-count="license_category:A">A (do 4,5% oraz piwo)</span></label>
+        <label><input type="checkbox" name="license_category" value="B" checked><i class="legend-color legend-color--b"></i><span data-filter-count="license_category:B">B (4,5-18%)</span></label>
+        <label><input type="checkbox" name="license_category" value="C" checked><i class="legend-color legend-color--c"></i><span data-filter-count="license_category:C">C (powyżej 18%)</span></label>
+        <div class="map-legend__more">
+          <button id="statistics-toggle" class="statistics-toggle" type="button" aria-expanded="false" aria-controls="statistics-panel">Więcej statystyk</button>
+        </div>
+      </div>
+    </div>
+    <div class="map-panel__actions">
+      <button id="map-panel-toggle" class="map-panel__toggle" type="button" aria-expanded="true" aria-controls="map-panel-content" aria-label="Ukryj panel">‹</button>
+    </div>
+  </section>
+
+  <p class="map-author">
+    <a class="map-author__person" href="https://maciej-ciemborowicz.eu" aria-label="Maciej Ciemborowicz">
+      <%= image_tag 'maciej.png', alt: '', class: 'map-author__avatar' %>
+      <span>&copy; Maciej Ciemborowicz</span>
+    </a>
+    <a class="site-brand" href="https://www.facebook.com/DobraNocKrakow" aria-label="Dobra Noc Kraków na Facebooku">
+      <%= image_tag 'logo.jpg', alt: '', class: 'site-brand__logo' %>
+      <span>Dobra Noc Kraków</span>
+    </a>
+  </p>
+
+  <section id="statistics-panel" class="statistics-panel" aria-label="Statystyki" hidden>
+    <div class="statistics-panel__header">
+      <strong>Statystyki</strong>
+      <div class="statistics-panel__metric-switch" aria-label="Metryka wykresu">
+        <button type="button" data-statistics-metric="premises" class="is-active">lokale</button>
+        <button type="button" data-statistics-metric="licenses">zezwolenia</button>
+        <button type="button" data-statistics-metric="premises_per_1000">lokale / 1000 zameldowanych</button>
+        <button type="button" data-statistics-metric="premises_per_km2">lokale / km²</button>
+        <button type="button" data-statistics-metric="licenses_per_1000">zezwolenia / 1000 zameldowanych</button>
+        <button type="button" data-statistics-metric="licenses_per_km2">zezwolenia / km²</button>
+      </div>
+      <button id="statistics-close" class="statistics-panel__close" type="button" aria-label="Zamknij statystyki">×</button>
+    </div>
+    <div id="statistics-content" class="statistics-panel__content"></div>
+  </section>
+
+  <section class="time-slider" aria-label="Oś czasu">
+    <div class="time-slider__meta">
+      <strong id="selected-report"><%= @initial_report&.strftime('%d.%m.%Y') %></strong>
+    </div>
+    <input id="report-slider" type="range" aria-label="Data raportu">
+    <div id="report-ticks" class="year-ticks"></div>
+  </section>
+</main>
+
+<script>
+  document.addEventListener('turbolinks:load', function () {
+    var page = document.querySelector('.license-map-page');
+    if (!page || page.dataset.mapReady === '1') return;
+    page.dataset.mapReady = '1';
+
+    var reports = page.dataset.reports.split(',').filter(Boolean);
+    var reportTimes = reports.map(function (report) { return Date.parse(report); });
+    var licensesUrl = page.dataset.licensesUrl;
+    var rawRecordsUrl = page.dataset.rawRecordsUrl;
+    var rawStaticUrl = page.dataset.rawStaticUrl;
+    var statisticsUrl = page.dataset.statisticsUrl;
+    var statisticsStaticUrl = page.dataset.statisticsStaticUrl;
+    var rawReportCache = {};
+    var map = L.map('license-map', { attributionControl: false, zoomControl: false }).setView([50.0573, 19.9373], 14);
+    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19
+    }).addTo(map);
+    map.createPane('simTint');
+    map.getPane('simTint').style.zIndex = 350;
+    map.getPane('simTint').style.pointerEvents = 'none';
+
+    var simTintRenderer = L.canvas({ padding: 0.75 });
+    var simTintLayer = L.geoJSON(null, {
+      pane: 'simTint',
+      interactive: false,
+      renderer: simTintRenderer,
+      style: simAreaStyle
+    }).addTo(map);
+    L.Control.DataQualityWarning = L.Control.extend({
+      options: {
+        position: 'topright'
+      },
+
+      onAdd: function () {
+        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control map-data-warning');
+        var button = L.DomUtil.create('a', 'map-data-warning__button', container);
+        var tooltip = 'Mapa bazuje na oczyszczonych danych UMK, geokodowanych z wykorzystaniem Google Geocoding API, Google Places Text Search, OSM/Nominatim oraz ULDK. Mimo największych starań część lokalizacji może wyświetlać się w złych miejscach. Aby zobaczyć surowy adres z danych UMK kliknij na punkt, a następnie RAW. Lokalizacje są w trakcie weryfikacji.';
+
+        container.setAttribute('aria-label', tooltip); 
+        container.setAttribute('role', 'img');
+        button.href = '#';
+        button.setAttribute('aria-hidden', 'true');
+        button.setAttribute('tabindex', '-1');
+        button.innerHTML = '<span class="map-data-warning__icon">!</span>';
+        L.DomUtil.create('span', 'map-data-warning__tooltip', container).textContent = tooltip;
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.disableScrollPropagation(container);
+        L.DomEvent.on(button, 'click', L.DomEvent.preventDefault);
+
+        return container;
+      }
+    });
+    new L.Control.DataQualityWarning().addTo(map);
+    L.Control.MapSymbolLegend = L.Control.extend({
+      options: {
+        position: 'topright'
+      },
+
+      onAdd: function () {
+        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control map-symbol-legend');
+        container.innerHTML = [
+          '<a class="map-symbol-legend__button" href="#" aria-label="Legenda"><span></span></a>',
+          '<div class="map-symbol-legend__tooltip" role="tooltip">',
+            '<strong>Legenda</strong>',
+            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--detail"></i>sprzedaż detaliczna</span>',
+            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--gastronomy"></i>gastronomia</span>',
+            '<span><i class="map-symbol-legend__marker map-symbol-legend__marker--group"></i>wiele zezwoleń w jednym lokalu</span>',
+          '</div>'
+        ].join('');
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.disableScrollPropagation(container);
+        L.DomEvent.on(container.querySelector('a'), 'click', L.DomEvent.preventDefault);
+        return container;
+      }
+    });
+    new L.Control.MapSymbolLegend().addTo(map);
+    L.control.layers(null, {
+      'Gęstość lokali': simTintLayer
+    }, {
+      collapsed: true,
+      position: 'topright'
+    }).addTo(map);
+
+    var clusters = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      spiderfyOnMaxZoom: true,
+      disableClusteringAtZoom: 17,
+      iconCreateFunction: function (cluster) {
+        var businessIds = new Set();
+        cluster.getAllChildMarkers().forEach(function (marker) {
+          businessIds.add(marker.options.businessId || marker.options.pointId);
+        });
+        var count = businessIds.size;
+        var size = count < 100 ? 'small' : count < 1000 ? 'medium' : 'large';
+        return L.divIcon({
+          html: '<div><span>' + count.toLocaleString('pl-PL') + '</span></div>',
+          className: 'marker-cluster marker-cluster-' + size,
+          iconSize: L.point(40, 40)
+        });
+      },
+      maxClusterRadius: function (zoom) {
+        if (zoom < 12) return 74;
+        if (zoom < 15) return 52;
+        return 28;
+      }
+    });
+    map.addLayer(clusters);
+
+    var slider = document.getElementById('report-slider');
+    var selectedReport = document.getElementById('selected-report');
+    var status = document.getElementById('map-status');
+    var reportSummary = document.getElementById('report-summary');
+    var ticks = document.getElementById('report-ticks');
+    var panel = page.querySelector('.map-panel');
+    var panelToggle = document.getElementById('map-panel-toggle');
+    var simScope = document.getElementById('sim-scope');
+    var simArea = document.getElementById('sim-area');
+    var simAreaField = document.getElementById('sim-area-field');
+    var statisticsToggle = document.getElementById('statistics-toggle');
+    var statisticsPanel = document.getElementById('statistics-panel');
+    var statisticsClose = document.getElementById('statistics-close');
+    var statisticsContent = document.getElementById('statistics-content');
+    var statisticsMetricButtons = Array.prototype.slice.call(page.querySelectorAll('[data-statistics-metric]'));
+    var filterInputs = Array.prototype.slice.call(page.querySelectorAll('.map-legend input[type="checkbox"]'));
+    var currentReport = null;
+    var currentPoints = [];
+    var currentSimAreas = [];
+    var currentSummary = null;
+    var currentPopulation = null;
+    var currentStatistics = null;
+    var staticStatisticsData = null;
+    var reportDataCache = {};
+    var reportLoadRequestId = 0;
+    var pendingStatisticsFetch = null;
+    var debounceTimer = null;
+    var markerRenderFrame = null;
+    var statisticsDebounceTimer = null;
+    var statisticsRequestKey = null;
+    var statisticsMetricMode = 'premises';
+    var statisticsChartRequested = false;
+    var fittedInitialBounds = false;
+
+    if (reportTimes.length) {
+      slider.min = String(reportTimes[0]);
+      slider.max = String(reportTimes[reportTimes.length - 1]);
+      slider.step = '1';
+      slider.value = String(reportTimes[reportTimes.length - 1]);
+    }
+
+    renderReportTicks();
+
+    panelToggle.addEventListener('click', function () {
+      var collapsed = panel.classList.toggle('map-panel--collapsed');
+      panelToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      panelToggle.setAttribute('aria-label', collapsed ? 'Pokaż panel' : 'Ukryj panel');
+      panelToggle.textContent = collapsed ? '›' : '‹';
+      window.setTimeout(function () { map.invalidateSize(); }, 160);
+    });
+
+    statisticsToggle.addEventListener('click', function () {
+      if (statisticsPanelOpen()) {
+        closeStatisticsPanel();
+      } else {
+        openStatisticsPanel();
+      }
+    });
+
+    statisticsClose.addEventListener('click', function () {
+      closeStatisticsPanel();
+    });
+
+    statisticsMetricButtons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        statisticsMetricMode = button.dataset.statisticsMetric;
+        statisticsChartRequested = true;
+        statisticsMetricButtons.forEach(function (item) {
+          item.classList.toggle('is-active', item === button);
+        });
+        renderStatisticsPanel();
+        scheduleStatisticsLoad(true);
+      });
+    });
+
+    function reportFromSlider() {
+      var value = Number(slider.value);
+      var index = nearestReportIndex(value);
+      return reports[index];
+    }
+
+    function nearestReportIndex(value) {
+      var nearestIndex = 0;
+      var nearestDistance = Infinity;
+
+      reportTimes.forEach(function (time, index) {
+        var distance = Math.abs(time - value);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = index;
+        }
+      });
+
+      return nearestIndex;
+    }
+
+    function snapSliderToReport(report) {
+      slider.value = String(Date.parse(report));
+    }
+
+    function renderReportTicks() {
+      if (!reports.length) {
+        ticks.innerHTML = '';
+        return;
+      }
+
+      var firstYear = new Date(reports[0]).getFullYear();
+      var lastYear = new Date(reports[reports.length - 1]).getFullYear();
+      var span = Math.max(1, lastYear - firstYear);
+      var labels = [];
+
+      for (var year = firstYear; year <= lastYear; year += 1) {
+        labels.push(
+          '<span style="left:' + (((year - firstYear) / span) * 100).toFixed(3) + '%">' +
+            year +
+          '</span>'
+        );
+      }
+
+      ticks.innerHTML = labels.join('');
+    }
+
+    function reportLabel(report, compact) {
+      var date = new Date(report);
+      if (compact) {
+        return String(date.getFullYear());
+      }
+
+      return date.toLocaleString('pl-PL', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    }
+
+    function categoryColor(category) {
+      if (category === 'A') return '#f5d547';
+      if (category === 'B') return '#f59e2f';
+      return '#d93f32';
+    }
+
+    function businessIcon(categories) {
+      var values = Array.isArray(categories) ? categories : [categories];
+      if (values.indexOf('detal') !== -1 && values.indexOf('gastronomia') !== -1) return 'license-marker--mixed';
+      return values.indexOf('gastronomia') !== -1 ? 'license-marker--gastronomy' : 'license-marker--detail';
+    }
+
+    function premiseBusinessCategories(point) {
+      return point.premise_business_categories || point.business_categories || [point.business_category];
+    }
+
+    function simUnitLabel(unit) {
+      return unit;
+    }
+
+    function markerIcon(point) {
+      var categories = point.license_categories || [point.license_category];
+      return L.divIcon({
+        className: [
+          'license-marker',
+          businessIcon(premiseBusinessCategories(point))
+        ].join(' '),
+        html: '<span style="--marker-fill:' + categoryGradient(categories) + ';background:' + categoryGradient(categories) + '"></span>',
+        iconSize: [22, 22],
+        iconAnchor: [11, 11],
+        popupAnchor: [0, -10]
+      });
+    }
+
+    function categoryGradient(categories) {
+      var unique = categories.filter(Boolean).sort();
+      if (unique.length <= 1) return categoryColor(unique[0]);
+
+      var slice = 100 / unique.length;
+      var stops = unique.map(function (category, index) {
+        var start = (slice * index).toFixed(3);
+        var end = (slice * (index + 1)).toFixed(3);
+        var color = categoryColor(category);
+        return color + ' ' + start + '% ' + end + '%';
+      });
+      return 'conic-gradient(' + stops.join(', ') + ')';
+    }
+
+    function selectedValues(name) {
+      return filterInputs
+        .filter(function (input) { return input.name === name && input.checked; })
+        .map(function (input) { return input.value; });
+    }
+
+    function filteredPoint(point, selectedBusinessCategories, selectedLicenseCategories, selectedSimUnit, selectedSimArea) {
+      var businessCategories = (point.business_categories || [point.business_category]).filter(function (category) {
+        return selectedBusinessCategories.indexOf(category) !== -1;
+      });
+      if (!businessCategories.length) return null;
+      if (selectedSimUnit && (point.sim_units || [point.sim_unit]).indexOf(selectedSimUnit) === -1) return null;
+      if (selectedSimArea && (point.sim_areas || [point.sim_area]).indexOf(selectedSimArea) === -1) return null;
+
+      var categories = (point.license_categories || [point.license_category]).filter(function (category) {
+        return selectedLicenseCategories.indexOf(category) !== -1;
+      });
+      if (!categories.length) return null;
+
+      var copy = Object.assign({}, point);
+      copy.raw_records_count = Number(point.raw_records_count || (point.raw_records || []).length || 0);
+      var businessDetails = point.business_license_details || [];
+
+      if (businessDetails.length) {
+        var filteredDetails = filteredBusinessLicenseDetails(point, selectedBusinessCategories, selectedLicenseCategories);
+        if (!filteredDetails.length) return null;
+
+        var counts = countsFromBusinessLicenseDetails(filteredDetails);
+        var premiseCounts = countsFromBusinessLicenseDetails(businessDetails);
+        var filteredBusinessIds = uniqueSorted(filteredDetails.map(function (detail) {
+          return detail.business_id;
+        }).filter(Boolean), String);
+
+        copy.business_license_details = filteredDetails;
+        copy.businesses = filteredDetails.map(function (detail) { return detail.business; });
+        copy.business = copy.businesses[0] || point.business;
+        copy.business_count = copy.businesses.length;
+        copy.business_ids = filteredBusinessIds;
+        copy.business_id_count = filteredBusinessIds.length;
+        copy.business_categories = Object.keys(counts.business_category).sort();
+        copy.business_category = copy.business_categories[0];
+        copy.premise_business_categories = Object.keys(premiseCounts.business_category).sort();
+        copy.license_categories = Object.keys(counts.license_category).sort();
+        copy.license_category = copy.license_categories[0];
+        copy.license_counts_by_business_category = counts.business_category;
+        copy.license_counts_by_category = counts.license_category;
+        copy.license_count = filteredDetails.reduce(function (sum, detail) {
+          return sum + Number(detail.license_count || 0);
+        }, 0);
+        return copy;
+      }
+
+      copy.business_categories = businessCategories;
+      copy.business_category = businessCategories[0];
+      copy.premise_business_categories = point.business_categories || [point.business_category];
+      copy.license_categories = categories;
+      copy.license_category = categories[0];
+      copy.license_count = categories.reduce(function (sum, category) {
+        return sum + ((point.license_counts_by_category || {})[category] || 0);
+      }, 0) || categories.length;
+      return copy;
+    }
+
+    function filteredRawRecords(records, selectedBusinessCategories, selectedLicenseCategories) {
+      return records.filter(function (record) {
+        return selectedBusinessCategories.indexOf(record.business_category) !== -1 &&
+          selectedLicenseCategories.indexOf(record.license_category) !== -1;
+      });
+    }
+
+    function filteredBusinessLicenseDetails(point, selectedBusinessCategories, selectedLicenseCategories) {
+      return (point.business_license_details || []).map(function (detail) {
+        var categoryDetails = (detail.category_details || []).map(function (categoryDetail) {
+          if (selectedBusinessCategories.indexOf(categoryDetail.business_category) === -1) return null;
+
+          var licenseCounts = selectedLicenseCategories.reduce(function (memo, category) {
+            var count = (categoryDetail.license_counts_by_category || {})[category] || 0;
+            if (count) memo[category] = count;
+            return memo;
+          }, {});
+          var licenseCategories = Object.keys(licenseCounts).sort();
+          var licenseCount = licenseCategories.reduce(function (sum, category) {
+            return sum + licenseCounts[category];
+          }, 0);
+          if (!licenseCount) return null;
+
+          return Object.assign({}, categoryDetail, {
+            license_categories: licenseCategories,
+            license_counts_by_category: licenseCounts,
+            license_count: licenseCount
+          });
+        }).filter(Boolean);
+
+        if (!categoryDetails.length) return null;
+
+        var detailCounts = countsFromBusinessLicenseDetails([{ category_details: categoryDetails }]);
+
+        return Object.assign({}, detail, {
+          business_categories: Object.keys(detailCounts.business_category).sort(),
+          license_categories: Object.keys(detailCounts.license_category).sort(),
+          license_counts_by_category: detailCounts.license_category,
+          license_count: categoryDetails.reduce(function (sum, categoryDetail) {
+            return sum + Number(categoryDetail.license_count || 0);
+          }, 0),
+          category_details: categoryDetails
+        });
+      }).filter(Boolean);
+    }
+
+    function countsFromBusinessLicenseDetails(details) {
+      return details.reduce(function (memo, detail) {
+        (detail.category_details || []).forEach(function (categoryDetail) {
+          memo.business_category[categoryDetail.business_category] =
+            (memo.business_category[categoryDetail.business_category] || 0) + Number(categoryDetail.license_count || 0);
+
+          Object.keys(categoryDetail.license_counts_by_category || {}).forEach(function (licenseCategory) {
+            memo.license_category[licenseCategory] =
+              (memo.license_category[licenseCategory] || 0) + Number(categoryDetail.license_counts_by_category[licenseCategory] || 0);
+          });
+        });
+        return memo;
+      }, { business_category: {}, license_category: {} });
+    }
+
+    function visiblePoints() {
+      var businessCategories = selectedValues('business_category');
+      var licenseCategories = selectedValues('license_category');
+      var selectedSimUnit = simScope.value === 'krakow' ? '' : simScope.value;
+      var selectedSimArea = selectedSimUnit ? simArea.value : '';
+      return currentPoints
+        .map(function (point) { return filteredPoint(point, businessCategories, licenseCategories, selectedSimUnit, selectedSimArea); })
+        .filter(Boolean);
+    }
+
+    function regionPoints() {
+      var selectedSimUnit = simScope.value === 'krakow' ? '' : simScope.value;
+      var selectedSimArea = selectedSimUnit ? simArea.value : '';
+
+      return currentPoints.filter(function (point) {
+        if (selectedSimUnit && (point.sim_units || [point.sim_unit]).indexOf(selectedSimUnit) === -1) return false;
+        if (selectedSimArea && (point.sim_areas || [point.sim_area]).indexOf(selectedSimArea) === -1) return false;
+        return true;
+      });
+    }
+
+    function renderSimControls() {
+      var selectedScope = simScope.value || 'krakow';
+      var selectedArea = simArea.value;
+      var units = uniqueSorted(currentPoints.flatMap(function (point) {
+        return point.sim_units || [point.sim_unit];
+      }).filter(Boolean), districtSortKey);
+
+      simScope.innerHTML = ['<option value="krakow">Kraków</option>'].concat(units.map(function (unit) {
+        return '<option value="' + escapeHtml(unit) + '">' + escapeHtml(simUnitLabel(unit)) + '</option>';
+      })).join('');
+      simScope.value = units.indexOf(selectedScope) === -1 ? 'krakow' : selectedScope;
+
+      renderSimAreas(selectedArea);
+    }
+
+    function renderSimAreas(selectedArea) {
+      var selectedSimUnit = simScope.value === 'krakow' ? '' : simScope.value;
+      var areas = selectedSimUnit ? uniqueSorted(currentPoints.flatMap(function (point) {
+        return (point.sim_units || [point.sim_unit]).indexOf(selectedSimUnit) === -1 ? [] : (point.sim_areas || [point.sim_area]);
+      }).filter(Boolean), function (area) { return areaSortKey(selectedSimUnit, area); }) : [];
+
+      simArea.disabled = !selectedSimUnit;
+      simAreaField.classList.toggle('is-disabled', !selectedSimUnit);
+      simArea.innerHTML = ['<option value="">Wszystkie obszary</option>'].concat(areas.map(function (area) {
+        return '<option value="' + escapeHtml(area) + '">' + escapeHtml(area) + '</option>';
+      })).join('');
+      simArea.value = areas.indexOf(selectedArea) === -1 ? '' : selectedArea;
+    }
+
+    function uniqueSorted(values, labelCallback) {
+      var valuesSet = new Set(values);
+      return Array.from(valuesSet).sort(function (left, right) {
+        return labelCallback(left).localeCompare(labelCallback(right), 'pl', { numeric: true });
+      });
+    }
+
+    function areaSortKey(selectedSimUnit, area) {
+      var point = currentPoints.find(function (item) {
+        return (item.sim_units || [item.sim_unit]).indexOf(selectedSimUnit) !== -1 &&
+          (item.sim_areas || [item.sim_area]).indexOf(area) !== -1;
+      });
+      return point && point.sim_area_code ? point.sim_area_code : area;
+    }
+
+    function districtSortKey(district) {
+      var match = String(district).match(/Dzielnica ([IVXLCDM]+)/);
+      return String(match ? romanToNumber(match[1]) : 999).padStart(3, '0') + ' ' + district;
+    }
+
+    function romanToNumber(value) {
+      var numerals = { I: 1, V: 5, X: 10, L: 50, C: 100, D: 500, M: 1000 };
+      return String(value).split('').reduce(function (sum, char, index, chars) {
+        var current = numerals[char] || 0;
+        var next = numerals[chars[index + 1]] || 0;
+        return sum + (current < next ? -current : current);
+      }, 0);
+    }
+
+    function renderPoints(points, fitInitialBounds) {
+      if (markerRenderFrame) {
+        window.cancelAnimationFrame(markerRenderFrame);
+        markerRenderFrame = null;
+      }
+
+      clusters.clearLayers();
+      var displayPoints = spreadOverlappingPoints(points);
+      var markers = displayPoints.map(function (point) {
+        var marker = L.marker([point.displayLat || point.lat, point.displayLng || point.lng], {
+          icon: markerIcon(point),
+          zIndexOffset: categoryZIndex((point.license_categories || [point.license_category]).slice(-1)[0]),
+          businessId: point.point_group_id || point.business_id,
+          pointId: point.id,
+          licenseCount: point.license_count || 1
+        }).bindPopup(popupHtml(point), {
+          className: 'license-popup',
+          minWidth: 158,
+          maxWidth: 158
+        });
+        wireRawRecordPopup(marker, point);
+        return marker;
+      });
+      clusters.addLayers(markers);
+
+      if (markers.length && fitInitialBounds && !fittedInitialBounds) {
+        map.fitBounds(clusters.getBounds(), { padding: [32, 32], maxZoom: 13 });
+        fittedInitialBounds = true;
+      }
+
+    }
+
+    function scheduleMarkerRender(points) {
+      if (markerRenderFrame) window.cancelAnimationFrame(markerRenderFrame);
+
+      markerRenderFrame = window.requestAnimationFrame(function () {
+        markerRenderFrame = window.requestAnimationFrame(function () {
+          markerRenderFrame = null;
+          renderPoints(points, false);
+        });
+      });
+    }
+
+    function renderSimAreaTint(points) {
+      if (!currentSimAreas.length) {
+        simTintLayer.clearLayers();
+        return;
+      }
+
+      var selectedSimUnit = simScope.value === 'krakow' ? '' : simScope.value;
+      var selectedSimArea = selectedSimUnit ? simArea.value : '';
+      var tintAreas = currentSimAreas.filter(function (area) {
+        if (selectedSimUnit && area.district !== selectedSimUnit) return false;
+        if (selectedSimArea && area.name !== selectedSimArea) return false;
+        return true;
+      });
+      var stats = simAreaDensityStats(points, tintAreas);
+
+      simTintLayer.clearLayers();
+      simTintLayer.addData({
+        type: 'FeatureCollection',
+        features: tintAreas.map(function (area) {
+          var areaStats = stats[area.code] || { count: 0, density: 0 };
+          return {
+            type: 'Feature',
+            geometry: area.geometry,
+            properties: {
+              code: area.code,
+              name: area.name,
+              district: area.district,
+              count: areaStats.count,
+              density: areaStats.density,
+              tintColor: simDensityColor(areaStats.density)
+            }
+          };
+        })
+      });
+    }
+
+    function simAreaDensityStats(points, areas) {
+      var byArea = points.reduce(function (memo, point) {
+        var code = point.sim_area_code;
+        if (!code) return memo;
+
+        memo[code] = memo[code] || new Set();
+        memo[code].add(premiseKey(point));
+        return memo;
+      }, {});
+
+      return areas.reduce(function (memo, area) {
+        var count = byArea[area.code] ? byArea[area.code].size : 0;
+        var areaKm2 = Number(area.area_km2 || 0);
+        memo[area.code] = {
+          count: count,
+          density: areaKm2 > 0 ? count / areaKm2 : 0
+        };
+        return memo;
+      }, {});
+    }
+
+    function premiseKey(point) {
+      return [
+        point.point_group_id || point.business_id || point.id,
+        point.lat,
+        point.lng
+      ].join('|');
+    }
+
+    function simDensityColor(density) {
+      var stops = [
+        { value: 0, color: [46, 173, 75] },
+        { value: 10, color: [166, 213, 72] },
+        { value: 45, color: [244, 208, 63] },
+        { value: 95, color: [243, 156, 18] },
+        { value: 170, color: [224, 91, 36] },
+        { value: 250, color: [176, 34, 34] },
+        { value: 320, color: [132, 18, 18] },
+        { value: 450, color: [64, 0, 0] }
+      ];
+
+      for (var index = 1; index < stops.length; index += 1) {
+        var left = stops[index - 1];
+        var right = stops[index];
+        if (density <= right.value) {
+          var local = right.value === left.value ? 0 : (density - left.value) / (right.value - left.value);
+          return rgbColor(interpolateRgb(left.color, right.color, Math.max(0, Math.min(1, local))));
+        }
+      }
+
+      return rgbColor(stops[stops.length - 1].color);
+    }
+
+    function interpolateRgb(left, right, ratio) {
+      return left.map(function (channel, index) {
+        return Math.round(channel + ((right[index] - channel) * ratio));
+      });
+    }
+
+    function rgbColor(channels) {
+      return 'rgb(' + channels.join(', ') + ')';
+    }
+
+    function simAreaStyle(feature) {
+      return {
+        color: feature.properties.tintColor,
+        weight: 1.2,
+        opacity: 0.75,
+        fillColor: feature.properties.tintColor,
+        fillOpacity: 0.46
+      };
+    }
+
+    function premisesCount(points) {
+      var premises = new Set();
+      points.forEach(function (point) {
+        premises.add(premiseKey(point));
+      });
+      return premises.size;
+    }
+
+    function spreadOverlappingPoints(points) {
+      var grouped = points.reduce(function (memo, point) {
+        var key = [point.lat, point.lng].join(',');
+        memo[key] = memo[key] || [];
+        memo[key].push(point);
+        return memo;
+      }, {});
+
+      return Object.keys(grouped).reduce(function (memo, key) {
+        var group = grouped[key].slice().sort(function (left, right) {
+          return Number(left.id || 0) - Number(right.id || 0);
+        });
+
+        if (group.length === 1) {
+          memo.push(group[0]);
+          return memo;
+        }
+
+        var center = map.project([group[0].lat, group[0].lng], map.getZoom());
+        var radius = Math.min(20, 8 + group.length);
+        group.forEach(function (point, index) {
+          var angle = (Math.PI * 2 * index) / group.length - Math.PI / 2;
+          var display = map.unproject([
+            center.x + Math.cos(angle) * radius,
+            center.y + Math.sin(angle) * radius
+          ], map.getZoom());
+          memo.push(Object.assign({}, point, {
+            displayLat: display.lat,
+            displayLng: display.lng
+          }));
+        });
+
+        return memo;
+      }, []);
+    }
+
+    function categoryZIndex(category) {
+      if (category === 'C') return 300;
+      if (category === 'B') return 200;
+      return 100;
+    }
+
+    function popupHtml(point) {
+      return [
+        popupUncertaintyBadge(point),
+        popupBusinessDetails(point),
+        '<span>' + escapeHtml(point.address || '') + '</span>',
+        popupLicenseCount(point),
+        popupMetaRow(point)
+      ].filter(Boolean).join('');
+    }
+
+    function popupLicenseCount(point) {
+      var count = Number(point.license_count || 1);
+      return '<span><strong class="license-popup__license-count">' +
+        count.toLocaleString('pl-PL') + ' ' + licenseWord(count) +
+        '</strong> w tym punkcie</span>';
+    }
+
+    function popupMetaRow(point) {
+      var expires = point.expires_at ? '<span>do ' + escapeHtml(point.expires_at) + '</span>' : '<span></span>';
+      var raw = hasRawRecords(point) ? '<a href="#" data-raw-records>RAW</a>' : '';
+      if (!point.expires_at && !raw) return '';
+
+      return '<div class="license-popup__meta-row">' + expires + raw + '</div>';
+    }
+
+    function hasRawRecords(point) {
+      return Number(point.raw_records_count || 0) > 0 || (point.raw_records || []).length > 0;
+    }
+
+    function wireRawRecordPopup(marker, point) {
+      if (!hasRawRecords(point)) return;
+
+      marker.on('popupopen', function (event) {
+        var element = event.popup.getElement();
+        var link = element && element.querySelector('[data-raw-records]');
+        if (!link || link.dataset.rawReady === '1') return;
+
+        link.dataset.rawReady = '1';
+        link.addEventListener('click', function (clickEvent) {
+          clickEvent.preventDefault();
+          showRawRecordPopup(point);
+        });
+      });
+    }
+
+    function showRawRecordPopup(point) {
+      var existing = document.querySelector('.raw-record-popup');
+      if (existing) existing.remove();
+
+      var popup = document.createElement('div');
+      popup.className = 'raw-record-popup';
+      popup.innerHTML = '<div class="raw-record-popup__panel" role="dialog" aria-modal="true" aria-label="Surowy rekord">' +
+        '<div class="raw-record-popup__header"><strong>RAW</strong><button type="button" aria-label="Zamknij">×</button></div>' +
+        '<pre>Ładowanie...</pre>' +
+      '</div>';
+
+      popup.addEventListener('click', function (event) {
+        if (event.target === popup) popup.remove();
+      });
+      popup.querySelector('button').addEventListener('click', function () {
+        popup.remove();
+      });
+      document.addEventListener('keydown', closeRawRecordPopupOnEscape);
+      document.body.appendChild(popup);
+
+      loadRawRecords(point)
+        .then(function (records) {
+          var filtered = filteredRawRecords(records, selectedValues('business_category'), selectedValues('license_category'));
+          var pre = popup.querySelector('pre');
+          if (pre) pre.textContent = JSON.stringify(filtered, null, 2);
+        })
+        .catch(function () {
+          var pre = popup.querySelector('pre');
+          if (pre) pre.textContent = 'Nie udało się pobrać RAW.';
+        });
+    }
+
+    function loadRawRecords(point) {
+      if ((point.raw_records || []).length) return Promise.resolve(point.raw_records);
+
+      if (rawStaticUrl) {
+        return loadRawReport(currentReport).then(function (recordsByPoint) {
+          return recordsByPoint[String(point.id)] || [];
+        });
+      }
+
+      if (!rawRecordsUrl) return Promise.resolve([]);
+
+      return fetch(rawRecordsUrl + '?report_at=' + encodeURIComponent(currentReport) + '&point_id=' + encodeURIComponent(point.id), { cache: 'no-store' })
+        .then(function (response) { return response.json(); })
+        .then(function (data) { return data.raw_records || []; });
+    }
+
+    function loadRawReport(report) {
+      if (rawReportCache[report]) return rawReportCache[report];
+
+      var url = rawStaticUrl.replace(/\/$/, '') + '/' + report.replace(/:/g, '-') + '.json?v=202608050330';
+      rawReportCache[report] = fetch(url, { cache: 'no-store' }).then(function (response) { return response.json(); });
+      return rawReportCache[report];
+    }
+
+    function closeRawRecordPopupOnEscape(event) {
+      if (event.key !== 'Escape') return;
+
+      var popup = document.querySelector('.raw-record-popup');
+      if (popup) popup.remove();
+      document.removeEventListener('keydown', closeRawRecordPopupOnEscape);
+    }
+
+    function popupUncertaintyBadge(point) {
+      if (!point.location_uncertain) return '';
+
+      return '<div class="license-popup__uncertainty"><span>!</span><strong>Niepewna lokalizacja</strong></div>';
+    }
+
+    function popupBusinessDetails(point) {
+      var details = point.business_license_details || [];
+      if (!details.length) {
+        return '<strong>' + escapeHtml(point.business || '') + '</strong>';
+      }
+
+      return '<div class="license-popup__businesses">' +
+        details.map(function (detail, index) {
+          var businessName = index === 0 ?
+            '<strong>' + escapeHtml(detail.business || '') + '</strong>' :
+            '<span class="license-popup__business-name">' + escapeHtml(detail.business || '') + '</span>';
+          return '<div class="license-popup__business-block">' +
+            businessName +
+            (detail.category_details || []).map(popupBusinessCategoryRow).join('') +
+          '</div>';
+        }).join('') +
+        '</div>';
+    }
+
+    function popupBusinessCategoryRow(categoryDetail) {
+      var count = Number(categoryDetail.license_count || 0);
+      var suffix = count ? ' (' + Number(count).toLocaleString('pl-PL') + ')' : '';
+      return '<span class="license-popup__license-row">' + escapeHtml(categoryDetail.business_category || '') + suffix +
+        ' / kat. ' + popupLicenseCategories(categoryDetail.license_categories || []) + '</span>';
+    }
+
+    function popupLicenseCategories(categories) {
+      return categories.map(function (category) {
+        var normalized = String(category || '').trim().toUpperCase();
+        if (['A', 'B', 'C'].indexOf(normalized) === -1) return escapeHtml(category);
+
+        return '<strong class="license-popup__category license-popup__category--' +
+          normalized.toLowerCase() + '">' + normalized + '</strong>';
+      }).join(', ');
+    }
+
+    function licenseWord(count) {
+      var absolute = Math.abs(Number(count || 0));
+      var lastTwo = absolute % 100;
+      var last = absolute % 10;
+      if (absolute === 1) return 'licencja';
+      if (last >= 2 && last <= 4 && !(lastTwo >= 12 && lastTwo <= 14)) return 'licencje';
+      return 'licencji';
+    }
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>"']/g, function (char) {
+        return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' })[char];
+      });
+    }
+
+    function renderSummary(points) {
+      if (!points) {
+        renderSummaryLoading();
+        return;
+      }
+
+      var premises = premiseStats(points);
+
+      reportSummary.innerHTML = [
+        '<strong class="report-summary__title">lokale (na podstawie zezwoleń):</strong>',
+        summaryRows(premises).map(function (row) {
+          return summaryPlainRow(row.label, row.count);
+        }).join('')
+      ].join('');
+    }
+
+    function renderSummaryLoading() {
+      reportSummary.innerHTML = [
+        '<strong class="report-summary__title">lokale (na podstawie zezwoleń):</strong>',
+        summaryRows({ total: null, gastronomy: null, mixed: null, detail: null }).map(function (row) {
+          return summaryPlainRow(row.label, null);
+        }).join('')
+      ].join('');
+    }
+
+    function summaryRows(stats) {
+      return statisticRowDefinitions(stats);
+    }
+
+    function premiseStats(points) {
+      var premises = points.reduce(function (memo, point) {
+        var key = [
+          point.point_group_id || point.business_id || point.id,
+          point.lat,
+          point.lng
+        ].join('|');
+        var categories = premiseBusinessCategories(point);
+        memo[key] = memo[key] || { detail: false, gastronomy: false };
+        memo[key].detail = memo[key].detail || categories.indexOf('detal') !== -1;
+        memo[key].gastronomy = memo[key].gastronomy || categories.indexOf('gastronomia') !== -1;
+        return memo;
+      }, {});
+
+      var premiseValues = Object.values(premises);
+      return {
+        total: premiseValues.length,
+        gastronomy: premiseValues.filter(function (premise) { return premise.gastronomy && !premise.detail; }).length,
+        mixed: premiseValues.filter(function (premise) { return premise.gastronomy && premise.detail; }).length,
+        detail: premiseValues.filter(function (premise) { return premise.detail && !premise.gastronomy; }).length
+      };
+    }
+
+    function licenseStats(points) {
+      return points.reduce(function (memo, point) {
+        var businessCounts = point.license_counts_by_business_category || {};
+        var categories = premiseBusinessCategories(point);
+        var detail = Number(businessCounts.detal || 0);
+        var gastronomy = Number(businessCounts.gastronomia || 0);
+
+        memo.total += Number(point.license_count || 0);
+        if (categories.indexOf('detal') !== -1 && categories.indexOf('gastronomia') !== -1) {
+          memo.mixed += detail + gastronomy;
+        } else if (gastronomy) {
+          memo.gastronomy += gastronomy;
+        } else if (detail) {
+          memo.detail += detail;
+        }
+        return memo;
+      }, { total: 0, gastronomy: 0, mixed: 0, detail: 0 });
+    }
+
+    function currentRegionPopulation() {
+      if (!currentPopulation || !currentPopulation.observed_on) return null;
+
+      var selectedSimUnit = simScope.value === 'krakow' ? '' : simScope.value;
+      var selectedSimArea = selectedSimUnit ? simArea.value : '';
+
+      if (selectedSimUnit && selectedSimArea) {
+        var code = selectedSimAreaCode(selectedSimUnit, selectedSimArea);
+        var simUnitPopulation = code && (currentPopulation.sim_units || {})[code];
+        return populationRecord(simUnitPopulation);
+      }
+
+      if (selectedSimUnit) {
+        return populationRecord((currentPopulation.districts || {})[selectedSimUnit]);
+      }
+
+      return populationRecord(currentPopulation.city);
+    }
+
+    function selectedSimAreaCode(selectedSimUnit, selectedSimArea) {
+      var point = currentPoints.find(function (item) {
+        return (item.sim_units || [item.sim_unit]).indexOf(selectedSimUnit) !== -1 &&
+          (item.sim_areas || [item.sim_area]).indexOf(selectedSimArea) !== -1;
+      });
+      return point && point.sim_area_code;
+    }
+
+    function populationRecord(record) {
+      var total = record && Number(record.total);
+      if (!total) return null;
+
+      return {
+        total: total,
+        area_km2: Number(record.area_km2 || 0),
+        observed_on: currentPopulation.observed_on,
+        source_url: currentPopulation.source_url
+      };
+    }
+
+    function summaryPopulationRow(population) {
+      return '<span class="report-summary__population"><strong>zameldowani:</strong> ' +
+        Number(population.total || 0).toLocaleString('pl-PL') +
+        ' <em>(' + escapeHtml(summaryDateLabel(population.observed_on)) + ')</em></span>';
+    }
+
+    function summaryPlainRow(label, value) {
+      return '<span><strong>' + escapeHtml(label) + ':</strong> ' +
+        summaryValue(value) + '</span>';
+    }
+
+    function summaryValue(value) {
+      if (value === null || value === undefined) {
+        return '<span class="report-summary__value report-summary__value--loading" aria-label="Ładowanie liczby"></span>';
+      }
+
+      return Number(value || 0).toLocaleString('pl-PL');
+    }
+
+    function statisticRates(value, population) {
+      var rates = [];
+      var total = population && Number(population.total);
+      var area = population && Number(population.area_km2);
+
+      if (total) {
+        rates.push(formatRate((Number(value || 0) * 1000) / total) + ' / 1000 zameldowanych');
+      }
+      if (area) {
+        rates.push(formatRate(Number(value || 0) / area) + ' / km²');
+      }
+
+      return rates.length ? ' <em>(' + rates.join('; ') + ')</em>' : '';
+    }
+
+    function statisticsMetricDefinition(mode) {
+      var definitions = {
+        premises: {
+          base: 'premises',
+          chartTitle: 'Liczba lokali w czasie',
+          sectionTitle: 'Liczba lokali',
+          summaryLabel: 'Liczba lokali',
+          unit: 'count'
+        },
+        licenses: {
+          base: 'licenses',
+          chartTitle: 'Liczba zezwoleń w czasie',
+          sectionTitle: 'Liczba zezwoleń',
+          summaryLabel: 'Liczba zezwoleń',
+          unit: 'count'
+        },
+        premises_per_1000: {
+          base: 'premises',
+          chartTitle: 'Liczba lokali na 1000 zameldowanych w czasie',
+          sectionTitle: 'Liczba lokali na 1000 zameldowanych',
+          summaryLabel: 'Liczba lokali na 1000 zameldowanych',
+          unit: 'rate',
+          denominator: 'population'
+        },
+        premises_per_km2: {
+          base: 'premises',
+          chartTitle: 'Liczba lokali na km² w czasie',
+          sectionTitle: 'Liczba lokali na km²',
+          summaryLabel: 'Liczba lokali na km²',
+          unit: 'rate',
+          denominator: 'area'
+        },
+        licenses_per_1000: {
+          base: 'licenses',
+          chartTitle: 'Liczba zezwoleń na 1000 zameldowanych w czasie',
+          sectionTitle: 'Liczba zezwoleń na 1000 zameldowanych',
+          summaryLabel: 'Liczba zezwoleń na 1000 zameldowanych',
+          unit: 'rate',
+          denominator: 'population'
+        },
+        licenses_per_km2: {
+          base: 'licenses',
+          chartTitle: 'Liczba zezwoleń na km² w czasie',
+          sectionTitle: 'Liczba zezwoleń na km²',
+          summaryLabel: 'Liczba zezwoleń na km²',
+          unit: 'rate',
+          denominator: 'area'
+        }
+      };
+
+      return definitions[mode] || definitions.premises;
+    }
+
+    function statisticValue(count, population, mode) {
+      if (mode.unit === 'count') return Number(count || 0);
+      if (!population) return null;
+
+      var denominator = mode.denominator === 'population' ? Number(population.total || 0) : Number(population.area_km2 || 0);
+      var multiplier = mode.denominator === 'population' ? 1000 : 1;
+      return denominator ? (Number(count || 0) * multiplier) / denominator : null;
+    }
+
+    function formatStatisticValue(value, mode) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'brak danych';
+
+      return mode.unit === 'rate' ? formatRate(value) : formatInteger(value);
+    }
+
+    function formatChartValue(value, mode) {
+      return mode.unit === 'rate' ? formatRate(value) : formatInteger(value);
+    }
+
+    function formatSignedStatisticDelta(value, mode) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'brak danych';
+
+      var number = Number(value);
+      var formatted = mode.unit === 'rate' ? formatRate(Math.abs(number)) : formatInteger(Math.abs(number));
+      if (number === 0) return '0';
+      return (number > 0 ? '+' : '-') + formatted;
+    }
+
+    function formatSignedPercentDelta(value, baseline) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'brak danych';
+      if (!baseline || !Number.isFinite(Number(baseline))) return 'brak danych';
+
+      var percent = ((Number(value) - Number(baseline)) * 100) / Number(baseline);
+      if (!Number.isFinite(percent)) return 'brak danych';
+      if (percent === 0) return '0,00%';
+
+      return (percent > 0 ? '+' : '') + percent.toLocaleString('pl-PL', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }) + '%';
+    }
+
+    function openStatisticsPanel() {
+      statisticsPanel.hidden = false;
+      statisticsPanel.classList.add('is-open');
+      statisticsToggle.setAttribute('aria-expanded', 'true');
+      statisticsToggle.textContent = 'Pokaż mapę';
+      statisticsChartRequested = true;
+      renderStatisticsPanel();
+      scheduleStatisticsLoad(true);
+    }
+
+    function closeStatisticsPanel() {
+      statisticsPanel.classList.remove('is-open');
+      statisticsPanel.hidden = true;
+      statisticsToggle.setAttribute('aria-expanded', 'false');
+      statisticsToggle.textContent = 'Więcej statystyk';
+    }
+
+    function statisticsPanelOpen() {
+      return !statisticsPanel.hidden;
+    }
+
+    function renderStatisticsPanel() {
+      if (!statisticsPanelOpen()) return;
+
+      var premises = premiseStats(visiblePoints());
+      var licenses = licenseStats(visiblePoints());
+      var population = currentRegionPopulation();
+      var mode = statisticsMetricDefinition(statisticsMetricMode);
+      var selectedStats = mode.base === 'licenses' ? licenses : premises;
+
+      statisticsContent.innerHTML = [
+        '<div class="statistics-summary-row">',
+        '<div class="statistics-panel__metrics">',
+          statisticMetric('Powierzchnia', population && population.area_km2 ? formatArea(population.area_km2) + ' km²' : 'brak danych', ''),
+          statisticMetric('Liczba osób zameldowanych', population ? formatInteger(population.total) : 'brak danych', populationMeta(population)),
+        '</div>',
+        '<div class="statistics-rate-sections">',
+          statisticRateSection(mode.sectionTitle, statisticRows(selectedStats, population, mode)),
+          statisticRateSection('Δ₀ / Δ₀%', statisticDeltaRows(selectedStats, population, mode), true),
+        '</div>',
+        '</div>',
+        statisticsChartsHtml()
+      ].join('');
+      wireStatisticsChartTooltips();
+    }
+
+    function statisticMetric(label, value, meta) {
+      return '<div class="statistics-metric">' +
+        '<span>' + escapeHtml(label) + '</span>' +
+        '<strong>' + escapeHtml(value) + '</strong>' +
+        (meta ? '<em>' + meta + '</em>' : '') +
+      '</div>';
+    }
+
+    function populationMeta(population) {
+      if (!population) return '';
+
+      var source = population.source_url ?
+        '<a href="' + escapeHtml(population.source_url) + '" target="_blank" rel="noopener">źródło</a>' :
+        '';
+
+      return '<span>' + escapeHtml(summaryDateLabel(population.observed_on)) + '</span>' + source;
+    }
+
+    function statisticRateSection(title, rows, isDelta) {
+      return '<section class="statistics-rate-section' + (isDelta ? ' statistics-rate-section--delta' : '') + '">' +
+        '<h2>' + escapeHtml(title) + '</h2>' +
+        '<div class="statistics-rate-section__rows">' +
+          rows.map(isDelta ? statisticDeltaRow : statisticRateRow).join('') +
+        '</div>' +
+      '</section>';
+    }
+
+    function statisticRows(stats, population, mode) {
+      return statisticRowDefinitions(stats).map(function (row) {
+        var baseline = statisticBaselineRow(row.key, mode);
+        var value = statisticValue(row.count, population, mode);
+        var baselineValue = baseline ? statisticValue(baseline.count, baseline.population, mode) : null;
+        return Object.assign({}, row, {
+          value: value,
+          deltaValue: baseline && value !== null && value !== undefined && baselineValue !== null && baselineValue !== undefined ? Number(value) - Number(baselineValue) : null,
+          deltaPercent: baseline && value !== null && value !== undefined && baselineValue !== null && baselineValue !== undefined ? statisticPercentDelta(value, baselineValue) : null,
+          deltaCount: baseline ? Number(row.count || 0) - Number(baseline.count || 0) : null,
+          unit: mode.unit
+        });
+      });
+    }
+
+    function statisticRowDefinitions(stats) {
+      return [
+        { key: 'total', label: 'suma', count: stats.total },
+        { key: 'gastronomy', label: 'gastronomia', count: stats.gastronomy },
+        { key: 'mixed', label: 'gastronomia + sprzedaż detaliczna', count: stats.mixed },
+        { key: 'detail', label: 'sprzedaż detaliczna', count: stats.detail }
+      ];
+    }
+
+    function statisticRateRow(row) {
+      return '<div class="statistics-rate-row">' +
+        '<span>' + escapeHtml(row.label) + '</span>' +
+        '<strong>' + formatStatisticValue(row.value, statisticsMetricDefinition(statisticsMetricMode)) + '</strong>' +
+        '<em>' + formatInteger(row.count) + '</em>' +
+      '</div>';
+    }
+
+    function statisticDeltaRows(stats, population, mode) {
+      return statisticRows(stats, population, mode);
+    }
+
+    function statisticDeltaRow(row) {
+      var mode = statisticsMetricDefinition(statisticsMetricMode);
+      var countDelta = formatStatisticCountDelta(row.deltaCount);
+      var countMeta = mode.unit === 'rate' && countDelta ? '<em>' + countDelta + '</em>' : '';
+      var valueDelta = formatStatisticRowDelta(row.deltaValue, mode);
+      var percentDelta = formatPercentDelta(row.deltaPercent);
+      var deltaText = [valueDelta, percentDelta].filter(Boolean).join(' / ');
+
+      return '<div class="statistics-rate-row">' +
+        '<span>' + escapeHtml(row.label) + '</span>' +
+        '<strong>' + deltaText + '</strong>' +
+        countMeta +
+      '</div>';
+    }
+
+    function statisticBaselineRow(key, mode) {
+      if (!currentStatistics || !currentStatistics.reports || !currentStatistics.reports.length) return null;
+
+      var first = currentStatistics.reports.find(function (entry) {
+        var stats = mode.base === 'licenses' ? entry.licenses : entry.premises;
+        return stats && Number.isFinite(Number(stats[key]));
+      });
+      if (!first) return null;
+
+      var firstStats = mode.base === 'licenses' ? first.licenses : first.premises;
+      return {
+        count: firstStats[key],
+        population: first.population
+      };
+    }
+
+    function formatStatisticRowDelta(value, mode) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return '';
+
+      return formatSignedStatisticDelta(value, mode);
+    }
+
+    function formatStatisticCountDelta(value) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return '';
+
+      return formatSignedStatisticDelta(value, { unit: 'count' });
+    }
+
+    function statisticPercentDelta(value, baseline) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return null;
+      if (!baseline || !Number.isFinite(Number(baseline))) return null;
+
+      var percent = ((Number(value) - Number(baseline)) * 100) / Number(baseline);
+      return Number.isFinite(percent) ? percent : null;
+    }
+
+    function formatPercentDelta(value) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return '';
+      if (Number(value) === 0) return '0,00%';
+
+      return (Number(value) > 0 ? '+' : '') + Number(value).toLocaleString('pl-PL', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }) + '%';
+    }
+
+    function statisticsChartsHtml() {
+      if (!statisticsChartRequested) {
+        return '<div class="statistics-panel__loading">Wybierz metrykę wykresu</div>';
+      }
+
+      if (!currentStatistics) {
+        return '<div class="statistics-panel__loading">Ładowanie wykresów</div>';
+      }
+
+      var series = currentStatistics.reports || [];
+      var mode = statisticsMetricDefinition(statisticsMetricMode);
+      return '<div class="statistics-panel__charts">' +
+        statisticChart(mode.chartTitle, lineChart(series, function (entry) {
+          if (entry.value !== undefined) return entry.value;
+
+          var stats = mode.base === 'licenses' ? (entry.licenses || {}) : (entry.premises || {});
+          return statisticValue(stats.total || 0, entry.population, mode);
+        }, mode)) +
+      '</div>';
+    }
+
+    function statisticChart(title, svg) {
+      return '<section class="statistics-chart">' +
+        '<h2>' + escapeHtml(title) + '</h2>' +
+        '<div class="statistics-chart__plot">' +
+          svg +
+          '<div class="statistics-chart-tooltip" hidden></div>' +
+        '</div>' +
+      '</section>';
+    }
+
+    function lineChart(series, valueCallback, mode) {
+      var values = series.map(function (entry) {
+        var value = valueCallback(entry);
+        return value === null || value === undefined ? null : Number(value);
+      });
+      var numericValues = values.filter(function (value) { return Number.isFinite(value); });
+      if (!numericValues.length) {
+        return '<div class="statistics-chart__empty">Brak danych</div>';
+      }
+
+      var width = 840;
+      var height = 280;
+      var left = 58;
+      var right = 24;
+      var top = 22;
+      var bottom = 44;
+      var scale = niceChartScale(Math.min.apply(null, numericValues), Math.max.apply(null, numericValues), 5);
+      var min = scale.min;
+      var max = scale.max;
+      var range = Math.max(1, max - min);
+      var plotWidth = width - left - right;
+      var plotHeight = height - top - bottom;
+      var currentIndex = series.findIndex(function (entry) { return entry.report_at === currentReport; });
+      var times = series.map(function (entry) { return Date.parse(entry.report_at); });
+      var minTime = Math.min.apply(null, times);
+      var maxTime = Math.max.apply(null, times);
+      var timeRange = Math.max(1, maxTime - minTime);
+      var points = values.map(function (value, index) {
+        if (!Number.isFinite(value)) return null;
+        var reportTime = Date.parse(series[index].report_at);
+        var x = left + ((reportTime - minTime) / timeRange) * plotWidth;
+        var y = top + plotHeight - ((value - min) / range) * plotHeight;
+        return { x: x, y: y, value: value, entry: series[index], index: index };
+      }).filter(Boolean);
+      var firstPoint = points[0];
+      var polyline = points.map(function (point) {
+        return point.x.toFixed(2) + ',' + point.y.toFixed(2);
+      }).join(' ');
+      var currentPoint = points.find(function (point) { return point.index === currentIndex; });
+      var yearTicks = chartYearTicks(minTime, maxTime, left, plotWidth);
+      var yTicks = scale.ticks.map(function (value) {
+        var y = top + plotHeight - ((value - min) / range) * plotHeight;
+        return { value: value, y: y };
+      });
+
+      return '<svg class="statistics-chart__svg" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + escapeHtml(mode.chartTitle) + '">' +
+        yTicks.map(function (tick) {
+          return '<line class="statistics-chart__grid" x1="' + left + '" y1="' + tick.y.toFixed(2) + '" x2="' + (width - right) + '" y2="' + tick.y.toFixed(2) + '"></line>' +
+            '<text class="statistics-chart__label statistics-chart__label--y" x="' + (left - 8) + '" y="' + (tick.y + 4).toFixed(2) + '">' + escapeHtml(formatChartValue(tick.value, mode)) + '</text>';
+        }).join('') +
+        yearTicks.map(function (tick) {
+          return '<line class="statistics-chart__tick" x1="' + tick.x.toFixed(2) + '" y1="' + (top + plotHeight) + '" x2="' + tick.x.toFixed(2) + '" y2="' + (top + plotHeight + 5) + '"></line>' +
+            '<text class="statistics-chart__label statistics-chart__label--x" x="' + tick.x.toFixed(2) + '" y="' + (height - 12) + '">' + escapeHtml(tick.year) + '</text>';
+        }).join('') +
+        '<line class="statistics-chart__axis" x1="' + left + '" y1="' + (top + plotHeight) + '" x2="' + (width - right) + '" y2="' + (top + plotHeight) + '"></line>' +
+        '<line class="statistics-chart__axis" x1="' + left + '" y1="' + top + '" x2="' + left + '" y2="' + (top + plotHeight) + '"></line>' +
+        '<polyline class="statistics-chart__line" points="' + polyline + '"></polyline>' +
+        points.map(function (point) {
+          var previousPoint = previousFinitePoint(points, point.index);
+          return '<g class="statistics-chart__hover-point" ' +
+            'data-tooltip-date="' + escapeHtml(reportLabel(point.entry.report_at, false)) + '" ' +
+            'data-tooltip-value="' + escapeHtml(formatStatisticValue(point.value, mode)) + '" ' +
+            'data-tooltip-delta="' + escapeHtml(formatSignedStatisticDelta(previousPoint && point.value - previousPoint.value, mode)) + '" ' +
+            'data-tooltip-delta-percent="' + escapeHtml(formatSignedPercentDelta(point.value, previousPoint && previousPoint.value)) + '" ' +
+            'data-tooltip-delta-start="' + escapeHtml(formatSignedStatisticDelta(firstPoint && point.value - firstPoint.value, mode)) + '" ' +
+            'data-tooltip-delta-start-percent="' + escapeHtml(formatSignedPercentDelta(point.value, firstPoint && firstPoint.value)) + '">' +
+            '<circle class="statistics-chart__hit" cx="' + point.x.toFixed(2) + '" cy="' + point.y.toFixed(2) + '" r="9"></circle>' +
+            '<circle class="statistics-chart__point" cx="' + point.x.toFixed(2) + '" cy="' + point.y.toFixed(2) + '" r="' + (point.index === currentIndex ? 4.5 : 3) + '"></circle>' +
+          '</g>';
+        }).join('') +
+        (currentPoint ? '<text class="statistics-chart__current" x="' + Math.min(width - 120, currentPoint.x + 9).toFixed(2) + '" y="' + Math.max(16, currentPoint.y - 9).toFixed(2) + '">' + escapeHtml(formatStatisticValue(currentPoint.value, mode)) + '</text>' : '') +
+      '</svg>';
+    }
+
+    function previousFinitePoint(points, index) {
+      for (var pointIndex = points.length - 1; pointIndex >= 0; pointIndex -= 1) {
+        if (points[pointIndex].index < index) return points[pointIndex];
+      }
+
+      return null;
+    }
+
+    function wireStatisticsChartTooltips() {
+      var plot = statisticsContent.querySelector('.statistics-chart__plot');
+      if (!plot) return;
+
+      var tooltip = plot.querySelector('.statistics-chart-tooltip');
+      if (!tooltip) return;
+
+      Array.prototype.slice.call(plot.querySelectorAll('.statistics-chart__hover-point')).forEach(function (point) {
+        point.addEventListener('mouseenter', function () {
+          tooltip.innerHTML = statisticsChartTooltipHtml(point.dataset);
+          tooltip.hidden = false;
+        });
+        point.addEventListener('mousemove', function (event) {
+          positionStatisticsChartTooltip(plot, tooltip, event);
+        });
+        point.addEventListener('mouseleave', function () {
+          tooltip.hidden = true;
+        });
+      });
+    }
+
+    function statisticsChartTooltipHtml(data) {
+      return '<div class="statistics-chart-tooltip__title">' +
+        '<strong>' + escapeHtml(data.tooltipDate || '') + '</strong>' +
+        '<span>' + escapeHtml(data.tooltipValue || '') + '</span>' +
+      '</div>' +
+      '<div class="statistics-chart-tooltip__rows">' +
+        statisticsChartTooltipRow('Δₜ', data.tooltipDelta, 'zmiana liczbowa względem poprzedniego pomiaru') +
+        statisticsChartTooltipRow('Δₜ%', data.tooltipDeltaPercent, 'zmiana procentowa względem poprzedniego pomiaru') +
+        statisticsChartTooltipRow('Δ₀', data.tooltipDeltaStart, 'zmiana liczbowa względem początku danych') +
+        statisticsChartTooltipRow('Δ₀%', data.tooltipDeltaStartPercent, 'zmiana procentowa względem początku danych') +
+      '</div>';
+    }
+
+    function statisticsChartTooltipRow(symbol, value, label) {
+      return '<div class="statistics-chart-tooltip__row">' +
+        '<span title="' + escapeHtml(label) + '">' + escapeHtml(symbol) + '</span>' +
+        '<strong>' + escapeHtml(value || 'brak danych') + '</strong>' +
+      '</div>';
+    }
+
+    function positionStatisticsChartTooltip(plot, tooltip, event) {
+      var rect = plot.getBoundingClientRect();
+      var tooltipRect = tooltip.getBoundingClientRect();
+      var left = event.clientX - rect.left + 12;
+      var top = event.clientY - rect.top - tooltipRect.height - 12;
+
+      if (left + tooltipRect.width > rect.width - 8) {
+        left = event.clientX - rect.left - tooltipRect.width - 12;
+      }
+      if (top < 8) {
+        top = event.clientY - rect.top + 14;
+      }
+
+      tooltip.style.left = Math.max(8, left) + 'px';
+      tooltip.style.top = Math.max(8, top) + 'px';
+    }
+
+    function niceChartScale(minValue, maxValue, tickCount) {
+      if (minValue === maxValue) {
+        minValue = Math.max(0, minValue - 1);
+        maxValue += 1;
+      }
+
+      var span = Math.max(1, maxValue - minValue);
+      var step = niceNumber(span / Math.max(1, tickCount - 1));
+      var min = Math.max(0, Math.floor(minValue / step) * step);
+      var max = Math.ceil(maxValue / step) * step;
+      var ticks = [];
+
+      for (var value = min; value <= max + step / 2; value += step) {
+        ticks.push(Math.round(value * 100) / 100);
+      }
+
+      return { min: min, max: max, ticks: ticks };
+    }
+
+    function niceNumber(value) {
+      var exponent = Math.floor(Math.log10(Math.max(value, 1)));
+      var base = Math.pow(10, exponent);
+      var fraction = value / base;
+      var niceFraction = fraction <= 1 ? 1 : fraction <= 2 ? 2 : fraction <= 5 ? 5 : 10;
+      return niceFraction * base;
+    }
+
+    function chartYearTicks(minTime, maxTime, left, plotWidth) {
+      var ticks = [];
+      var minYear = new Date(minTime).getFullYear();
+      var maxYear = new Date(maxTime).getFullYear();
+      var timeRange = Math.max(1, maxTime - minTime);
+
+      for (var year = minYear; year <= maxYear; year += 1) {
+        var time = Date.parse(String(year) + '-01-01T00:00:00');
+
+        ticks.push({
+          year: String(year),
+          x: left + ((time - minTime) / timeRange) * plotWidth
+        });
+      }
+
+      if (ticks.length <= 14) return ticks;
+
+      var step = Math.ceil(ticks.length / 12);
+      return ticks.filter(function (tick, index) {
+        return index % step === 0 || index === ticks.length - 1;
+      });
+    }
+
+    function scheduleStatisticsLoad(force) {
+      if (!statisticsChartRequested) return;
+      if (!statisticsPanelOpen() || (!statisticsUrl && !statisticsStaticUrl)) return;
+
+      window.clearTimeout(statisticsDebounceTimer);
+      statisticsDebounceTimer = window.setTimeout(function () {
+        loadStatistics(force);
+      }, force ? 0 : 180);
+    }
+
+    function loadStatistics(force) {
+      var query = statisticsQuery();
+      var key = query.toString();
+      if (!force && key === statisticsRequestKey && currentStatistics) {
+        renderStatisticsPanel();
+        return;
+      }
+      statisticsRequestKey = key;
+      currentStatistics = null;
+      renderStatisticsPanel();
+
+      if (statisticsStaticUrl) {
+        loadStaticStatistics(query);
+        return;
+      }
+
+      if (pendingStatisticsFetch) pendingStatisticsFetch.abort();
+      pendingStatisticsFetch = new AbortController();
+
+      fetch(statisticsUrl + '?' + key, { signal: pendingStatisticsFetch.signal })
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          currentStatistics = data;
+          renderStatisticsPanel();
+        })
+        .catch(function (error) {
+          if (error.name === 'AbortError') return;
+          statisticsContent.innerHTML = '<div class="statistics-panel__loading">Nie udało się pobrać statystyk</div>';
+        });
+    }
+
+    function loadStaticStatistics(query) {
+      var applyStatistics = function (data) {
+        staticStatisticsData = data;
+        currentStatistics = statisticsFromStaticData(data, query);
+        renderStatisticsPanel();
+      };
+
+      if (staticStatisticsData) {
+        applyStatistics(staticStatisticsData);
+        return;
+      }
+
+      fetch(statisticsStaticUrl)
+        .then(function (response) { return response.json(); })
+        .then(applyStatistics)
+        .catch(function () {
+          statisticsContent.innerHTML = '<div class="statistics-panel__loading">Nie udało się pobrać statystyk</div>';
+        });
+    }
+
+    function statisticsFromStaticData(data, query) {
+      var regionKey = staticRegionKey(query);
+      var comboKey = staticComboKey(query);
+      var mode = statisticsMetricDefinition(statisticsMetricMode);
+      var regionPremises = (((data.stats || {})[regionKey]) || {});
+      var regionLicenses = (((data.license_stats || {})[regionKey]) || {});
+      var premiseStats = regionPremises[comboKey] || [];
+      var licenseStats = regionLicenses[comboKey] || [];
+      var populations = ((data.populations || {})[regionKey]) || [];
+
+      return {
+        reports: (data.reports || []).map(function (report, index) {
+          var premiseValues = premiseStats[index] || [0, 0, 0, 0];
+          var licenseValues = licenseStats[index] || [0, 0, 0, 0];
+          var values = mode.base === 'licenses' ? licenseValues : premiseValues;
+          var population = populations[index] || null;
+          var count = Number(values[0] || 0);
+          return {
+            report_at: report,
+            population: population,
+            premises: statisticCountsFromValues(premiseValues),
+            licenses: statisticCountsFromValues(licenseValues),
+            value: statisticValue(count, population, mode)
+          };
+        })
+      };
+    }
+
+    function statisticCountsFromValues(values) {
+      return {
+        total: Number(values[0] || 0),
+        gastronomy: Number(values[1] || 0),
+        mixed: Number(values[2] || 0),
+        detail: Number(values[3] || 0)
+      };
+    }
+
+    function staticRegionKey(query) {
+      if (query.get('sim_area_code')) return 'area:' + query.get('sim_area_code');
+      if (query.get('sim_unit')) return 'district:' + query.get('sim_unit');
+      return 'city';
+    }
+
+    function staticComboKey(query) {
+      var businessMask = query.getAll('business_categories[]').reduce(function (mask, value) {
+        if (value === 'detal') return mask | 1;
+        if (value === 'gastronomia') return mask | 2;
+        return mask;
+      }, 0);
+      var licenseMask = query.getAll('license_categories[]').reduce(function (mask, value) {
+        if (value === 'A') return mask | 1;
+        if (value === 'B') return mask | 2;
+        if (value === 'C') return mask | 4;
+        return mask;
+      }, 0);
+
+      return businessMask + '-' + licenseMask;
+    }
+
+    function statisticsQuery() {
+      var query = new URLSearchParams();
+      var selectedSimUnit = simScope.value === 'krakow' ? '' : simScope.value;
+      var selectedSimArea = selectedSimUnit ? simArea.value : '';
+      var selectedAreaCode = selectedSimArea ? selectedSimAreaCode(selectedSimUnit, selectedSimArea) : '';
+
+      if (selectedSimUnit) query.set('sim_unit', selectedSimUnit);
+      if (selectedAreaCode) query.set('sim_area_code', selectedAreaCode);
+      query.set('metric', statisticsMetricMode);
+      query.set('business_categories_selected', '1');
+      query.set('license_categories_selected', '1');
+      selectedValues('business_category').forEach(function (value) {
+        query.append('business_categories[]', value);
+      });
+      selectedValues('license_category').forEach(function (value) {
+        query.append('license_categories[]', value);
+      });
+
+      return query;
+    }
+
+    function formatRate(value) {
+      return Number(value || 0).toLocaleString('pl-PL', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatArea(value) {
+      return Number(value || 0).toLocaleString('pl-PL', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function formatInteger(value) {
+      return Number(value || 0).toLocaleString('pl-PL');
+    }
+
+    function formatPercent(value) {
+      if (value === null || value === undefined || !Number.isFinite(Number(value))) return 'brak danych';
+
+      var number = Number(value);
+      return (number > 0 ? '+' : '') + number.toLocaleString('pl-PL', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }) + '%';
+    }
+
+    function summaryDateLabel(value) {
+      if (!value) return '';
+
+      return new Date(value + 'T00:00:00').toLocaleDateString('pl-PL', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+      });
+    }
+
+    function renderFilterCounts(points) {
+      var counts = points.reduce(function (memo, point) {
+        (point.business_categories || [point.business_category]).forEach(function (category) {
+          memo.business_category[category] = (memo.business_category[category] || 0) + ((point.license_counts_by_business_category || {})[category] || 0);
+        });
+        (point.license_categories || [point.license_category]).forEach(function (category) {
+          memo.license_category[category] = (memo.license_category[category] || 0) + ((point.license_counts_by_category || {})[category] || 0);
+        });
+        return memo;
+      }, { business_category: {}, license_category: {} });
+
+      filterCountLabel('business_category:detal', 'sprzedaż detaliczna', counts.business_category.detal);
+      filterCountLabel('business_category:gastronomia', 'gastronomia', counts.business_category.gastronomia);
+      filterCountLabel('license_category:A', 'A (do 4,5% oraz piwo)', counts.license_category.A);
+      filterCountLabel('license_category:B', 'B (4,5-18%)', counts.license_category.B);
+      filterCountLabel('license_category:C', 'C (powyżej 18%)', counts.license_category.C);
+    }
+
+    function filterCountLabel(key, label, value) {
+      var element = page.querySelector('[data-filter-count="' + key + '"]');
+      if (!element) return;
+
+      element.textContent = label + ' (' + Number(value || 0).toLocaleString('pl-PL') + ')';
+    }
+
+    function updateVisibleState(fitInitialBounds) {
+      var points = visiblePoints();
+      renderSimAreaTint(points);
+      renderPoints(points, Boolean(fitInitialBounds));
+      renderSummary(points);
+      renderFilterCounts(points);
+      if (statisticsPanelOpen()) {
+        renderStatisticsPanel();
+        scheduleStatisticsLoad(false);
+      }
+    }
+
+    function loadReport(report) {
+      if (!report || report === currentReport) return;
+      currentReport = report;
+      selectedReport.textContent = reportLabel(report, false);
+      setLoadingStatus();
+      renderSummaryLoading();
+      var requestId = ++reportLoadRequestId;
+
+      loadReportData(report)
+        .then(function (data) {
+          if (requestId !== reportLoadRequestId) return;
+
+          currentPoints = data.points;
+          currentSimAreas = data.sim_areas || [];
+          currentSummary = data.summary;
+          currentPopulation = data.population;
+          renderSimControls();
+          updateVisibleState(false);
+          selectedReport.textContent = data.report_at ? reportLabel(data.report_at, false) : 'brak raportu';
+          clearLoadingStatus();
+        })
+        .catch(function () {
+          if (requestId !== reportLoadRequestId) return;
+
+          setErrorStatus();
+        });
+    }
+
+    function loadReportData(report, options) {
+      options = options || {};
+      if (reportDataCache[report]) return reportDataCache[report];
+
+      reportDataCache[report] = fetch(reportDataUrl(report), {
+        cache: 'no-store',
+        signal: options.signal
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Report request failed');
+          return response.json();
+        })
+        .catch(function (error) {
+          delete reportDataCache[report];
+          throw error;
+        });
+
+      return reportDataCache[report];
+    }
+
+    function reportDataUrl(report) {
+      return licensesUrl + '?report_at=' + encodeURIComponent(report);
+    }
+
+    function setLoadingStatus() {
+      status.className = 'map-loading is-loading';
+      status.textContent = '';
+      status.setAttribute('aria-label', 'Ładowanie danych');
+    }
+
+    function clearLoadingStatus() {
+      status.className = 'map-loading';
+      status.textContent = '';
+      status.removeAttribute('aria-label');
+    }
+
+    function setErrorStatus() {
+      status.className = 'map-loading is-error';
+      status.textContent = '!';
+      status.setAttribute('aria-label', 'Nie udało się pobrać danych');
+    }
+
+    function scheduleLoad() {
+      var report = reportFromSlider();
+      snapSliderToReport(report);
+      selectedReport.textContent = reportLabel(report, false);
+      window.clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(function () { loadReport(report); }, 120);
+    }
+
+    slider.addEventListener('input', scheduleLoad);
+    filterInputs.forEach(function (input) {
+      input.addEventListener('change', function () {
+        updateVisibleState(false);
+      });
+    });
+    simScope.addEventListener('change', function () {
+      renderSimAreas('');
+      updateVisibleState(false);
+    });
+    simArea.addEventListener('change', function () {
+      updateVisibleState(false);
+    });
+    map.on('zoomend', function () {
+      if (simTintLayer.bringToFront) simTintLayer.bringToFront();
+      scheduleMarkerRender(visiblePoints());
+    });
+    snapSliderToReport(page.dataset.initialReport);
+    loadReport(page.dataset.initialReport);
+  });
+</script>

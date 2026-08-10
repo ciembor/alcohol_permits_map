@@ -7,6 +7,7 @@ from datetime import datetime
 
 FILES_ROOT_PATH = '../data/files/'
 OUTPUT_PATH = '../data/files/output/'
+FILES_FILTER = os.environ.get('FILES_FILTER')
 
 # reported_at
 # license_category: ['A', 'B', 'C']
@@ -25,13 +26,16 @@ def convert_pdf_files():
       filepath = subdir + os.sep + file
 
       if filepath.endswith(".pdf"):
+        if FILES_FILTER and FILES_FILTER not in filepath:
+          continue
+
         meta = get_meta(filepath)
         convert_pdf_file(filepath).to_csv(f'{OUTPUT_PATH}{meta["reported_at"]} - {meta["business_category"]} - {meta["license_category"]}.csv')
 
 def extract_rows(path):
   meta = get_meta(path)
   column_positions_in_inches = get_column_positions_in_inches(meta['license_category'], meta['business_category'])
-  column_positions = map(lambda position: position * 72, column_positions_in_inches)
+  column_positions = list(map(lambda position: position * 72, column_positions_in_inches))
 
   table = tabula.read_pdf(path, pages="all", guess=False, columns=column_positions, pandas_options={'header': None})
   table = pd.concat(table, axis=0).reset_index(drop=True)
@@ -132,14 +136,20 @@ def decorate_index(index):
   return int(float(index))
 
 def decorate_date(date):
-  try:
-    date = datetime.strptime(date, "%Y-%m-%d")
-  except:
-    date = None
-  return date
+  for date_format in ["%Y-%m-%d", "%d.%m.%Y"]:
+    try:
+      return datetime.strptime(date, date_format).date()
+    except:
+      pass
+  return None
+
+def decorate_text(text):
+  if text is None:
+    return None
+  return " ".join(str(text).split())
 
 def decorate_table_row(row):
-  return [decorate_index(row[0]), row[1], row[2], row[3], decorate_date(row[4])]
+  return [decorate_index(row[0]), decorate_text(row[1]), decorate_text(row[2]), decorate_text(row[3]), decorate_date(row[4])]
 
 def decorate_table(table):
   table = list(map(decorate_table_row, table))

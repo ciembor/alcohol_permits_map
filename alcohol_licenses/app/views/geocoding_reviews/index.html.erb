@@ -1,0 +1,762 @@
+<% content_for :head do %>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<% end %>
+
+<main
+  class="geocoding-review-page"
+  data-categories-url="<%= geocoding_reviews_categories_path %>"
+  data-next-url="<%= geocoding_reviews_next_path %>"
+  data-review-url-template="<%= geocoding_review_path('__ID__') %>"
+>
+  <div id="geocoding-review-map" class="geocoding-review-map"></div>
+
+  <aside class="geocoding-review-panel" aria-label="Kontrola geokodowania">
+    <header class="geocoding-review-panel__header">
+      <h1>Kontrola geokodowania</h1>
+    </header>
+
+    <section>
+      <div id="review-categories" class="geocoding-review-categories"></div>
+    </section>
+
+    <section id="review-status" class="geocoding-review-status" aria-live="polite">
+      Ładowanie kategorii...
+    </section>
+  </aside>
+
+    <aside id="review-details" class="geocoding-review-details" aria-label="Szczegóły punktu" hidden>
+      <div class="geocoding-review-details__head">
+        <h2 id="review-address"></h2>
+        <span id="review-location-id"></span>
+        <strong id="review-business-name"></strong>
+      </div>
+
+      <dl id="review-meta" class="geocoding-review-meta"></dl>
+
+      <section class="geocoding-review-distance-tool" aria-label="Porównanie odległości geokoderów">
+        <div class="geocoding-review-distance-tool__controls">
+          <label>
+            <span>Od</span>
+            <select id="distance-source-a"></select>
+          </label>
+          <label>
+            <span>Do</span>
+            <select id="distance-source-b"></select>
+          </label>
+        </div>
+        <output id="distance-result" class="geocoding-review-distance-tool__result">brak porównania</output>
+      </section>
+
+      <div class="geocoding-review-actions">
+        <button id="review-accept" type="button">Zatwierdź bez zmiany</button>
+        <button id="review-unresolved" type="button">Nie rozstrzygaj</button>
+      </div>
+
+      <div id="review-quality-actions" class="geocoding-review-quality-actions" hidden>
+        <button type="button" data-quality-status="exact">dokładnie</button>
+        <button type="button" data-quality-status="nearest_area">najbliższa okolica (&lt; 25 m)</button>
+        <button type="button" data-quality-status="area">okolica (&gt; 25 m, &lt; 50 m)</button>
+        <button type="button" data-quality-status="far">daleko (&gt; 50 m, &lt; 100 m)</button>
+        <button type="button" data-quality-status="very_far">bardzo daleko (&gt; 100 m)</button>
+        <button type="button" data-quality-status="hard_to_tell">trudno powiedzieć</button>
+      </div>
+
+      <label class="geocoding-review-note">
+        <span>Notatka</span>
+        <textarea id="review-note" rows="3"></textarea>
+      </label>
+
+    <div>
+      <h3>Kandydaci</h3>
+        <div class="geocoding-review-candidate-legend" aria-label="Legenda kandydatów">
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--current"></i>Wybrane</span>
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--google"></i>Google</span>
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--nominatim"></i>OSM</span>
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--gus"></i>GUS</span>
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--krakow_msip"></i>MSIP</span>
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--parcel"></i>ULDK</span>
+          <span><i class="geocoding-review-candidate-legend__dot geocoding-review-candidate-legend__dot--manual"></i>Ręczne</span>
+      </div>
+      <div id="review-candidates" class="geocoding-review-candidates"></div>
+    </div>
+  </aside>
+</main>
+
+<script>
+  document.addEventListener('turbolinks:load', function () {
+    var page = document.querySelector('.geocoding-review-page');
+    if (!page || page.dataset.reviewReady === '1') return;
+    page.dataset.reviewReady = '1';
+
+    var categoriesUrl = page.dataset.categoriesUrl;
+    var nextUrl = page.dataset.nextUrl;
+    var reviewUrlTemplate = page.dataset.reviewUrlTemplate;
+    var activeCategory = 'random_sample';
+    var currentCandidate = null;
+    var activePosition = null;
+    var activeSource = 'manual';
+    var categoriesCache = [];
+    var saving = false;
+    var osmNumberRequestId = 0;
+
+    function isRandomSampleCategory(category) {
+      return category === 'random_sample' || category === 'random_sample_msip_regression';
+    }
+
+    var map = L.map('geocoding-review-map', { zoomControl: false }).setView([50.0573, 19.9373], 13);
+    L.control.zoom({ position: 'topright' }).addTo(map);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 20
+    }).addTo(map);
+
+    var markers = L.layerGroup().addTo(map);
+    var osmNumberLabels = L.layerGroup().addTo(map);
+    var activeMarker = null;
+
+    var categoryContainer = document.getElementById('review-categories');
+    var status = document.getElementById('review-status');
+    var details = document.getElementById('review-details');
+    var addressTitle = document.getElementById('review-address');
+    var locationId = document.getElementById('review-location-id');
+    var businessName = document.getElementById('review-business-name');
+    var meta = document.getElementById('review-meta');
+    var distanceSourceA = document.getElementById('distance-source-a');
+    var distanceSourceB = document.getElementById('distance-source-b');
+    var distanceResult = document.getElementById('distance-result');
+    var note = document.getElementById('review-note');
+    var candidates = document.getElementById('review-candidates');
+    var accept = document.getElementById('review-accept');
+    var unresolved = document.getElementById('review-unresolved');
+    var standardActions = document.querySelector('.geocoding-review-actions');
+    var qualityActions = document.getElementById('review-quality-actions');
+
+    accept.addEventListener('click', function () {
+      saveReview('verified');
+    });
+
+    unresolved.addEventListener('click', function () {
+      saveReview('unresolved');
+    });
+
+    Array.prototype.forEach.call(qualityActions.querySelectorAll('[data-quality-status]'), function (button) {
+      button.addEventListener('click', function () {
+        saveReview(button.dataset.qualityStatus, {
+          qualitySignal: activeCategory + '_quality:' + button.dataset.qualityStatus
+        });
+      });
+    });
+
+    refreshCategories().then(loadNext);
+
+    function refreshCategories() {
+      var url = new URL(categoriesUrl, window.location.origin);
+
+      return fetch(url.toString(), { headers: { Accept: 'application/json' } })
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          categoriesCache = data.categories || [];
+          ensureActiveCategoryHasRemaining();
+          renderCategories(categoriesCache);
+        });
+    }
+
+    function ensureActiveCategoryHasRemaining() {
+      var active = categoriesCache.find(function (category) {
+        return category.key === activeCategory;
+      });
+      if (active && remainingForCategory(active) > 0) return;
+
+      var next = categoriesCache.find(function (category) {
+        return remainingForCategory(category) > 0;
+      });
+      if (next) activeCategory = next.key;
+    }
+
+    function remainingForCategory(category) {
+      return Math.max(Number(category.total || 0) - Number(category.reviewed || 0), 0);
+    }
+
+    function renderCategories(categoriesData) {
+      categoryContainer.innerHTML = '';
+      var priority = categoriesData.filter(function (category) { return category.group !== 'control'; });
+      var control = categoriesData.filter(function (category) { return category.group === 'control'; });
+
+      categoryContainer.appendChild(renderCategorySection('Priorytetowe', priority));
+
+      var controlSection = document.createElement('details');
+      controlSection.className = 'geocoding-review-category-section geocoding-review-category-section--control';
+      controlSection.open = control.some(function (category) { return category.key === activeCategory; });
+      controlSection.innerHTML = '<summary>Kontrolne</summary>';
+      controlSection.appendChild(renderCategoryList(control));
+      categoryContainer.appendChild(controlSection);
+    }
+
+    function renderCategorySection(title, categoriesData) {
+      var section = document.createElement('section');
+      section.className = 'geocoding-review-category-section';
+      section.innerHTML = '<h2>' + escapeHtml(title) + '</h2>';
+      section.appendChild(renderCategoryList(categoriesData));
+      return section;
+    }
+
+    function renderCategoryList(categoriesData) {
+      var list = document.createElement('div');
+      list.className = 'geocoding-review-category-list';
+      categoriesData.forEach(function (category) {
+        var remaining = remainingForCategory(category);
+        var button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'geocoding-review-category' + (category.key === activeCategory ? ' is-active' : '');
+        button.disabled = remaining === 0;
+        button.dataset.category = category.key;
+        button.innerHTML = [
+          '<strong>', escapeHtml(category.label), '</strong>',
+          '<span>', category.reviewed, '/', category.total, ' sprawdzone',
+          remaining ? ' · ' + remaining + ' pozostało' : ' · gotowe',
+          category.corrected ? ' · ' + category.corrected + ' poprawione' : '',
+          category.unresolved ? ' · ' + category.unresolved + ' nierozstrz.' : '',
+          '</span>'
+        ].join('');
+        button.addEventListener('click', function () {
+          activeCategory = category.key;
+          Array.prototype.forEach.call(categoryContainer.querySelectorAll('[data-category]'), function (child) {
+            child.classList.toggle('is-active', child.dataset.category === activeCategory);
+          });
+          loadNext();
+        });
+        list.appendChild(button);
+      });
+      return list;
+    }
+
+    function loadNext() {
+      status.textContent = 'Ładowanie punktu...';
+      details.hidden = true;
+      markers.clearLayers();
+      activeMarker = null;
+      currentCandidate = null;
+
+      var url = new URL(nextUrl, window.location.origin);
+      url.searchParams.set('category', activeCategory);
+
+      return fetch(url.toString(), { headers: { Accept: 'application/json' } })
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (!data.candidate) {
+            status.textContent = 'Brak punktów w tej kategorii.';
+            return;
+          }
+          currentCandidate = data.candidate;
+          renderCandidate(data.candidate);
+        })
+        .catch(function () {
+          status.textContent = 'Nie udało się załadować punktu.';
+        });
+    }
+
+    function renderCandidate(candidate) {
+      status.textContent = '';
+      details.hidden = false;
+      note.value = '';
+      addressTitle.textContent = candidate.address || 'bez adresu';
+      locationId.textContent = 'transformed_location #' + candidate.id;
+      businessName.textContent = candidateBusinessNames(candidate).join(' | ') || 'bez nazwy';
+      activePosition = [candidate.current.lat, candidate.current.lng];
+      activeSource = 'current';
+
+      renderMeta(candidate);
+      renderDistanceTool(mapMarkerItems(candidate));
+      renderReviewActions(candidate);
+      renderCandidateButtons(candidate.candidates || []);
+      renderMap(candidate);
+    }
+
+    function renderReviewActions(candidate) {
+      var isRandomSample = isRandomSampleCategory(candidate.active_category);
+      standardActions.hidden = isRandomSample;
+      qualityActions.hidden = !isRandomSample;
+    }
+
+    function renderMeta(candidate) {
+      var selected = candidate.selected || {};
+      var normalized = candidate.normalized || {};
+      var sim = candidate.sim || {};
+      var items = [
+        ['Źródło', selected.source],
+        ['Strategia', selected.strategy],
+        ['Precyzja', selected.precision],
+        ['SIM', [sim.district, sim.name].filter(Boolean).join(' / ')],
+        ['Typ adresu', normalized.address_kind],
+        ['Numer', normalized.building_number || normalized.unit_number || normalized.parcel_number],
+        ['Podmioty', candidateBusinessNames(candidate).join(' | ')]
+      ];
+
+      meta.innerHTML = items.map(function (item) {
+        return '<dt>' + escapeHtml(item[0]) + '</dt><dd>' + escapeHtml(item[1] || 'brak') + '</dd>';
+      }).join('');
+    }
+
+    function renderDistanceTool(points) {
+      var validPoints = points.filter(function (point) {
+        return point && point.lat != null && point.lng != null;
+      });
+      var options = validPoints.map(function (point, index) {
+        return '<option value="' + index + '">' + escapeHtml(point.label || point.source || point.kind || 'geokoder') + '</option>';
+      }).join('');
+
+      distanceSourceA.innerHTML = options;
+      distanceSourceB.innerHTML = options;
+      distanceSourceA.disabled = validPoints.length < 2;
+      distanceSourceB.disabled = validPoints.length < 2;
+
+      if (validPoints.length >= 2) {
+        distanceSourceA.value = '0';
+        distanceSourceB.value = '1';
+      }
+
+      function updateDistance() {
+        if (validPoints.length < 2) {
+          distanceResult.textContent = validPoints.length === 1 ? 'tylko jeden geokoder' : 'brak geokoderów';
+          return;
+        }
+
+        var first = validPoints[Number(distanceSourceA.value)];
+        var second = validPoints[Number(distanceSourceB.value)];
+        if (!first || !second) {
+          distanceResult.textContent = 'brak porównania';
+          return;
+        }
+
+        distanceResult.textContent = [
+          formatDistance(distanceMeters(first.lat, first.lng, second.lat, second.lng)),
+          ' · ',
+          Number(first.lat).toFixed(6), ', ', Number(first.lng).toFixed(6),
+          ' ↔ ',
+          Number(second.lat).toFixed(6), ', ', Number(second.lng).toFixed(6)
+        ].join('');
+      }
+
+      distanceSourceA.onchange = updateDistance;
+      distanceSourceB.onchange = updateDistance;
+      updateDistance();
+    }
+
+    function renderCandidateButtons(candidateValues) {
+      candidates.innerHTML = candidateValues.map(function (candidate, index) {
+        var kind = candidate.kind || candidate.source || 'candidate';
+        return [
+          '<article class="geocoding-review-candidate-row geocoding-review-candidate-row--', escapeClass(kind), '" data-candidate-index="', index, '">',
+          '<div class="geocoding-review-candidate-row__main">',
+          '<i class="geocoding-review-candidate-row__dot"></i>',
+          '<div>',
+          '<strong>', escapeHtml(candidate.label || candidate.kind), '</strong>',
+          '<span>', Number(candidate.lat).toFixed(6), ', ', Number(candidate.lng).toFixed(6), '</span>',
+          '<small>', escapeHtml([candidate.source, candidate.strategy, candidate.precision].filter(Boolean).join(' · ')), '</small>',
+          '</div>',
+          '</div>',
+          '<button type="button" data-index="', index, '">Wybierz</button>',
+          '</article>'
+        ].join('');
+      }).join('');
+
+      Array.prototype.forEach.call(candidates.querySelectorAll('[data-candidate-index]'), function (row) {
+        row.addEventListener('click', function (event) {
+          if (event.target.closest('button')) return;
+          var candidate = candidateValues[Number(row.dataset.candidateIndex)];
+          setActivePosition([candidate.lat, candidate.lng], candidate.kind || candidate.source || 'candidate');
+        });
+      });
+
+      Array.prototype.forEach.call(candidates.querySelectorAll('button[data-index]'), function (button) {
+        button.addEventListener('click', function () {
+          var candidate = candidateValues[Number(button.dataset.index)];
+          setActivePosition([candidate.lat, candidate.lng], candidate.kind || candidate.source || 'candidate');
+        });
+      });
+    }
+
+    function renderMap(candidate) {
+      markers.clearLayers();
+      osmNumberLabels.clearLayers();
+
+      if (isRandomSampleCategory(candidate.active_category)) {
+        L.circle(activePosition, {
+          radius: 25,
+          color: '#5c7c12',
+          weight: 2,
+          opacity: 0.75,
+          fillColor: '#f1f8df',
+          fillOpacity: 0.12
+        }).addTo(markers);
+        L.circle(activePosition, {
+          radius: 50,
+          color: '#ad8301',
+          weight: 2,
+          opacity: 0.62,
+          fillColor: '#fff8c5',
+          fillOpacity: 0.08
+        }).addTo(markers);
+        L.circle(activePosition, {
+          radius: 100,
+          color: '#b54708',
+          weight: 2,
+          opacity: 0.5,
+          fillColor: '#fff4e5',
+            fillOpacity: 0.035
+          }).addTo(markers);
+        renderMapGeocoderMarkers(candidate, false);
+        activeMarker = L.marker(activePosition, {
+          draggable: false,
+          icon: activeIcon(true)
+        }).addTo(markers);
+        activeMarker.bindTooltip(markerTooltip(candidate, candidate.current), {
+          className: 'geocoding-review-tooltip',
+          direction: 'top',
+          offset: [34, -44],
+          opacity: 0.96
+        });
+        map.setView(activePosition, 18);
+        loadOsmHouseNumbers(activePosition);
+        return;
+      }
+
+      renderMapGeocoderMarkers(candidate, true);
+
+      activeMarker = L.marker(activePosition, {
+        draggable: true,
+        icon: activeIcon(false)
+      }).addTo(markers);
+      activeMarker.bindTooltip(markerTooltip(candidate, candidate.current), {
+        className: 'geocoding-review-tooltip',
+        direction: 'top',
+        offset: [34, -44],
+        opacity: 0.96
+      });
+      activeMarker.on('dragend', function () {
+        var latLng = activeMarker.getLatLng();
+        activePosition = [latLng.lat, latLng.lng];
+        activeSource = 'drag';
+        loadOsmHouseNumbers(activePosition);
+      });
+      activeMarker.on('add', bindActiveButton);
+
+      bindActiveButton();
+      map.setView(activePosition, 18);
+      loadOsmHouseNumbers(activePosition);
+    }
+
+    function renderMapGeocoderMarkers(candidate, withAction) {
+      mapMarkerItems(candidate).forEach(function (item) {
+        if (!item.lat || !item.lng) return;
+        if (item.kind === 'selected') return;
+
+        var marker = L.marker([item.lat, item.lng], { icon: candidateIcon(item.kind || item.source, withAction) }).addTo(markers);
+        marker.bindTooltip(markerTooltip(candidate, item), {
+          className: 'geocoding-review-tooltip',
+          direction: 'top',
+          offset: [0, -12],
+          opacity: 0.96
+        });
+        marker.bindPopup('<strong>' + escapeHtml(item.label || item.kind) + '</strong><br>' +
+          escapeHtml([item.source, item.strategy, item.precision].filter(Boolean).join(' · ')) +
+          (withAction ? '<br><button type="button" data-pick-marker="1">Wybierz</button>' : ''));
+        marker.on('add', function () {
+          if (withAction) bindCandidateMarkerButton(marker, item);
+        });
+        marker.on('popupopen', function (event) {
+          if (!withAction) return;
+          var button = event.popup.getElement().querySelector('[data-pick-marker]');
+          if (button) {
+            button.addEventListener('click', function () {
+              setActivePosition([item.lat, item.lng], item.kind || item.source || 'candidate');
+              map.closePopup();
+            });
+          }
+        });
+      });
+    }
+
+    function mapMarkerItems(candidate) {
+      var seen = {};
+      return (candidate.geocoder_points || []).concat(candidate.candidates || []).filter(function (item) {
+        if (!item || !item.lat || !item.lng) return false;
+        var key = [item.source || item.kind || 'candidate', Number(item.lat).toFixed(7), Number(item.lng).toFixed(7)].join('|');
+        if (seen[key]) return false;
+        seen[key] = true;
+        return true;
+      });
+    }
+
+    function bindCandidateMarkerButton(marker, item) {
+      window.setTimeout(function () {
+        if (!marker || !marker.getElement()) return;
+        var button = marker.getElement().querySelector('[data-pick-marker]');
+        if (!button || button.dataset.bound === '1') return;
+        button.dataset.bound = '1';
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          setActivePosition([item.lat, item.lng], item.kind || item.source || 'candidate');
+        });
+      }, 0);
+    }
+
+    function setActivePosition(position, source) {
+      activePosition = [Number(position[0]), Number(position[1])];
+      activeSource = source;
+      if (activeMarker) activeMarker.setLatLng(activePosition);
+      map.panTo(activePosition);
+      loadOsmHouseNumbers(activePosition);
+    }
+
+    function bindActiveButton() {
+      window.setTimeout(function () {
+        if (!activeMarker || !activeMarker.getElement()) return;
+        var button = activeMarker.getElement().querySelector('[data-save-active]');
+        if (!button || button.dataset.bound === '1') return;
+        button.dataset.bound = '1';
+        button.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          saveReview(coordinatesChanged() ? 'corrected' : 'verified');
+        });
+      }, 0);
+    }
+
+    function saveReview(statusValue, options) {
+      if (!currentCandidate || saving) return;
+      options = options || {};
+      saving = true;
+      setReviewControlsDisabled(true);
+      var qualitySignals = (currentCandidate.signal_categories || []).slice();
+      if (options.qualitySignal) qualitySignals.push(options.qualitySignal);
+
+      var body = {
+        signal_category: activeCategory,
+        review_status: statusValue,
+        original_latitude: currentCandidate.current.lat,
+        original_longitude: currentCandidate.current.lng,
+        selected_geocoding_result_id: currentCandidate.selected && currentCandidate.selected.id,
+        quality_signals: qualitySignals,
+        note: note.value
+      };
+
+      if (statusValue === 'corrected') {
+        body.manual_latitude = activePosition[0];
+        body.manual_longitude = activePosition[1];
+        body.manual_source = activeSource;
+        body.manual_precision = activeSource === 'drag' ? 'manual/verified_point' : 'manual/selected_candidate';
+      }
+
+      status.textContent = 'Zapisywanie...';
+
+      fetch(reviewUrlTemplate.replace('__ID__', currentCandidate.id), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'X-CSRF-Token': csrfToken()
+        },
+        body: JSON.stringify(body)
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error('save failed');
+          return response.json();
+        })
+        .then(function () {
+          updateActiveCategoryCounter(statusValue);
+          ensureActiveCategoryHasRemaining();
+          renderCategories(categoriesCache);
+          return loadNext();
+        })
+        .catch(function () {
+          status.textContent = 'Nie udało się zapisać decyzji.';
+        })
+        .then(function () {
+          saving = false;
+          setReviewControlsDisabled(false);
+        });
+    }
+
+    function updateActiveCategoryCounter(statusValue) {
+      var category = categoriesCache.find(function (item) {
+        return item.key === activeCategory;
+      });
+      if (!category) return;
+
+      if (isRandomSampleCategory(activeCategory) && statusValue === 'hard_to_tell') {
+        category.unresolved += 1;
+        return;
+      }
+
+      if (statusValue === 'corrected') {
+        category.reviewed += 1;
+        category.corrected += 1;
+      } else if (statusValue === 'verified') {
+        category.reviewed += 1;
+      } else if (statusValue === 'unresolved') {
+        category.reviewed += 1;
+        category.unresolved += 1;
+      } else {
+        category.reviewed += 1;
+      }
+    }
+
+    function setReviewControlsDisabled(disabled) {
+      accept.disabled = disabled;
+      unresolved.disabled = disabled;
+      Array.prototype.forEach.call(details.querySelectorAll('button'), function (button) {
+        button.disabled = disabled;
+      });
+    }
+
+    function coordinatesChanged() {
+      if (!currentCandidate || !activePosition) return false;
+      return Math.abs(Number(currentCandidate.current.lat) - Number(activePosition[0])) > 0.0000001 ||
+        Math.abs(Number(currentCandidate.current.lng) - Number(activePosition[1])) > 0.0000001;
+    }
+
+    function activeIcon(dimmed) {
+      return L.divIcon({
+        className: 'geocoding-review-active-marker' + (dimmed ? ' geocoding-review-active-marker--dimmed' : ''),
+        html: '<div class="geocoding-review-pin"></div>' + (dimmed ? '' : '<button type="button" data-save-active>Wybierz</button>'),
+        iconSize: [98, 64],
+        iconAnchor: [18, 52]
+      });
+    }
+
+    function candidateIcon(kind, withAction) {
+      if (withAction) {
+        return L.divIcon({
+          className: 'geocoding-review-candidate-marker geocoding-review-candidate-marker--with-action geocoding-review-candidate-marker--' + escapeClass(kind),
+          html: '<span></span><button type="button" data-pick-marker>Wybierz</button>',
+          iconSize: [96, 40],
+          iconAnchor: [11, 20]
+        });
+      }
+
+      return L.divIcon({
+        className: 'geocoding-review-candidate-marker geocoding-review-candidate-marker--' + escapeClass(kind || 'candidate'),
+        html: '<span></span>',
+        iconSize: [22, 22],
+        iconAnchor: [11, 11]
+      });
+    }
+
+    function markerTooltip(candidate, markerData) {
+      var uniqueNames = candidateBusinessNames(candidate);
+
+      return [
+        '<strong>', escapeHtml(candidate.address || 'bez adresu'), '</strong>',
+        '<span>', escapeHtml(uniqueNames.slice(0, 3).join(' | ') || 'bez nazwy'), '</span>',
+        '<small>', escapeHtml(markerData && markerData.label ? markerData.label : ''), '</small>'
+      ].join('');
+    }
+
+    function loadOsmHouseNumbers(position) {
+      var requestId = ++osmNumberRequestId;
+      osmNumberLabels.clearLayers();
+      var lat = Number(position[0]);
+      var lng = Number(position[1]);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+      var query = [
+        '[out:json][timeout:10];',
+        '(',
+        'node(around:120,', lat, ',', lng, ')["addr:housenumber"];',
+        'way(around:120,', lat, ',', lng, ')["addr:housenumber"];',
+        'relation(around:120,', lat, ',', lng, ')["addr:housenumber"];',
+        ');',
+        'out center tags;'
+      ].join('');
+
+      fetch('https://overpass-api.de/api/interpreter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+        body: 'data=' + encodeURIComponent(query)
+      })
+        .then(function (response) {
+          if (!response.ok) throw new Error('overpass failed');
+          return response.json();
+        })
+        .then(function (data) {
+          if (requestId !== osmNumberRequestId) return;
+          renderOsmHouseNumbers(data.elements || []);
+        })
+        .catch(function () {
+          if (requestId === osmNumberRequestId) osmNumberLabels.clearLayers();
+        });
+    }
+
+    function renderOsmHouseNumbers(elements) {
+      var seen = {};
+      elements.forEach(function (element) {
+        var tags = element.tags || {};
+        var number = tags['addr:housenumber'];
+        var lat = element.lat || (element.center && element.center.lat);
+        var lng = element.lon || (element.center && element.center.lon);
+        if (!number || !lat || !lng) return;
+
+        var key = [number, Number(lat).toFixed(7), Number(lng).toFixed(7)].join('|');
+        if (seen[key]) return;
+        seen[key] = true;
+
+        L.marker([lat, lng], {
+          interactive: false,
+          icon: L.divIcon({
+            className: 'geocoding-review-osm-number-label',
+            html: escapeHtml(number),
+            iconSize: null
+          })
+        }).addTo(osmNumberLabels);
+      });
+    }
+
+    function candidateBusinessNames(candidate) {
+      var names = candidate.business_names || [];
+
+      var uniqueNames = [];
+      names.forEach(function (name) {
+        if (uniqueNames.indexOf(name) === -1) uniqueNames.push(name);
+      });
+      return uniqueNames;
+    }
+
+    function csrfToken() {
+      var meta = document.querySelector('meta[name="csrf-token"]');
+      return meta && meta.content;
+    }
+
+    function escapeHtml(value) {
+      return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeClass(value) {
+      return String(value || '').replace(/[^a-z0-9_-]/gi, '-').toLowerCase();
+    }
+
+    function distanceMeters(lat1, lng1, lat2, lng2) {
+      var radius = 6371000;
+      var phi1 = Number(lat1) * Math.PI / 180;
+      var phi2 = Number(lat2) * Math.PI / 180;
+      var deltaPhi = (Number(lat2) - Number(lat1)) * Math.PI / 180;
+      var deltaLambda = (Number(lng2) - Number(lng1)) * Math.PI / 180;
+      var a = Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+        Math.cos(phi1) * Math.cos(phi2) *
+        Math.sin(deltaLambda / 2) * Math.sin(deltaLambda / 2);
+
+      return 2 * radius * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
+    function formatDistance(distance) {
+      if (distance >= 1000) return (distance / 1000).toFixed(2) + ' km';
+      if (distance >= 10) return distance.toFixed(1) + ' m';
+      return distance.toFixed(2) + ' m';
+    }
+  });
+</script>
