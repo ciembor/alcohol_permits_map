@@ -78,7 +78,7 @@ module DatasetExport
 
         The processing code is maintained separately in:
 
-        `/Users/maciej/Projects/krakow/alcohol_licenses`
+        `/Users/maciej/Projects/alcohol_permits_map`
 
         The dataset record is intended to be published on Zenodo as a dataset with
         DOI. Release archives are stored under `releases/<version>/` before upload.

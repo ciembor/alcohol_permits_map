@@ -2,9 +2,9 @@
 set -euo pipefail
 
 REMOTE_HOST="${REMOTE_HOST:?REMOTE_HOST is required, for example ciembor@example.org}"
-REMOTE_DIR="${REMOTE_DIR:-/home/ciembor/alcohol-licenses}"
-SERVICE_NAME="${SERVICE_NAME:-alcohol-licenses}"
-IMAGE_NAME="${IMAGE_NAME:-localhost/alcohol-licenses:latest}"
+REMOTE_DIR="${REMOTE_DIR:-/home/ciembor/alcohol_permits_map}"
+SERVICE_NAME="${SERVICE_NAME:-alcohol-permits-map}"
+IMAGE_NAME="${IMAGE_NAME:-localhost/alcohol-permits-map:latest}"
 PUBLIC_BASE_URL="${PUBLIC_BASE_URL:-}"
 HEALTHCHECK_ATTEMPTS="${HEALTHCHECK_ATTEMPTS:-30}"
 HEALTHCHECK_SLEEP_SECONDS="${HEALTHCHECK_SLEEP_SECONDS:-2}"

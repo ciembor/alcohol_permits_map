@@ -1,4 +1,4 @@
-name: Alcohol licenses deploy
+name: Alcohol permits map deploy
 
 on:
   workflow_dispatch:
@@ -15,10 +15,6 @@ on:
 permissions:
   contents: read
 
-defaults:
-  run:
-    working-directory: alcohol_licenses
-
 jobs:
   quality:
     name: Quality
@@ -33,7 +29,6 @@ jobs:
         with:
           ruby-version: "3.1.2"
           bundler-cache: true
-          working-directory: alcohol_licenses
 
       - name: Test
         run: DISABLE_SPRING=1 bin/rails test
@@ -47,7 +42,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
 
       - name: Build production image
-        run: docker build --pull -t alcohol-licenses:ci .
+        run: docker build --pull -t alcohol-permits-map:ci .
 
       - name: Smoke test production container
         shell: bash
@@ -58,32 +53,32 @@ jobs:
           chmod 0777 tmp/container-smoke/db tmp/container-smoke/log tmp/container-smoke/storage
 
           docker run --rm -d \
-            --name alcohol-licenses-smoke \
+            --name alcohol-permits-map-smoke \
             -p 127.0.0.1:9294:9294 \
             -e RAILS_ENV=production \
             -e RAILS_LOG_TO_STDOUT=1 \
             -e RAILS_SERVE_STATIC_FILES=1 \
-            -e SECRET_KEY_BASE=container-smoke-secret-key-base-for-alcohol-licenses-ci-2026-08-10-with-enough-length \
+            -e SECRET_KEY_BASE=container-smoke-secret-key-base-for-alcohol-permits-map-ci-2026-08-10-with-enough-length \
             -v "$PWD/tmp/container-smoke/db:/app/db" \
             -v "$PWD/tmp/container-smoke/log:/app/log" \
             -v "$PWD/tmp/container-smoke/storage:/app/storage" \
-            alcohol-licenses:ci
+            alcohol-permits-map:ci
 
           cleanup() {
-            docker rm -f alcohol-licenses-smoke >/dev/null 2>&1 || true
+            docker rm -f alcohol-permits-map-smoke >/dev/null 2>&1 || true
           }
           trap cleanup EXIT
 
           for attempt in $(seq 1 30); do
             if curl -fsS http://127.0.0.1:9294/healthz; then
-              docker exec alcohol-licenses-smoke ruby -e 'abort("container must not run as root") if Process.uid.zero?'
-              docker exec alcohol-licenses-smoke ruby -e 'abort("runtime dirs are not writable") unless %w[/app/db /app/log /app/tmp].all? { |path| File.writable?(path) }'
+              docker exec alcohol-permits-map-smoke ruby -e 'abort("container must not run as root") if Process.uid.zero?'
+              docker exec alcohol-permits-map-smoke ruby -e 'abort("runtime dirs are not writable") unless %w[/app/db /app/log /app/tmp].all? { |path| File.writable?(path) }'
               exit 0
             fi
             sleep 2
           done
 
-          docker logs alcohol-licenses-smoke
+          docker logs alcohol-permits-map-smoke
           exit 1
 
   deploy:
@@ -93,8 +88,8 @@ jobs:
       - quality
       - container-smoke
     env:
-      DEPLOY_HOST: ${{ vars.ALCOHOL_LICENSES_DEPLOY_HOST }}
-      PUBLIC_BASE_URL: ${{ vars.ALCOHOL_LICENSES_PUBLIC_BASE_URL }}
+      DEPLOY_HOST: ${{ vars.ALCOHOL_PERMITS_MAP_DEPLOY_HOST }}
+      PUBLIC_BASE_URL: ${{ vars.ALCOHOL_PERMITS_MAP_PUBLIC_BASE_URL }}
 
     steps:
       - name: Checkout

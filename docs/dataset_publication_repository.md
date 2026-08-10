@@ -2,7 +2,7 @@
 
 The processing repository remains:
 
-`/Users/maciej/Projects/krakow/alcohol_licenses`
+`/Users/maciej/Projects/alcohol_permits_map`
 
 The publication staging repository is separate and lives one level higher:
 
