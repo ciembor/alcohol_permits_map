@@ -8,6 +8,7 @@ namespace :research do
 
   desc 'Infer corrections and normalize raw locations'
   task normalize_locations: :environment do
+    Rake::Task['curation:import_address_corrections'].invoke
     Rake::Task['locations:infer_address_corrections'].invoke
     Rake::Task['locations:normalize'].invoke
   end
@@ -28,6 +29,7 @@ namespace :research do
 
   desc 'Rebuild analytical license point groups for all reports'
   task rebuild_analysis: :environment do
+    Rake::Task['curation:import_geocoding_decisions'].invoke
     ENV['ALL'] = '1'
     Rake::Task['license_point_groups:rebuild'].invoke
   end

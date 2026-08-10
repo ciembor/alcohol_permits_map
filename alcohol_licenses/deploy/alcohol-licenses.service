@@ -1,0 +1,24 @@
+[Unit]
+Description=Krakow alcohol licenses map
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/ciembor/alcohol-licenses
+EnvironmentFile=-/home/ciembor/alcohol-licenses/.env.local
+Restart=always
+RestartSec=5
+TimeoutStartSec=90
+CPUWeight=150
+IOWeight=150
+OOMScoreAdjust=-400
+
+ExecStartPre=-/usr/bin/podman rm -f alcohol-licenses
+ExecStart=/usr/bin/podman run --name=alcohol-licenses --user=1000:1000 --read-only --tmpfs /app/tmp:rw,noexec,nosuid,nodev,size=64m --memory=900m --memory-swap=900m --memory-reservation=384m --cpus=0.75 --pids-limit=192 -p 127.0.0.1:9294:9294 --env-file /home/ciembor/alcohol-licenses/.env.local -e RAILS_ENV=production -e RAILS_LOG_TO_STDOUT=1 -e RAILS_SERVE_STATIC_FILES=1 -v /home/ciembor/alcohol-licenses/db:/app/db:rw -v /home/ciembor/alcohol-licenses/log:/app/log:rw -v /home/ciembor/alcohol-licenses/storage:/app/storage:ro localhost/alcohol-licenses:latest
+ExecStop=/usr/bin/podman stop --time 30 alcohol-licenses
+ExecStopPost=-/usr/bin/podman rm -f alcohol-licenses
+KillMode=mixed
+TimeoutStopSec=45
+
+[Install]
+WantedBy=multi-user.target

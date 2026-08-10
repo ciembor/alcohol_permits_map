@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
   root 'maps#index'
 
+  get 'healthz', to: 'health#show'
   get 'map', to: 'maps#index'
   get 'map/licenses', to: 'maps#licenses'
   get 'map/raw_records', to: 'maps#raw_records'

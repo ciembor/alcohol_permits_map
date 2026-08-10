@@ -1,0 +1,129 @@
+name: Alcohol licenses deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Deploy the current main image or roll back one version
+        required: true
+        default: deploy
+        type: choice
+        options:
+          - deploy
+          - rollback
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: alcohol_licenses
+
+jobs:
+  quality:
+    name: Quality
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1
+        with:
+          ruby-version: "3.1.2"
+          bundler-cache: true
+          working-directory: alcohol_licenses
+
+      - name: Test
+        run: DISABLE_SPRING=1 bin/rails test
+
+  container-smoke:
+    name: Container smoke
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Build production image
+        run: docker build --pull -t alcohol-licenses:ci .
+
+      - name: Smoke test production container
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p tmp/container-smoke/db tmp/container-smoke/log tmp/container-smoke/storage
+          chmod 0777 tmp/container-smoke/db tmp/container-smoke/log tmp/container-smoke/storage
+
+          docker run --rm -d \
+            --name alcohol-licenses-smoke \
+            -p 127.0.0.1:9294:9294 \
+            -e RAILS_ENV=production \
+            -e RAILS_LOG_TO_STDOUT=1 \
+            -e RAILS_SERVE_STATIC_FILES=1 \
+            -e SECRET_KEY_BASE=container-smoke-secret-key-base-for-alcohol-licenses-ci-2026-08-10-with-enough-length \
+            -v "$PWD/tmp/container-smoke/db:/app/db" \
+            -v "$PWD/tmp/container-smoke/log:/app/log" \
+            -v "$PWD/tmp/container-smoke/storage:/app/storage" \
+            alcohol-licenses:ci
+
+          cleanup() {
+            docker rm -f alcohol-licenses-smoke >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:9294/healthz; then
+              docker exec alcohol-licenses-smoke ruby -e 'abort("container must not run as root") if Process.uid.zero?'
+              docker exec alcohol-licenses-smoke ruby -e 'abort("runtime dirs are not writable") unless %w[/app/db /app/log /app/tmp].all? { |path| File.writable?(path) }'
+              exit 0
+            fi
+            sleep 2
+          done
+
+          docker logs alcohol-licenses-smoke
+          exit 1
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs:
+      - quality
+      - container-smoke
+    env:
+      DEPLOY_HOST: ${{ vars.ALCOHOL_LICENSES_DEPLOY_HOST }}
+      PUBLIC_BASE_URL: ${{ vars.ALCOHOL_LICENSES_PUBLIC_BASE_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+      - name: Require deploy host
+        shell: bash
+        run: test -n "$DEPLOY_HOST"
+
+      - name: Setup SSH
+        shell: bash
+        env:
+          SSH_KNOWN_HOSTS: ${{ secrets.SSH_KNOWN_HOSTS }}
+          SSH_PRIVATE_KEY_B64: ${{ secrets.SSH_PRIVATE_KEY_B64 }}
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          printf '%s' "$SSH_PRIVATE_KEY_B64" | base64 -d > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+          ssh-keygen -lf ~/.ssh/id_ed25519
+          printf '%s\n' "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+          ssh-keygen -F "${DEPLOY_HOST}" -f ~/.ssh/known_hosts >/dev/null
+
+      - name: Deploy or rollback
+        env:
+          REMOTE_HOST: ciembor@${{ env.DEPLOY_HOST }}
+          DEPLOY_ACTION: ${{ inputs.action }}
+        run: scripts/deploy.sh "$DEPLOY_ACTION"
+        shell: bash

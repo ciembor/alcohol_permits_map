@@ -25,6 +25,7 @@ bin/rails source_data:import_spreadsheet_reports
 bin/rails source_data:import_license_reports
 bin/rails streets:import_simc                # Import TERC/SIMC street dictionary
 bin/rails sim:import_population              # Import historical SIM population totals
+bin/rails curation:import_address_corrections # Restore curated address fixes before normalization
 bin/rails locations:infer_address_corrections
 bin/rails locations:normalize
 
@@ -35,6 +36,7 @@ bin/rails geocoding:osm_missing_locations
 bin/rails geocoding:sync_osm_locations
 bin/rails geocoding:google                  # Optional Google quality-control pass
 
+bin/rails curation:import_geocoding_decisions # Restore reviewed geocoding choices
 bin/rails license_point_groups:rebuild ALL=1
 bin/rails grouping_audit:write
 
@@ -59,6 +61,11 @@ Full open-data pipeline, without Google quality-control geocoding:
 ```
 bin/rails research:full_open_pipeline
 ```
+
+Curated corrections and review decisions are versioned in
+`db/curation/current.json`. This snapshot protects manual address fixes,
+selected geocoding decisions, and geocoding review outcomes without storing the
+local SQLite database or raw geocoder responses in git.
 
 ## Paths
 XLSX / XLS files as well as downloaded pdfs and SIMC streets are in `vendor/data/*`

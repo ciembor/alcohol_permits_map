@@ -1,0 +1,8 @@
+.bundle/
+.git/
+.github/
+db/*.sqlite3
+db/*.sqlite3-*
+log/*
+tmp/*
+vendor/bundle/
