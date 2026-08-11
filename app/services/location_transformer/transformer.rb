@@ -24,22 +24,13 @@ module LocationTransformer
       [/plac inwalid/i, 'krowodrza']
     ].freeze
 
-    NOT_UNIQUE_WORDS = Street.all
-      .pluck(:name_1, :name_2)
-      .flatten
-      .compact
-      .map { |word| word.split(' ') }
-      .flatten
-      .tally
-      .select { |k,v| v > 1 }
-      .map { |k, v| k.upcase }
-      .freeze
-
     def initialize
+      streets = Street.pluck(:name_1, :name_2)
+
       @address_1_transformer = LocationTransformer::Address1Transformer.new(
-        not_unique_words: NOT_UNIQUE_WORDS,
+        not_unique_words: not_unique_words(streets),
         abbreviations: ABBREVIATIONS,
-        streets: Street.pluck(:name_1, :name_2)
+        streets: streets
       )
       @address_2_transformer = LocationTransformer::Address2Transformer.new
     end
@@ -62,6 +53,16 @@ module LocationTransformer
     private
 
     attr_accessor :address_1_transformer, :address_2_transformer
+
+    def not_unique_words(streets)
+      streets
+        .flatten
+        .compact
+        .flat_map { |word| word.split(' ') }
+        .tally
+        .select { |_word, count| count > 1 }
+        .map { |word, _count| word.upcase }
+    end
 
     def parse_address_parts(location_or_address_1, address_2 = nil)
       if location_or_address_1.respond_to?(:selected_address_correction)
