@@ -4,11 +4,11 @@ require 'time'
 
 module DatasetExport
   class PublicationRepositoryPreparer
-    DEFAULT_DESTINATION = '/Users/maciej/Projects/krakow-alcohol-licenses'.freeze
+    DEFAULT_DESTINATION = Rails.root.join('..', 'krakow-alcohol-licenses').expand_path.freeze
 
     def initialize(paths:, destination: ENV.fetch('PUBLISH_DIR', DEFAULT_DESTINATION))
       @paths = paths
-      @destination = Pathname(destination)
+      @destination = Pathname(destination).expand_path
     end
 
     def prepare

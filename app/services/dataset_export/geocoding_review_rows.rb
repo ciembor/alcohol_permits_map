@@ -10,7 +10,6 @@ module DatasetExport
       normalized_location_id
       signal_category
       review_status
-      reviewed_by
       original_latitude
       original_longitude
       manual_latitude
@@ -18,7 +17,6 @@ module DatasetExport
       selected_geocoding_result_id
       manual_geocoding_result_id
       quality_signals
-      note
       sim_circle_within_area
       reviewed_at
     ].freeze
@@ -46,7 +44,6 @@ module DatasetExport
           'normalized_location_id' => normalized_location_id,
           'signal_category' => review.signal_category,
           'review_status' => review.review_status,
-          'reviewed_by' => reviewed_by(review),
           'original_latitude' => review.original_latitude,
           'original_longitude' => review.original_longitude,
           'manual_latitude' => review.manual_latitude,
@@ -54,7 +51,6 @@ module DatasetExport
           'selected_geocoding_result_id' => selected_geocoding_result_id,
           'manual_geocoding_result_id' => manual_geocoding_result_id,
           'quality_signals' => JSON.generate(Array(review.quality_signals).compact),
-          'note' => review.note,
           'sim_circle_within_area' => review.sim_circle_within_area,
           'reviewed_at' => review.reviewed_at.utc.iso8601
         })
@@ -133,8 +129,5 @@ module DatasetExport
       )
     end
 
-    def reviewed_by(review)
-      review.reviewed_by.present? ? 'redacted' : nil
-    end
   end
 end

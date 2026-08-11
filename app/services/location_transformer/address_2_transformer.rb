@@ -171,7 +171,13 @@ module LocationTransformer
 
     def extract_unit_number(address_2)
       address = address_2.to_s
-      return if second_address_after_slash?(address)
+
+      if second_address_after_slash?(address)
+        return normalize_unit_number(
+          unit_from_local_marker(address.split('/', 2).first.to_s),
+          address
+        )
+      end
 
       unit_address = unit_address_segment(address)
       normalize_unit_number(

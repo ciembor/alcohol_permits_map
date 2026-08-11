@@ -2,7 +2,7 @@
   "metadata": {
     "format": "krakow-alcohol-licenses-curation-snapshot",
     "version": 2,
-    "exported_at": "2026-08-10T19:24:05Z",
+    "exported_at": "2026-08-11T14:05:38Z",
     "notes": "Curated address corrections, manual/audit geocoding decisions, and geocoding review outcomes. Automatic selected geocoding results and raw geocoder responses are intentionally excluded."
   },
   "address_corrections": [
@@ -4043,32 +4043,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Beskidzka",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "plac targowy kiosk nr 3",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_geo_derivation",
-        "strategy": "described_place",
-        "query": "plac targowy kiosk nr 3 Beskidzka Kraków",
-        "latitude": 50.0167161,
-        "longitude": 19.9507612,
-        "confidence": 0.75,
-        "precision": "derived/street_address",
-        "selected": false,
-        "created_at": "2026-08-02T08:20:45Z",
-        "updated_at": "2026-08-02T08:20:45Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Białoruska",
         "building_number": "10B",
         "address_kind": "street_address",
@@ -4325,32 +4299,6 @@
         "selected": true,
         "created_at": "2026-08-03T19:53:11Z",
         "updated_at": "2026-08-10T06:41:45Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Bociana",
-        "building_number": "4",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "4/4",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Bociana 4 Kraków",
-        "latitude": 50.0924103,
-        "longitude": 19.9567286,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:47:49Z",
-        "updated_at": "2026-08-03T23:47:49Z"
       }
     },
     {
@@ -7808,32 +7756,6 @@
         "precision": "ROOFTOP/street_address|subpremise",
         "selected": true,
         "created_at": "2026-08-04T00:06:04Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Wielopole",
-        "building_number": "16",
-        "address_kind": "compound_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "16/2 i 2A",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "Wielopole 16 Kraków",
-        "latitude": 50.05863900000001,
-        "longitude": 19.9450507,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": true,
-        "created_at": "2026-08-04T00:06:07Z",
         "updated_at": "2026-08-10T06:41:45Z"
       }
     },
@@ -15171,32 +15093,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "św. Gertrudy",
-        "building_number": "7",
-        "address_kind": "compound_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "7 / 1 i 2",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "św. Gertrudy 7 Kraków",
-        "latitude": 50.0578323,
-        "longitude": 19.9411886,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": true,
-        "created_at": "2026-08-04T00:08:37Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Bulwar Wołyński",
         "building_number": null,
         "address_kind": "landmark",
@@ -15427,32 +15323,6 @@
         "selected": true,
         "created_at": "2026-08-01T23:43:14Z",
         "updated_at": "2026-08-01T23:43:14Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Bulwar Czerwieński",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "81/4",
-        "parcel_region": "22",
-        "parcel_cadastral_unit": "srodmiescie",
-        "raw_address_2": "dz. 81/4",
-        "same_as": null
-      },
-      "result": {
-        "source": "uldk",
-        "strategy": "cadastral_parcel",
-        "query": "126105_9.0022.81/4",
-        "latitude": 50.094017701188086,
-        "longitude": 19.963682032864057,
-        "confidence": null,
-        "precision": "parcel/S-22",
-        "selected": true,
-        "created_at": "2026-08-02T08:24:28Z",
-        "updated_at": "2026-08-02T08:24:28Z"
       }
     },
     {
@@ -16965,32 +16835,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "bpa Albina Małysiaka",
-        "building_number": "4",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "4/4",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "bpa Albina Małysiaka 4 Kraków",
-        "latitude": 49.9994782,
-        "longitude": 19.8934121,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:07:45Z",
-        "updated_at": "2026-08-04T00:07:45Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Osiedle Oświecenia",
         "building_number": null,
         "address_kind": "landmark",
@@ -17351,32 +17195,6 @@
         "selected": true,
         "created_at": "2026-08-02T06:17:52Z",
         "updated_at": "2026-08-02T06:17:52Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Juliusza Lea",
-        "building_number": "20B",
-        "address_kind": "compound_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "20 B /1 i 2",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "Juliusza Lea 20B Kraków",
-        "latitude": 50.0705047,
-        "longitude": 19.917929,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": true,
-        "created_at": "2026-08-03T23:52:25Z",
-        "updated_at": "2026-08-10T06:41:45Z"
       }
     },
     {
@@ -18135,58 +17953,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Komuny Paryskiej",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15/3",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Komuny Paryskiej 15 Kraków",
-        "latitude": 50.0013008,
-        "longitude": 19.8948376,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:54:30Z",
-        "updated_at": "2026-08-03T23:54:30Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Komuny Paryskiej",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15/3",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_review",
-        "strategy": "manual_pin",
-        "query": "osm | 49.9988955 | 19.8947609 | 2026-08-05T21:50:53Z",
-        "latitude": 49.9988955,
-        "longitude": 19.8947609,
-        "confidence": 1.0,
-        "precision": "manual/selected_candidate",
-        "selected": false,
-        "created_at": "2026-08-05T21:50:53Z",
-        "updated_at": "2026-08-05T21:50:53Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Osiedle Złota Podkowa",
         "building_number": "1",
         "address_kind": "street_address",
@@ -18209,32 +17975,6 @@
         "selected": false,
         "created_at": "2026-08-04T00:00:02Z",
         "updated_at": "2026-08-04T00:00:02Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Strzelców",
-        "building_number": "21",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "21/23",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Strzelców 21 Kraków",
-        "latitude": 50.0958948,
-        "longitude": 19.9729467,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:04:19Z",
-        "updated_at": "2026-08-04T00:04:19Z"
       }
     },
     {
@@ -18287,32 +18027,6 @@
         "selected": false,
         "created_at": "2026-08-03T23:46:59Z",
         "updated_at": "2026-08-03T23:46:59Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Kalwaryjska",
-        "building_number": "90",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "90/2",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Kalwaryjska 90 Kraków",
-        "latitude": 50.037876,
-        "longitude": 19.9408965,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:53:32Z",
-        "updated_at": "2026-08-03T23:53:32Z"
       }
     },
     {
@@ -18417,32 +18131,6 @@
         "selected": false,
         "created_at": "2026-08-03T23:56:01Z",
         "updated_at": "2026-08-04T00:29:28Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Lubostroń",
-        "building_number": "22G",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "22G lok. OU 8",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Lubostroń 22G Kraków",
-        "latitude": 50.0179385,
-        "longitude": 19.8944341,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:55:58Z",
-        "updated_at": "2026-08-03T23:55:58Z"
       }
     },
     {
@@ -18577,58 +18265,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Wodna",
-        "building_number": "24",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "24/L1",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Wodna 24 Kraków",
-        "latitude": 50.0397315,
-        "longitude": 19.9744291,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:06:23Z",
-        "updated_at": "2026-08-04T00:06:23Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Szlak",
-        "building_number": "50",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "50 lok. A7",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Szlak 50 Kraków",
-        "latitude": 50.0709448,
-        "longitude": 19.9442048,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:04:43Z",
-        "updated_at": "2026-08-04T00:04:43Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Osiedle Centrum D",
         "building_number": "2",
         "address_kind": "street_address",
@@ -18655,80 +18291,28 @@
     },
     {
       "transformed_location": {
-        "address_1": "Rakowicka",
+        "address_1": "Meiselsa",
         "building_number": "20",
         "address_kind": "street_address",
         "address_relation": null,
-        "unit_number": null,
+        "unit_number": "1",
         "parcel_number": null,
         "parcel_region": null,
         "parcel_cadastral_unit": null,
-        "raw_address_2": "20 lok L2",
+        "raw_address_2": "20 LOK. U1",
         "same_as": null
       },
       "result": {
-        "source": "google",
+        "source": "krakow_msip",
         "strategy": "address_point",
-        "query": "Rakowicka 20 Kraków",
-        "latitude": 50.0690611,
-        "longitude": 19.9526997,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:02:06Z",
-        "updated_at": "2026-08-04T00:02:06Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "dr. Jana Piltza",
-        "building_number": "64",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "64/6UA",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "dr. Jana Piltza 64 Kraków",
-        "latitude": 50.0146943,
-        "longitude": 19.8908374,
-        "confidence": 0.8,
-        "precision": "RANGE_INTERPOLATED/street_address",
+        "query": "Meiselsa 20 Kraków",
+        "latitude": 50.05135067321644,
+        "longitude": 19.94390353090937,
+        "confidence": null,
+        "precision": "address_point/msip_emuia",
         "selected": true,
-        "created_at": "2026-08-04T00:07:47Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Andrzeja Frycza-Modrzewskiego",
-        "building_number": "2",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "2/11",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Andrzeja Frycza-Modrzewskiego 2 Kraków",
-        "latitude": 50.0868353,
-        "longitude": 19.9470421,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:46:51Z",
-        "updated_at": "2026-08-03T23:46:51Z"
+        "created_at": "2026-08-08T14:29:45Z",
+        "updated_at": "2026-08-08T21:37:22Z"
       }
     },
     {
@@ -18785,32 +18369,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Bohdana Zaleskiego",
-        "building_number": "1",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "1/4",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Bohdana Zaleskiego 1 Kraków",
-        "latitude": 50.0678619,
-        "longitude": 19.9599251,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T19:53:28Z",
-        "updated_at": "2026-08-03T19:53:28Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Jana Szwai",
         "building_number": "16",
         "address_kind": "street_address",
@@ -18859,32 +18417,6 @@
         "selected": false,
         "created_at": "2026-08-02T07:57:39Z",
         "updated_at": "2026-08-02T07:57:39Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Osiedle Złota Podkowa",
-        "building_number": "1",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "1/8",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Osiedle Złota Podkowa 1 Kraków",
-        "latitude": 50.0862068,
-        "longitude": 19.880076,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:00:01Z",
-        "updated_at": "2026-08-04T00:00:01Z"
       }
     },
     {
@@ -19144,58 +18676,6 @@
         "precision": "address_point/msip_emuia",
         "selected": true,
         "created_at": "2026-08-08T14:30:09Z",
-        "updated_at": "2026-08-08T21:37:22Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Grzegórzecka",
-        "building_number": "77A",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "77AlokU1",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Grzegórzecka 77A Kraków",
-        "latitude": 50.0571144,
-        "longitude": 19.9650443,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:51:26Z",
-        "updated_at": "2026-08-03T23:51:26Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Grzegórzecka",
-        "building_number": "77A",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "77AlokU1",
-        "same_as": null
-      },
-      "result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Grzegórzecka 77A Kraków",
-        "latitude": 50.056660298909705,
-        "longitude": 19.96561785532082,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-08T14:30:10Z",
         "updated_at": "2026-08-08T21:37:22Z"
       }
     },
@@ -19617,32 +19097,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Stradomska",
-        "building_number": "19",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "3i",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "19 lok 3i 4",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Stradomska 19 Kraków",
-        "latitude": 50.0525092,
-        "longitude": 19.9404753,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:04:12Z",
-        "updated_at": "2026-08-04T00:04:12Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Wielopole",
         "building_number": "32",
         "address_kind": "street_address",
@@ -19773,162 +19227,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Mazowiecka",
-        "building_number": "8",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "8/2",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Mazowiecka 8 Kraków",
-        "latitude": 50.0730187,
-        "longitude": 19.9302234,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:56:47Z",
-        "updated_at": "2026-08-03T23:56:47Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Podgórska",
-        "building_number": "24",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "24/1009",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "Podgórska 24 Kraków",
-        "latitude": 50.04934859999999,
-        "longitude": 19.950233,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": true,
-        "created_at": "2026-08-04T00:01:07Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Aleja Zygmunta Krasińskiego",
-        "building_number": "19",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "19/7",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Aleja Zygmunta Krasińskiego 19 Kraków",
-        "latitude": 50.05869029999999,
-        "longitude": 19.9261153,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:46:38Z",
-        "updated_at": "2026-08-03T23:46:38Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Długa",
-        "building_number": "22",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "22/28",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Długa 22 Kraków",
-        "latitude": 50.06780939999999,
-        "longitude": 19.9383645,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:49:51Z",
-        "updated_at": "2026-08-03T23:49:51Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Dojazdowa",
-        "building_number": "3",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "3/1B",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Dojazdowa 3 Kraków",
-        "latitude": 50.0528928,
-        "longitude": 19.9213567,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:49:32Z",
-        "updated_at": "2026-08-03T23:49:32Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Mazowiecka",
-        "building_number": "21",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "21/1",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Mazowiecka 21 Kraków",
-        "latitude": 50.0742589,
-        "longitude": 19.9283676,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:56:44Z",
-        "updated_at": "2026-08-03T23:56:44Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Sławkowska",
         "building_number": "19",
         "address_kind": "street_address",
@@ -19951,110 +19249,6 @@
         "selected": false,
         "created_at": "2026-08-04T00:04:57Z",
         "updated_at": "2026-08-04T00:04:57Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Smoleńsk",
-        "building_number": "22",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "22/14",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Smoleńsk 22 Kraków",
-        "latitude": 50.0582771,
-        "longitude": 19.9268919,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:03:15Z",
-        "updated_at": "2026-08-04T00:03:15Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Tuchowska",
-        "building_number": "2",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "2/1",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Tuchowska 2 Kraków",
-        "latitude": 50.01244519999999,
-        "longitude": 19.9674561,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:05:27Z",
-        "updated_at": "2026-08-04T00:05:27Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Pychowicka",
-        "building_number": "18",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "18/68",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Pychowicka 18 Kraków",
-        "latitude": 50.03212260000001,
-        "longitude": 19.9164732,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:01:49Z",
-        "updated_at": "2026-08-04T00:01:49Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Ambrożego Grabowskiego",
-        "building_number": "6",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "6/2",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Ambrożego Grabowskiego 6 Kraków",
-        "latitude": 50.0670048,
-        "longitude": 19.9279296,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:46:51Z",
-        "updated_at": "2026-08-03T23:46:51Z"
       }
     },
     {
@@ -20133,32 +19327,6 @@
         "selected": true,
         "created_at": "2026-08-08T14:30:52Z",
         "updated_at": "2026-08-08T21:37:23Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "dr. Ludwika Zamenhofa",
-        "building_number": "4",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "4/2A",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "dr. Ludwika Zamenhofa 4 Kraków",
-        "latitude": 50.0636161,
-        "longitude": 19.9457219,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:07:50Z",
-        "updated_at": "2026-08-04T00:07:50Z"
       }
     },
     {
@@ -20293,32 +19461,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Józefa Dietla",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15/1",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Józefa Dietla 15 Kraków",
-        "latitude": 50.05036500000001,
-        "longitude": 19.9387705,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:52:53Z",
-        "updated_at": "2026-08-03T23:52:53Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Dolnych Młynów",
         "building_number": "10",
         "address_kind": "street_address",
@@ -20367,32 +19509,6 @@
         "selected": false,
         "created_at": "2026-08-03T23:50:48Z",
         "updated_at": "2026-08-03T23:50:48Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Halicka",
-        "building_number": "19",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "19/9",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Halicka 19 Kraków",
-        "latitude": 50.0510934,
-        "longitude": 19.9530657,
-        "confidence": 0.8,
-        "precision": "RANGE_INTERPOLATED/street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:51:31Z",
-        "updated_at": "2026-08-03T23:51:31Z"
       }
     },
     {
@@ -20787,58 +19903,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Aleja Ignacego Daszyńskiego",
-        "building_number": "13",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "13/36",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Aleja Ignacego Daszyńskiego 13 Kraków",
-        "latitude": 50.0577214,
-        "longitude": 19.9509479,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:46:15Z",
-        "updated_at": "2026-08-03T23:46:15Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Kotlarska",
-        "building_number": "2",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "2/6 B",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Kotlarska 2 Kraków",
-        "latitude": 50.0570167,
-        "longitude": 19.9595308,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:54:39Z",
-        "updated_at": "2026-08-03T23:54:39Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Plac Nowy",
         "building_number": "3",
         "address_kind": "street_address",
@@ -21069,6 +20133,32 @@
         "selected": false,
         "created_at": "2026-08-03T23:56:31Z",
         "updated_at": "2026-08-03T23:56:31Z"
+      }
+    },
+    {
+      "transformed_location": {
+        "address_1": "Miodowa",
+        "building_number": "32",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": "3",
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "32 LOK. 3",
+        "same_as": null
+      },
+      "result": {
+        "source": "krakow_msip",
+        "strategy": "address_point",
+        "query": "Miodowa 32 Kraków",
+        "latitude": 50.05335556034614,
+        "longitude": 19.94667189043517,
+        "confidence": null,
+        "precision": "address_point/msip_emuia",
+        "selected": true,
+        "created_at": "2026-08-08T14:31:49Z",
+        "updated_at": "2026-08-08T21:37:24Z"
       }
     },
     {
@@ -21433,110 +20523,6 @@
         "selected": false,
         "created_at": "2026-08-02T04:44:25Z",
         "updated_at": "2026-08-02T04:44:25Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Sukiennicza",
-        "building_number": "8",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "C",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "8 lok. UC 1",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Sukiennicza 8 Kraków",
-        "latitude": 50.0510426,
-        "longitude": 19.9383381,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:04:24Z",
-        "updated_at": "2026-08-04T00:04:24Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Basztowa",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "U",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15/rynek kleparski 4 lok U",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Basztowa 15 Kraków",
-        "latitude": 50.0663649,
-        "longitude": 19.9401267,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:47:21Z",
-        "updated_at": "2026-08-03T23:47:21Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Nadwiślańska",
-        "building_number": "5",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "L",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "5 lok. L 2",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Nadwiślańska 5 Kraków",
-        "latitude": 50.0462995,
-        "longitude": 19.9497977,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:58:10Z",
-        "updated_at": "2026-08-03T23:58:10Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Karola Szymanowskiego",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "L",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15 lok. L 3 U",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Karola Szymanowskiego 15 Kraków",
-        "latitude": 50.06662499999999,
-        "longitude": 19.9224234,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:53:58Z",
-        "updated_at": "2026-08-03T23:53:58Z"
       }
     },
     {
@@ -22139,32 +21125,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Bulwar Kurlandzki",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "94",
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "dz. 94 obr. śrdódmieście",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_geo_completion",
-        "strategy": "cadastral_parcel",
-        "query": "Bulwar Kurlandzki dz. 94 Kraków",
-        "latitude": 50.04681557388398,
-        "longitude": 19.946528910257975,
-        "confidence": 0.65,
-        "precision": "derived/exact_parcel/S-15",
-        "selected": true,
-        "created_at": "2026-08-02T08:33:56Z",
-        "updated_at": "2026-08-02T08:33:56Z"
-      }
-    },
-    {
-      "transformed_location": {
         "address_1": "Bulwar Wołyński",
         "building_number": null,
         "address_kind": "parcel",
@@ -22447,32 +21407,6 @@
         "selected": false,
         "created_at": "2026-08-03T23:52:33Z",
         "updated_at": "2026-08-03T23:52:33Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Józefa",
-        "building_number": "6",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "1",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "6 LOK 1 P",
-        "same_as": null
-      },
-      "result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Józefa 6 Kraków",
-        "latitude": 50.050552,
-        "longitude": 19.9433645,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:52:38Z",
-        "updated_at": "2026-08-03T23:52:38Z"
       }
     },
     {
@@ -22951,32 +21885,6 @@
         "address_relation": null,
         "unit_number": null,
         "parcel_number": "471/8",
-        "parcel_region": "104",
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "dz.nr471/8 obr.104,105",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_geo_completion",
-        "strategy": "cadastral_parcel",
-        "query": "Henryka i Karola Czeczów dz. 471/8 Kraków",
-        "latitude": 50.0187263,
-        "longitude": 20.0564966,
-        "confidence": 0.65,
-        "precision": "derived/street",
-        "selected": true,
-        "created_at": "2026-08-02T08:33:56Z",
-        "updated_at": "2026-08-02T08:33:56Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Henryka i Karola Czeczów",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "471/8",
         "parcel_region": null,
         "parcel_cadastral_unit": null,
         "raw_address_2": "dz.nr 471/8",
@@ -22993,32 +21901,6 @@
         "selected": true,
         "created_at": "2026-08-02T08:33:56Z",
         "updated_at": "2026-08-02T08:33:56Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Białoruska",
-        "building_number": "1",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "1 kiosk 39",
-        "same_as": null
-      },
-      "result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "Białoruska 1 Kraków",
-        "latitude": 50.0173964,
-        "longitude": 19.9761443,
-        "confidence": 0.8,
-        "precision": "RANGE_INTERPOLATED/street_address",
-        "selected": true,
-        "created_at": "2026-08-04T02:57:19Z",
-        "updated_at": "2026-08-10T06:41:45Z"
       }
     },
     {
@@ -24063,6 +22945,32 @@
     },
     {
       "transformed_location": {
+        "address_1": "dr. Ludwika Zamenhofa",
+        "building_number": "4",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": "2A",
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "4/2A",
+        "same_as": null
+      },
+      "result": {
+        "source": "krakow_msip",
+        "strategy": "address_point",
+        "query": "dr. Ludwika Zamenhofa 4 Kraków",
+        "latitude": 50.06350845667586,
+        "longitude": 19.945745335258326,
+        "confidence": null,
+        "precision": "address_point/msip_emuia",
+        "selected": true,
+        "created_at": "2026-08-09T00:11:13Z",
+        "updated_at": "2026-08-09T00:11:13Z"
+      }
+    },
+    {
+      "transformed_location": {
         "address_1": "Plac Bawół",
         "building_number": "6",
         "address_kind": "street_address",
@@ -24631,58 +23539,6 @@
         "selected": true,
         "created_at": "2026-08-09T00:11:14Z",
         "updated_at": "2026-08-09T00:11:14Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Meiselsa",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": null,
-        "same_as": null
-      },
-      "result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Meiselsa 20 Kraków",
-        "latitude": 50.05135067321644,
-        "longitude": 19.94390353090937,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-09T00:18:51Z",
-        "updated_at": "2026-08-09T00:18:51Z"
-      }
-    },
-    {
-      "transformed_location": {
-        "address_1": "Miodowa",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": null,
-        "same_as": null
-      },
-      "result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Miodowa 32 Kraków",
-        "latitude": 50.05335556034614,
-        "longitude": 19.94667189043517,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-09T00:18:51Z",
-        "updated_at": "2026-08-09T00:18:51Z"
       }
     },
     {
@@ -25798,75 +24654,45 @@
     },
     {
       "transformed_location": {
-        "address_1": "Bociana",
-        "building_number": "4",
+        "address_1": "Blokowa",
+        "building_number": "1",
         "address_kind": "street_address",
         "address_relation": null,
         "unit_number": null,
         "parcel_number": null,
         "parcel_region": null,
         "parcel_cadastral_unit": null,
-        "raw_address_2": "4/4",
+        "raw_address_2": "1",
         "same_as": null
       },
       "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0924103,
-      "original_longitude": 19.9567286,
+      "review_status": "far",
+      "original_latitude": 50.0859693,
+      "original_longitude": 20.0736823,
       "manual_latitude": null,
       "manual_longitude": null,
       "selected_geocoding_result": {
-        "source": "google",
+        "source": "manual_review",
         "strategy": "address_point",
-        "query": "Bociana 4 Kraków",
-        "latitude": 50.0924103,
-        "longitude": 19.9567286,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:47:49Z",
-        "updated_at": "2026-08-03T23:47:49Z"
+        "query": "Blokowa 1 Kraków",
+        "latitude": 50.0859693,
+        "longitude": 20.0736823,
+        "confidence": 0.8,
+        "precision": "RANGE_INTERPOLATED/street_address",
+        "selected": true,
+        "created_at": "2026-08-03T19:53:11Z",
+        "updated_at": "2026-08-10T06:41:45Z"
       },
       "manual_geocoding_result": null,
       "quality_signals": [
         "random_sample",
-        "random_sample_quality:exact"
+        "random_sample_quality:far"
       ],
       "note": null,
       "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T03:14:54Z",
-      "created_at": "2026-08-06T03:14:54Z",
-      "updated_at": "2026-08-06T03:14:54Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Bogucianka",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "176/3",
-        "parcel_region": "77",
-        "parcel_cadastral_unit": "podgorze",
-        "raw_address_2": "działka nr 176/3",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_500",
-      "review_status": "verified",
-      "original_latitude": 50.00916476923077,
-      "original_longitude": 19.813008,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": null,
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_500"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T17:19:29Z",
-      "created_at": "2026-08-05T17:19:29Z",
-      "updated_at": "2026-08-05T17:19:29Z"
+      "reviewed_at": "2026-08-11T13:20:32Z",
+      "created_at": "2026-08-11T13:20:32Z",
+      "updated_at": "2026-08-11T13:20:32Z"
     },
     {
       "transformed_location": {
@@ -31885,48 +30711,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Wielopole",
-        "building_number": "16",
-        "address_kind": "compound_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "16/2 i 2A",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.05863900000001,
-      "original_longitude": 19.9450507,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "Wielopole 16 Kraków",
-        "latitude": 50.05863900000001,
-        "longitude": 19.9450507,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": true,
-        "created_at": "2026-08-04T00:06:07Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T03:44:42Z",
-      "created_at": "2026-08-06T03:44:42Z",
-      "updated_at": "2026-08-06T03:44:42Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Wiewiórcza",
         "building_number": "1A",
         "address_kind": "street_address",
@@ -33308,36 +32092,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Józefa Wybickiego",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "361/1",
-        "parcel_region": "41",
-        "parcel_cadastral_unit": "krowodrza",
-        "raw_address_2": "dz.nr361/1",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_500",
-      "review_status": "verified",
-      "original_latitude": 50.08373754545455,
-      "original_longitude": 19.913450454545455,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": null,
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_500"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T17:23:36Z",
-      "created_at": "2026-08-05T17:23:36Z",
-      "updated_at": "2026-08-05T17:23:36Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Architektów",
         "building_number": null,
         "address_kind": "landmark",
@@ -33502,6 +32256,132 @@
       "reviewed_at": "2026-08-10T03:43:22Z",
       "created_at": "2026-08-10T03:43:22Z",
       "updated_at": "2026-08-10T03:43:22Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Architektów",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0970723,
+      "original_longitude": 20.0465624,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Architektów Kraków",
+        "latitude": 50.0970723,
+        "longitude": 20.0465624,
+        "confidence": 0.05341270084687568,
+        "precision": "residential/road",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:35Z",
+        "updated_at": "2026-08-02T06:17:35Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:27:43Z",
+      "created_at": "2026-08-11T13:27:43Z",
+      "updated_at": "2026-08-11T13:27:43Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Architektów",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0970723,
+      "original_longitude": 20.0465624,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Architektów Kraków",
+        "latitude": 50.0970723,
+        "longitude": 20.0465624,
+        "confidence": 0.05341270084687568,
+        "precision": "residential/road",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:35Z",
+        "updated_at": "2026-08-02T06:17:35Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:36:05Z",
+      "created_at": "2026-08-11T13:36:05Z",
+      "updated_at": "2026-08-11T13:36:05Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Architektów",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0970723,
+      "original_longitude": 20.0465624,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Architektów Kraków",
+        "latitude": 50.0970723,
+        "longitude": 20.0465624,
+        "confidence": 0.05341270084687568,
+        "precision": "residential/road",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:35Z",
+        "updated_at": "2026-08-02T06:17:35Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T14:01:17Z",
+      "created_at": "2026-08-11T14:01:17Z",
+      "updated_at": "2026-08-11T14:01:17Z"
     },
     {
       "transformed_location": {
@@ -35242,68 +34122,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Jana Brożka",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "404/3",
-        "parcel_region": "32",
-        "parcel_cadastral_unit": "podgorze",
-        "raw_address_2": "działka 404/3",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "hard_to_tell",
-      "original_latitude": 50.02990676666666,
-      "original_longitude": 19.929993733333333,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": null,
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:hard_to_tell"
-      ],
-      "note": null,
-      "sim_circle_within_area": false,
-      "reviewed_at": "2026-08-06T00:23:32Z",
-      "created_at": "2026-08-06T00:23:32Z",
-      "updated_at": "2026-08-06T00:23:32Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Jana Brożka",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "404/3",
-        "parcel_region": "32",
-        "parcel_cadastral_unit": "podgorze",
-        "raw_address_2": "działka 404/3",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.02990676666666,
-      "original_longitude": 19.929993733333333,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": null,
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T05:46:14Z",
-      "created_at": "2026-08-06T05:46:14Z",
-      "updated_at": "2026-08-06T05:46:14Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Mirowska",
         "building_number": null,
         "address_kind": "landmark",
@@ -35977,36 +34795,6 @@
       "reviewed_at": "2026-08-06T05:26:18Z",
       "created_at": "2026-08-06T05:26:18Z",
       "updated_at": "2026-08-06T05:26:18Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Aleja Adama Mickiewicza",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "65/3",
-        "parcel_region": "14",
-        "parcel_cadastral_unit": "krowodrza",
-        "raw_address_2": "dz. 65/3/Piłsudkiego",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_250",
-      "review_status": "verified",
-      "original_latitude": 50.05613584615385,
-      "original_longitude": 19.91796123076923,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": null,
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_250"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T18:48:07Z",
-      "created_at": "2026-08-05T18:48:07Z",
-      "updated_at": "2026-08-05T18:48:07Z"
     },
     {
       "transformed_location": {
@@ -38798,6 +37586,90 @@
     },
     {
       "transformed_location": {
+        "address_1": "Saska",
+        "building_number": "27",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "27",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0370348,
+      "original_longitude": 19.9811944,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "manual_review",
+        "strategy": "address_point",
+        "query": "Saska 27 Kraków",
+        "latitude": 50.0370348,
+        "longitude": 19.9811944,
+        "confidence": 1.0,
+        "precision": "ROOFTOP/premise|street_address",
+        "selected": true,
+        "created_at": "2026-08-04T00:02:58Z",
+        "updated_at": "2026-08-10T06:41:45Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:26:27Z",
+      "created_at": "2026-08-11T13:26:27Z",
+      "updated_at": "2026-08-11T13:26:27Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Saska",
+        "building_number": "27",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "27",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "very_far",
+      "original_latitude": 50.0370348,
+      "original_longitude": 19.9811944,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "manual_review",
+        "strategy": "address_point",
+        "query": "Saska 27 Kraków",
+        "latitude": 50.0370348,
+        "longitude": 19.9811944,
+        "confidence": 1.0,
+        "precision": "ROOFTOP/premise|street_address",
+        "selected": true,
+        "created_at": "2026-08-04T00:02:58Z",
+        "updated_at": "2026-08-10T06:41:45Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:very_far"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:34:59Z",
+      "created_at": "2026-08-11T13:34:59Z",
+      "updated_at": "2026-08-11T13:34:59Z"
+    },
+    {
+      "transformed_location": {
         "address_1": "Józefińska",
         "building_number": "2",
         "address_kind": "street_address",
@@ -40760,6 +39632,48 @@
       "reviewed_at": "2026-08-10T04:07:44Z",
       "created_at": "2026-08-10T04:07:44Z",
       "updated_at": "2026-08-10T04:07:44Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Grzegórzecka",
+        "building_number": "63",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "63",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "far",
+      "original_latitude": 50.0570939,
+      "original_longitude": 19.9593789,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "manual_review",
+        "strategy": "address_point",
+        "query": "Grzegórzecka 63 Kraków",
+        "latitude": 50.0570939,
+        "longitude": 19.9593789,
+        "confidence": 0.8,
+        "precision": "RANGE_INTERPOLATED/street_address",
+        "selected": true,
+        "created_at": "2026-08-03T23:51:23Z",
+        "updated_at": "2026-08-10T06:41:45Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:far"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T13:26:43Z",
+      "created_at": "2026-08-11T13:26:43Z",
+      "updated_at": "2026-08-11T13:26:43Z"
     },
     {
       "transformed_location": {
@@ -43582,6 +42496,174 @@
     },
     {
       "transformed_location": {
+        "address_1": "Jana Surzyckiego",
+        "building_number": "2",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "2",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0392272,
+      "original_longitude": 20.0021405,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "manual_review",
+        "strategy": "address_point",
+        "query": "Jana Surzyckiego 2 Kraków",
+        "latitude": 50.0392272,
+        "longitude": 20.0021405,
+        "confidence": 1.0,
+        "precision": "ROOFTOP/premise|street_address",
+        "selected": true,
+        "created_at": "2026-08-03T23:52:08Z",
+        "updated_at": "2026-08-10T06:41:45Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:27:06Z",
+      "created_at": "2026-08-11T13:27:06Z",
+      "updated_at": "2026-08-11T13:27:06Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Jana Surzyckiego",
+        "building_number": "2",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "2",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0392272,
+      "original_longitude": 20.0021405,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "manual_review",
+        "strategy": "address_point",
+        "query": "Jana Surzyckiego 2 Kraków",
+        "latitude": 50.0392272,
+        "longitude": 20.0021405,
+        "confidence": 1.0,
+        "precision": "ROOFTOP/premise|street_address",
+        "selected": true,
+        "created_at": "2026-08-03T23:52:08Z",
+        "updated_at": "2026-08-10T06:41:45Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:35:21Z",
+      "created_at": "2026-08-11T13:35:21Z",
+      "updated_at": "2026-08-11T13:35:21Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Jana Surzyckiego",
+        "building_number": "2",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "2",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0392272,
+      "original_longitude": 20.0021405,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "manual_review",
+        "strategy": "address_point",
+        "query": "Jana Surzyckiego 2 Kraków",
+        "latitude": 50.0392272,
+        "longitude": 20.0021405,
+        "confidence": 1.0,
+        "precision": "ROOFTOP/premise|street_address",
+        "selected": true,
+        "created_at": "2026-08-03T23:52:08Z",
+        "updated_at": "2026-08-10T06:41:45Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:36:15Z",
+      "created_at": "2026-08-11T13:36:15Z",
+      "updated_at": "2026-08-11T13:36:15Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Jana Surzyckiego",
+        "building_number": "2",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "2",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0392272,
+      "original_longitude": 20.0021405,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "manual_review",
+        "strategy": "address_point",
+        "query": "Jana Surzyckiego 2 Kraków",
+        "latitude": 50.0392272,
+        "longitude": 20.0021405,
+        "confidence": 1.0,
+        "precision": "ROOFTOP/premise|street_address",
+        "selected": true,
+        "created_at": "2026-08-03T23:52:08Z",
+        "updated_at": "2026-08-10T06:41:45Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T14:01:22Z",
+      "created_at": "2026-08-11T14:01:22Z",
+      "updated_at": "2026-08-11T14:01:22Z"
+    },
+    {
+      "transformed_location": {
         "address_1": "Władysława Syrokomli",
         "building_number": "9",
         "address_kind": "street_address",
@@ -44594,48 +43676,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "św. Gertrudy",
-        "building_number": "7",
-        "address_kind": "compound_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "7 / 1 i 2",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0578323,
-      "original_longitude": 19.9411886,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "św. Gertrudy 7 Kraków",
-        "latitude": 50.0578323,
-        "longitude": 19.9411886,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": true,
-        "created_at": "2026-08-04T00:08:37Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T05:03:14Z",
-      "created_at": "2026-08-06T05:03:14Z",
-      "updated_at": "2026-08-06T05:03:14Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Bulwar Wołyński",
         "building_number": null,
         "address_kind": "landmark",
@@ -44954,47 +43994,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Bulwar Czerwieński",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "81/4",
-        "parcel_region": "22",
-        "parcel_cadastral_unit": "srodmiescie",
-        "raw_address_2": "dz. 81/4",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_250",
-      "review_status": "verified",
-      "original_latitude": 50.094017701188086,
-      "original_longitude": 19.963682032864057,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "uldk",
-        "strategy": "cadastral_parcel",
-        "query": "126105_9.0022.81/4",
-        "latitude": 50.094017701188086,
-        "longitude": 19.963682032864057,
-        "confidence": null,
-        "precision": "parcel/S-22",
-        "selected": true,
-        "created_at": "2026-08-02T08:24:28Z",
-        "updated_at": "2026-08-02T08:24:28Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_250"
-      ],
-      "note": "uldk pokazał coś bardzo dziwnego i nie wiem dlaczego, wybieram nomination osm choć nie iem czy jest dobra",
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T19:56:24Z",
-      "created_at": "2026-08-05T19:56:24Z",
-      "updated_at": "2026-08-05T19:56:24Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Bulwar Kurlandzki",
         "building_number": null,
         "address_kind": "parcel",
@@ -45250,36 +44249,6 @@
       "reviewed_at": "2026-08-06T00:27:40Z",
       "created_at": "2026-08-06T00:27:40Z",
       "updated_at": "2026-08-06T00:27:40Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Aleja 29 Listopada",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "199",
-        "parcel_region": "22",
-        "parcel_cadastral_unit": "srodmiescie",
-        "raw_address_2": "dz. 199 i 200",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_1000",
-      "review_status": "unresolved",
-      "original_latitude": 50.09070463636363,
-      "original_longitude": 19.96153290909091,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": null,
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_1000"
-      ],
-      "note": "ani jedno ani drugie nie wygląda dobrze, jedno to środek drogi, drugie jest przy Majora Ryszarda Nuszkiewicza",
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-04T21:30:57Z",
-      "created_at": "2026-08-04T21:30:57Z",
-      "updated_at": "2026-08-04T21:30:57Z"
     },
     {
       "transformed_location": {
@@ -46296,36 +45265,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Bulwarowa",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "199/1",
-        "parcel_region": "44",
-        "parcel_cadastral_unit": "nowa_huta",
-        "raw_address_2": "działka 199/1, obr, Nowa Huta",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_250",
-      "review_status": "verified",
-      "original_latitude": 50.079035546875,
-      "original_longitude": 20.052986375,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": null,
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_250"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T18:48:21Z",
-      "created_at": "2026-08-05T18:48:21Z",
-      "updated_at": "2026-08-05T18:48:21Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Osiedle Na Lotnisku",
         "building_number": "23",
         "address_kind": "street_address",
@@ -47327,48 +46266,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "bpa Albina Małysiaka",
-        "building_number": "4",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "4/4",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 49.9994782,
-      "original_longitude": 19.8934121,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "bpa Albina Małysiaka 4 Kraków",
-        "latitude": 49.9994782,
-        "longitude": 19.8934121,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:07:45Z",
-        "updated_at": "2026-08-04T00:07:45Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T01:16:23Z",
-      "created_at": "2026-08-06T01:16:23Z",
-      "updated_at": "2026-08-06T01:16:23Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Osiedle Oświecenia",
         "building_number": null,
         "address_kind": "landmark",
@@ -47575,6 +46472,258 @@
       "reviewed_at": "2026-08-10T03:26:51Z",
       "created_at": "2026-08-10T03:26:51Z",
       "updated_at": "2026-08-10T03:26:51Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Osiedle Oświecenia",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0934536,
+      "original_longitude": 19.9913299,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Osiedle Oświecenia Kraków",
+        "latitude": 50.0934536,
+        "longitude": 19.9913299,
+        "confidence": 0.08007936751354235,
+        "precision": "residential/neighbourhood",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:50Z",
+        "updated_at": "2026-08-02T06:17:50Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:20:47Z",
+      "created_at": "2026-08-11T13:20:47Z",
+      "updated_at": "2026-08-11T13:20:47Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Osiedle Oświecenia",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0934536,
+      "original_longitude": 19.9913299,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Osiedle Oświecenia Kraków",
+        "latitude": 50.0934536,
+        "longitude": 19.9913299,
+        "confidence": 0.08007936751354235,
+        "precision": "residential/neighbourhood",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:50Z",
+        "updated_at": "2026-08-02T06:17:50Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:27:47Z",
+      "created_at": "2026-08-11T13:27:47Z",
+      "updated_at": "2026-08-11T13:27:47Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Osiedle Oświecenia",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0934536,
+      "original_longitude": 19.9913299,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Osiedle Oświecenia Kraków",
+        "latitude": 50.0934536,
+        "longitude": 19.9913299,
+        "confidence": 0.08007936751354235,
+        "precision": "residential/neighbourhood",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:50Z",
+        "updated_at": "2026-08-02T06:17:50Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:36:10Z",
+      "created_at": "2026-08-11T13:36:10Z",
+      "updated_at": "2026-08-11T13:36:10Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Osiedle Oświecenia",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0934536,
+      "original_longitude": 19.9913299,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Osiedle Oświecenia Kraków",
+        "latitude": 50.0934536,
+        "longitude": 19.9913299,
+        "confidence": 0.08007936751354235,
+        "precision": "residential/neighbourhood",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:50Z",
+        "updated_at": "2026-08-02T06:17:50Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:55:39Z",
+      "created_at": "2026-08-11T13:55:39Z",
+      "updated_at": "2026-08-11T13:55:39Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Osiedle Oświecenia",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0934536,
+      "original_longitude": 19.9913299,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Osiedle Oświecenia Kraków",
+        "latitude": 50.0934536,
+        "longitude": 19.9913299,
+        "confidence": 0.08007936751354235,
+        "precision": "residential/neighbourhood",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:50Z",
+        "updated_at": "2026-08-02T06:17:50Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:55:44Z",
+      "created_at": "2026-08-11T13:55:44Z",
+      "updated_at": "2026-08-11T13:55:44Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Osiedle Oświecenia",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0934536,
+      "original_longitude": 19.9913299,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Osiedle Oświecenia Kraków",
+        "latitude": 50.0934536,
+        "longitude": 19.9913299,
+        "confidence": 0.08007936751354235,
+        "precision": "residential/neighbourhood",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:50Z",
+        "updated_at": "2026-08-02T06:17:50Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T14:01:33Z",
+      "created_at": "2026-08-11T14:01:33Z",
+      "updated_at": "2026-08-11T14:01:33Z"
     },
     {
       "transformed_location": {
@@ -48317,45 +47466,171 @@
     },
     {
       "transformed_location": {
-        "address_1": "Juliusza Lea",
-        "building_number": "20B",
-        "address_kind": "compound_address",
+        "address_1": "Józefa Mackiewicza",
+        "building_number": null,
+        "address_kind": "landmark",
         "address_relation": null,
         "unit_number": null,
         "parcel_number": null,
         "parcel_region": null,
         "parcel_cadastral_unit": null,
-        "raw_address_2": "20 B /1 i 2",
+        "raw_address_2": null,
         "same_as": null
       },
       "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0705047,
-      "original_longitude": 19.917929,
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0913309,
+      "original_longitude": 19.9442428,
       "manual_latitude": null,
       "manual_longitude": null,
       "selected_geocoding_result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "Juliusza Lea 20B Kraków",
-        "latitude": 50.0705047,
-        "longitude": 19.917929,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Józefa Mackiewicza Kraków",
+        "latitude": 50.0913309,
+        "longitude": 19.9442428,
+        "confidence": 0.05341270084687568,
+        "precision": "tertiary/road",
         "selected": true,
-        "created_at": "2026-08-03T23:52:25Z",
-        "updated_at": "2026-08-10T06:41:45Z"
+        "created_at": "2026-08-02T06:17:52Z",
+        "updated_at": "2026-08-02T06:17:52Z"
       },
       "manual_geocoding_result": null,
       "quality_signals": [
         "random_sample",
-        "random_sample_quality:exact"
+        "random_sample_quality:hard_to_tell"
       ],
       "note": null,
       "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T03:36:05Z",
-      "created_at": "2026-08-06T03:36:05Z",
-      "updated_at": "2026-08-06T03:36:05Z"
+      "reviewed_at": "2026-08-11T13:27:40Z",
+      "created_at": "2026-08-11T13:27:40Z",
+      "updated_at": "2026-08-11T13:27:40Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Józefa Mackiewicza",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0913309,
+      "original_longitude": 19.9442428,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Józefa Mackiewicza Kraków",
+        "latitude": 50.0913309,
+        "longitude": 19.9442428,
+        "confidence": 0.05341270084687568,
+        "precision": "tertiary/road",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:52Z",
+        "updated_at": "2026-08-02T06:17:52Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:36:02Z",
+      "created_at": "2026-08-11T13:36:02Z",
+      "updated_at": "2026-08-11T13:36:02Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Józefa Mackiewicza",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0913309,
+      "original_longitude": 19.9442428,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Józefa Mackiewicza Kraków",
+        "latitude": 50.0913309,
+        "longitude": 19.9442428,
+        "confidence": 0.05341270084687568,
+        "precision": "tertiary/road",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:52Z",
+        "updated_at": "2026-08-02T06:17:52Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:39:32Z",
+      "created_at": "2026-08-11T13:39:32Z",
+      "updated_at": "2026-08-11T13:39:32Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Józefa Mackiewicza",
+        "building_number": null,
+        "address_kind": "landmark",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": null,
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0913309,
+      "original_longitude": 19.9442428,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "nominatim",
+        "strategy": "street_fallback",
+        "query": "Józefa Mackiewicza Kraków",
+        "latitude": 50.0913309,
+        "longitude": 19.9442428,
+        "confidence": 0.05341270084687568,
+        "precision": "tertiary/road",
+        "selected": true,
+        "created_at": "2026-08-02T06:17:52Z",
+        "updated_at": "2026-08-02T06:17:52Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T14:01:30Z",
+      "created_at": "2026-08-11T14:01:30Z",
+      "updated_at": "2026-08-11T14:01:30Z"
     },
     {
       "transformed_location": {
@@ -49520,58 +48795,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Komuny Paryskiej",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15/3",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_250",
-      "review_status": "corrected",
-      "original_latitude": 50.0013008,
-      "original_longitude": 19.8948376,
-      "manual_latitude": 49.9988955,
-      "manual_longitude": 19.8947609,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Komuny Paryskiej 15 Kraków",
-        "latitude": 50.0013008,
-        "longitude": 19.8948376,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:54:30Z",
-        "updated_at": "2026-08-03T23:54:30Z"
-      },
-      "manual_geocoding_result": {
-        "source": "manual_review",
-        "strategy": "manual_pin",
-        "query": "osm | 49.9988955 | 19.8947609 | 2026-08-05T21:50:53Z",
-        "latitude": 49.9988955,
-        "longitude": 19.8947609,
-        "confidence": 1.0,
-        "precision": "manual/selected_candidate",
-        "selected": false,
-        "created_at": "2026-08-05T21:50:53Z",
-        "updated_at": "2026-08-05T21:50:53Z"
-      },
-      "quality_signals": [
-        "google_osm_distance_250"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T21:50:53Z",
-      "created_at": "2026-08-05T21:50:53Z",
-      "updated_at": "2026-08-05T21:50:53Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Osiedle Złota Podkowa",
         "building_number": "1",
         "address_kind": "street_address",
@@ -49611,48 +48834,6 @@
       "reviewed_at": "2026-08-06T00:33:47Z",
       "created_at": "2026-08-06T00:33:47Z",
       "updated_at": "2026-08-06T00:33:47Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Strzelców",
-        "building_number": "21",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "21/23",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0958948,
-      "original_longitude": 19.9729467,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Strzelców 21 Kraków",
-        "latitude": 50.0958948,
-        "longitude": 19.9729467,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:04:19Z",
-        "updated_at": "2026-08-04T00:04:19Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-05T22:50:23Z",
-      "created_at": "2026-08-05T22:50:23Z",
-      "updated_at": "2026-08-05T22:50:23Z"
     },
     {
       "transformed_location": {
@@ -49737,48 +48918,6 @@
       "reviewed_at": "2026-08-06T00:34:07Z",
       "created_at": "2026-08-06T00:34:07Z",
       "updated_at": "2026-08-06T00:34:07Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Kalwaryjska",
-        "building_number": "90",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "90/2",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.037876,
-      "original_longitude": 19.9408965,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Kalwaryjska 90 Kraków",
-        "latitude": 50.037876,
-        "longitude": 19.9408965,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:53:32Z",
-        "updated_at": "2026-08-03T23:53:32Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T03:42:39Z",
-      "created_at": "2026-08-06T03:42:39Z",
-      "updated_at": "2026-08-06T03:42:39Z"
     },
     {
       "transformed_location": {
@@ -49947,48 +49086,6 @@
       "reviewed_at": "2026-08-05T22:48:11Z",
       "created_at": "2026-08-05T22:48:11Z",
       "updated_at": "2026-08-05T22:48:11Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Lubostroń",
-        "building_number": "22G",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "22G lok. OU 8",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0179385,
-      "original_longitude": 19.8944341,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Lubostroń 22G Kraków",
-        "latitude": 50.0179385,
-        "longitude": 19.8944341,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:55:58Z",
-        "updated_at": "2026-08-03T23:55:58Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:59:25Z",
-      "created_at": "2026-08-06T00:59:25Z",
-      "updated_at": "2026-08-06T00:59:25Z"
     },
     {
       "transformed_location": {
@@ -50210,89 +49307,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Wodna",
-        "building_number": "24",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "24/L1",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0397315,
-      "original_longitude": 19.9744291,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Wodna 24 Kraków",
-        "latitude": 50.0397315,
-        "longitude": 19.9744291,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:06:23Z",
-        "updated_at": "2026-08-04T00:06:23Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:28:10Z",
-      "created_at": "2026-08-06T00:28:10Z",
-      "updated_at": "2026-08-06T00:28:10Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Szlak",
-        "building_number": "50",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "50 lok. A7",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_250",
-      "review_status": "verified",
-      "original_latitude": 50.0709448,
-      "original_longitude": 19.9442048,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Szlak 50 Kraków",
-        "latitude": 50.0709448,
-        "longitude": 19.9442048,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:04:43Z",
-        "updated_at": "2026-08-04T00:04:43Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_250"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T21:45:37Z",
-      "created_at": "2026-08-05T21:45:37Z",
-      "updated_at": "2026-08-05T21:45:37Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Osiedle Centrum D",
         "building_number": "2",
         "address_kind": "street_address",
@@ -50334,117 +49348,34 @@
     },
     {
       "transformed_location": {
-        "address_1": "Rakowicka",
+        "address_1": "Meiselsa",
         "building_number": "20",
         "address_kind": "street_address",
         "address_relation": null,
-        "unit_number": null,
+        "unit_number": "1",
         "parcel_number": null,
         "parcel_region": null,
         "parcel_cadastral_unit": null,
-        "raw_address_2": "20 lok L2",
+        "raw_address_2": "20 LOK. U1",
         "same_as": null
       },
       "signal_category": "random_sample",
       "review_status": "exact",
-      "original_latitude": 50.0690611,
-      "original_longitude": 19.9526997,
+      "original_latitude": null,
+      "original_longitude": null,
       "manual_latitude": null,
       "manual_longitude": null,
       "selected_geocoding_result": {
-        "source": "google",
+        "source": "krakow_msip",
         "strategy": "address_point",
-        "query": "Rakowicka 20 Kraków",
-        "latitude": 50.0690611,
-        "longitude": 19.9526997,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:02:06Z",
-        "updated_at": "2026-08-04T00:02:06Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:31:30Z",
-      "created_at": "2026-08-06T00:31:30Z",
-      "updated_at": "2026-08-06T00:31:30Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "dr. Jana Piltza",
-        "building_number": "64",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "64/6UA",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_500",
-      "review_status": "verified",
-      "original_latitude": 50.0146943,
-      "original_longitude": 19.8908374,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "dr. Jana Piltza 64 Kraków",
-        "latitude": 50.0146943,
-        "longitude": 19.8908374,
-        "confidence": 0.8,
-        "precision": "RANGE_INTERPOLATED/street_address",
+        "query": "Meiselsa 20 Kraków",
+        "latitude": 50.05135067321644,
+        "longitude": 19.94390353090937,
+        "confidence": null,
+        "precision": "address_point/msip_emuia",
         "selected": true,
-        "created_at": "2026-08-04T00:07:47Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_500"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T17:21:16Z",
-      "created_at": "2026-08-05T17:21:16Z",
-      "updated_at": "2026-08-05T17:21:16Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Andrzeja Frycza-Modrzewskiego",
-        "building_number": "2",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "2/11",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0868353,
-      "original_longitude": 19.9470421,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Andrzeja Frycza-Modrzewskiego 2 Kraków",
-        "latitude": 50.0868353,
-        "longitude": 19.9470421,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:46:51Z",
-        "updated_at": "2026-08-03T23:46:51Z"
+        "created_at": "2026-08-08T14:29:45Z",
+        "updated_at": "2026-08-08T21:37:22Z"
       },
       "manual_geocoding_result": null,
       "quality_signals": [
@@ -50453,9 +49384,51 @@
       ],
       "note": null,
       "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T04:58:44Z",
-      "created_at": "2026-08-06T04:58:44Z",
-      "updated_at": "2026-08-06T04:58:44Z"
+      "reviewed_at": "2026-08-11T13:33:32Z",
+      "created_at": "2026-08-11T13:33:32Z",
+      "updated_at": "2026-08-11T13:33:32Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Meiselsa",
+        "building_number": "20",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": "1",
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "20 LOK. U1",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "exact",
+      "original_latitude": 50.05135067321644,
+      "original_longitude": 19.94390353090937,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "krakow_msip",
+        "strategy": "address_point",
+        "query": "Meiselsa 20 Kraków",
+        "latitude": 50.05135067321644,
+        "longitude": 19.94390353090937,
+        "confidence": null,
+        "precision": "address_point/msip_emuia",
+        "selected": true,
+        "created_at": "2026-08-08T14:29:45Z",
+        "updated_at": "2026-08-08T21:37:22Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:exact"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T14:01:14Z",
+      "created_at": "2026-08-11T14:01:14Z",
+      "updated_at": "2026-08-11T14:01:14Z"
     },
     {
       "transformed_location": {
@@ -50542,47 +49515,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Bohdana Zaleskiego",
-        "building_number": "1",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "1/4",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_500",
-      "review_status": "verified",
-      "original_latitude": 50.0678619,
-      "original_longitude": 19.9599251,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Bohdana Zaleskiego 1 Kraków",
-        "latitude": 50.0678619,
-        "longitude": 19.9599251,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T19:53:28Z",
-        "updated_at": "2026-08-03T19:53:28Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_500"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-04T23:13:38Z",
-      "created_at": "2026-08-04T23:13:38Z",
-      "updated_at": "2026-08-04T23:13:38Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Jana Szwai",
         "building_number": "16",
         "address_kind": "street_address",
@@ -50664,48 +49596,6 @@
       "reviewed_at": "2026-08-06T05:59:32Z",
       "created_at": "2026-08-06T05:59:32Z",
       "updated_at": "2026-08-06T05:59:32Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Osiedle Złota Podkowa",
-        "building_number": "1",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "1/8",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0862068,
-      "original_longitude": 19.880076,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Osiedle Złota Podkowa 1 Kraków",
-        "latitude": 50.0862068,
-        "longitude": 19.880076,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:00:01Z",
-        "updated_at": "2026-08-04T00:00:01Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T04:59:40Z",
-      "created_at": "2026-08-06T04:59:40Z",
-      "updated_at": "2026-08-06T04:59:40Z"
     },
     {
       "transformed_location": {
@@ -51126,90 +50016,6 @@
       "reviewed_at": "2026-08-08T22:50:17Z",
       "created_at": "2026-08-08T22:50:17Z",
       "updated_at": "2026-08-08T22:50:17Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Grzegórzecka",
-        "building_number": "77A",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "77AlokU1",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0571144,
-      "original_longitude": 19.9650443,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Grzegórzecka 77A Kraków",
-        "latitude": 50.0571144,
-        "longitude": 19.9650443,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:51:26Z",
-        "updated_at": "2026-08-03T23:51:26Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-05T23:24:00Z",
-      "created_at": "2026-08-05T23:24:00Z",
-      "updated_at": "2026-08-05T23:24:00Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Grzegórzecka",
-        "building_number": "77A",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "77AlokU1",
-        "same_as": null
-      },
-      "signal_category": "random_sample_msip_regression",
-      "review_status": "area",
-      "original_latitude": 50.056660298909705,
-      "original_longitude": 19.96561785532082,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Grzegórzecka 77A Kraków",
-        "latitude": 50.056660298909705,
-        "longitude": 19.96561785532082,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-08T14:30:10Z",
-        "updated_at": "2026-08-08T21:37:22Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample_msip_regression",
-        "random_sample_msip_regression_quality:area"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-08T22:37:53Z",
-      "created_at": "2026-08-08T22:37:53Z",
-      "updated_at": "2026-08-08T22:37:53Z"
     },
     {
       "transformed_location": {
@@ -51923,48 +50729,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Stradomska",
-        "building_number": "19",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "3i",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "19 lok 3i 4",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0525092,
-      "original_longitude": 19.9404753,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Stradomska 19 Kraków",
-        "latitude": 50.0525092,
-        "longitude": 19.9404753,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:04:12Z",
-        "updated_at": "2026-08-04T00:04:12Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:59:40Z",
-      "created_at": "2026-08-06T00:59:40Z",
-      "updated_at": "2026-08-06T00:59:40Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Wielopole",
         "building_number": "32",
         "address_kind": "street_address",
@@ -52141,256 +50905,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Mazowiecka",
-        "building_number": "8",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "8/2",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0730187,
-      "original_longitude": 19.9302234,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Mazowiecka 8 Kraków",
-        "latitude": 50.0730187,
-        "longitude": 19.9302234,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:56:47Z",
-        "updated_at": "2026-08-03T23:56:47Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:21:53Z",
-      "created_at": "2026-08-06T00:21:53Z",
-      "updated_at": "2026-08-06T00:21:53Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Podgórska",
-        "building_number": "24",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "24/1009",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_1000",
-      "review_status": "verified",
-      "original_latitude": 50.04934859999999,
-      "original_longitude": 19.950233,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "Podgórska 24 Kraków",
-        "latitude": 50.04934859999999,
-        "longitude": 19.950233,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": true,
-        "created_at": "2026-08-04T00:01:07Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_1000"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-04T21:37:18Z",
-      "created_at": "2026-08-04T21:37:18Z",
-      "updated_at": "2026-08-04T21:37:18Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Aleja Zygmunta Krasińskiego",
-        "building_number": "19",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "19/7",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.05869029999999,
-      "original_longitude": 19.9261153,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Aleja Zygmunta Krasińskiego 19 Kraków",
-        "latitude": 50.05869029999999,
-        "longitude": 19.9261153,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:46:38Z",
-        "updated_at": "2026-08-03T23:46:38Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T05:27:39Z",
-      "created_at": "2026-08-06T05:27:39Z",
-      "updated_at": "2026-08-06T05:27:39Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Długa",
-        "building_number": "22",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "22/28",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.06780939999999,
-      "original_longitude": 19.9383645,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Długa 22 Kraków",
-        "latitude": 50.06780939999999,
-        "longitude": 19.9383645,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:49:51Z",
-        "updated_at": "2026-08-03T23:49:51Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T01:16:26Z",
-      "created_at": "2026-08-06T01:16:26Z",
-      "updated_at": "2026-08-06T01:16:26Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Dojazdowa",
-        "building_number": "3",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "3/1B",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0528928,
-      "original_longitude": 19.9213567,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Dojazdowa 3 Kraków",
-        "latitude": 50.0528928,
-        "longitude": 19.9213567,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:49:32Z",
-        "updated_at": "2026-08-03T23:49:32Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T03:15:21Z",
-      "created_at": "2026-08-06T03:15:21Z",
-      "updated_at": "2026-08-06T03:15:21Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Mazowiecka",
-        "building_number": "21",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "21/1",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_250",
-      "review_status": "verified",
-      "original_latitude": 50.0742589,
-      "original_longitude": 19.9283676,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Mazowiecka 21 Kraków",
-        "latitude": 50.0742589,
-        "longitude": 19.9283676,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:56:44Z",
-        "updated_at": "2026-08-03T23:56:44Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_250"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T21:41:21Z",
-      "created_at": "2026-08-05T21:41:21Z",
-      "updated_at": "2026-08-05T21:41:21Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Sławkowska",
         "building_number": "19",
         "address_kind": "street_address",
@@ -52430,173 +50944,6 @@
       "reviewed_at": "2026-08-05T23:10:35Z",
       "created_at": "2026-08-05T23:10:35Z",
       "updated_at": "2026-08-05T23:10:35Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Smoleńsk",
-        "building_number": "22",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "22/14",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0582771,
-      "original_longitude": 19.9268919,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Smoleńsk 22 Kraków",
-        "latitude": 50.0582771,
-        "longitude": 19.9268919,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:03:15Z",
-        "updated_at": "2026-08-04T00:03:15Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:28:42Z",
-      "created_at": "2026-08-06T00:28:42Z",
-      "updated_at": "2026-08-06T00:28:42Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Tuchowska",
-        "building_number": "2",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "2/1",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.01244519999999,
-      "original_longitude": 19.9674561,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Tuchowska 2 Kraków",
-        "latitude": 50.01244519999999,
-        "longitude": 19.9674561,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:05:27Z",
-        "updated_at": "2026-08-04T00:05:27Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:23:05Z",
-      "created_at": "2026-08-06T00:23:05Z",
-      "updated_at": "2026-08-06T00:23:05Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Pychowicka",
-        "building_number": "18",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "18/68",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_250",
-      "review_status": "verified",
-      "original_latitude": 50.03212260000001,
-      "original_longitude": 19.9164732,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Pychowicka 18 Kraków",
-        "latitude": 50.03212260000001,
-        "longitude": 19.9164732,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:01:49Z",
-        "updated_at": "2026-08-04T00:01:49Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_250"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T21:41:01Z",
-      "created_at": "2026-08-05T21:41:01Z",
-      "updated_at": "2026-08-05T21:41:01Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Ambrożego Grabowskiego",
-        "building_number": "6",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "6/2",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0670048,
-      "original_longitude": 19.9279296,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Ambrożego Grabowskiego 6 Kraków",
-        "latitude": 50.0670048,
-        "longitude": 19.9279296,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:46:51Z",
-        "updated_at": "2026-08-03T23:46:51Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T03:47:54Z",
-      "created_at": "2026-08-06T03:47:54Z",
-      "updated_at": "2026-08-06T03:47:54Z"
     },
     {
       "transformed_location": {
@@ -52723,48 +51070,6 @@
       "reviewed_at": "2026-08-08T22:50:14Z",
       "created_at": "2026-08-08T22:50:14Z",
       "updated_at": "2026-08-08T22:50:14Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "dr. Ludwika Zamenhofa",
-        "building_number": "4",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "4/2A",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0636161,
-      "original_longitude": 19.9457219,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "dr. Ludwika Zamenhofa 4 Kraków",
-        "latitude": 50.0636161,
-        "longitude": 19.9457219,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-04T00:07:50Z",
-        "updated_at": "2026-08-04T00:07:50Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T03:15:14Z",
-      "created_at": "2026-08-06T03:15:14Z",
-      "updated_at": "2026-08-06T03:15:14Z"
     },
     {
       "transformed_location": {
@@ -52977,48 +51282,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Józefa Dietla",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15/1",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.05036500000001,
-      "original_longitude": 19.9387705,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Józefa Dietla 15 Kraków",
-        "latitude": 50.05036500000001,
-        "longitude": 19.9387705,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:52:53Z",
-        "updated_at": "2026-08-03T23:52:53Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T01:00:52Z",
-      "created_at": "2026-08-06T01:00:52Z",
-      "updated_at": "2026-08-06T01:00:52Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Dolnych Młynów",
         "building_number": "10",
         "address_kind": "street_address",
@@ -53100,47 +51363,6 @@
       "reviewed_at": "2026-08-05T23:29:07Z",
       "created_at": "2026-08-05T23:29:07Z",
       "updated_at": "2026-08-05T23:29:07Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Halicka",
-        "building_number": "19",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "19/9",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_250",
-      "review_status": "unresolved",
-      "original_latitude": 50.0510934,
-      "original_longitude": 19.9530657,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Halicka 19 Kraków",
-        "latitude": 50.0510934,
-        "longitude": 19.9530657,
-        "confidence": 0.8,
-        "precision": "RANGE_INTERPOLATED/street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:51:31Z",
-        "updated_at": "2026-08-03T23:51:31Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_250"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T21:42:12Z",
-      "created_at": "2026-08-05T21:42:12Z",
-      "updated_at": "2026-08-05T21:42:12Z"
     },
     {
       "transformed_location": {
@@ -53770,90 +51992,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Aleja Ignacego Daszyńskiego",
-        "building_number": "13",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "13/36",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0577214,
-      "original_longitude": 19.9509479,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Aleja Ignacego Daszyńskiego 13 Kraków",
-        "latitude": 50.0577214,
-        "longitude": 19.9509479,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:46:15Z",
-        "updated_at": "2026-08-03T23:46:15Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:27:32Z",
-      "created_at": "2026-08-06T00:27:32Z",
-      "updated_at": "2026-08-06T00:27:32Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Kotlarska",
-        "building_number": "2",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "2/6 B",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0570167,
-      "original_longitude": 19.9595308,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Kotlarska 2 Kraków",
-        "latitude": 50.0570167,
-        "longitude": 19.9595308,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:54:39Z",
-        "updated_at": "2026-08-03T23:54:39Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-05T23:30:02Z",
-      "created_at": "2026-08-05T23:30:02Z",
-      "updated_at": "2026-08-05T23:30:02Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Plac Nowy",
         "building_number": "3",
         "address_kind": "street_address",
@@ -54268,6 +52406,90 @@
       "reviewed_at": "2026-08-06T05:32:32Z",
       "created_at": "2026-08-06T05:32:32Z",
       "updated_at": "2026-08-06T05:32:32Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Miodowa",
+        "building_number": "32",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": "3",
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "32 LOK. 3",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "exact",
+      "original_latitude": null,
+      "original_longitude": null,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "krakow_msip",
+        "strategy": "address_point",
+        "query": "Miodowa 32 Kraków",
+        "latitude": 50.05335556034614,
+        "longitude": 19.94667189043517,
+        "confidence": null,
+        "precision": "address_point/msip_emuia",
+        "selected": true,
+        "created_at": "2026-08-08T14:31:49Z",
+        "updated_at": "2026-08-08T21:37:24Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:exact"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:33:32Z",
+      "created_at": "2026-08-11T13:33:32Z",
+      "updated_at": "2026-08-11T13:33:32Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Miodowa",
+        "building_number": "32",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": "3",
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "32 LOK. 3",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "exact",
+      "original_latitude": 50.05335556034614,
+      "original_longitude": 19.94667189043517,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "krakow_msip",
+        "strategy": "address_point",
+        "query": "Miodowa 32 Kraków",
+        "latitude": 50.05335556034614,
+        "longitude": 19.94667189043517,
+        "confidence": null,
+        "precision": "address_point/msip_emuia",
+        "selected": true,
+        "created_at": "2026-08-08T14:31:49Z",
+        "updated_at": "2026-08-08T21:37:24Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:exact"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T14:01:10Z",
+      "created_at": "2026-08-11T14:01:10Z",
+      "updated_at": "2026-08-11T14:01:10Z"
     },
     {
       "transformed_location": {
@@ -54759,174 +52981,6 @@
       "reviewed_at": "2026-08-05T22:57:32Z",
       "created_at": "2026-08-05T22:57:32Z",
       "updated_at": "2026-08-05T22:57:32Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Sukiennicza",
-        "building_number": "8",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "C",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "8 lok. UC 1",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0510426,
-      "original_longitude": 19.9383381,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Sukiennicza 8 Kraków",
-        "latitude": 50.0510426,
-        "longitude": 19.9383381,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-04T00:04:24Z",
-        "updated_at": "2026-08-04T00:04:24Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T01:15:47Z",
-      "created_at": "2026-08-06T01:15:47Z",
-      "updated_at": "2026-08-06T01:15:47Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Basztowa",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "U",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15/rynek kleparski 4 lok U",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0663649,
-      "original_longitude": 19.9401267,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Basztowa 15 Kraków",
-        "latitude": 50.0663649,
-        "longitude": 19.9401267,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/street_address|subpremise",
-        "selected": false,
-        "created_at": "2026-08-03T23:47:21Z",
-        "updated_at": "2026-08-03T23:47:21Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-05T22:37:15Z",
-      "created_at": "2026-08-05T22:37:15Z",
-      "updated_at": "2026-08-05T22:37:15Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Nadwiślańska",
-        "building_number": "5",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "L",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "5 lok. L 2",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.0462995,
-      "original_longitude": 19.9497977,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Nadwiślańska 5 Kraków",
-        "latitude": 50.0462995,
-        "longitude": 19.9497977,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:58:10Z",
-        "updated_at": "2026-08-03T23:58:10Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T05:29:14Z",
-      "created_at": "2026-08-06T05:29:14Z",
-      "updated_at": "2026-08-06T05:29:14Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Karola Szymanowskiego",
-        "building_number": "15",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "L",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "15 lok. L 3 U",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.06662499999999,
-      "original_longitude": 19.9224234,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Karola Szymanowskiego 15 Kraków",
-        "latitude": 50.06662499999999,
-        "longitude": 19.9224234,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:53:58Z",
-        "updated_at": "2026-08-03T23:53:58Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-05T23:10:59Z",
-      "created_at": "2026-08-05T23:10:59Z",
-      "updated_at": "2026-08-05T23:10:59Z"
     },
     {
       "transformed_location": {
@@ -55901,47 +53955,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Bulwar Kurlandzki",
-        "building_number": null,
-        "address_kind": "parcel",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": "94",
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "dz. 94 obr. śrdódmieście",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_500",
-      "review_status": "verified",
-      "original_latitude": 50.04681557388398,
-      "original_longitude": 19.946528910257975,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "manual_geo_completion",
-        "strategy": "cadastral_parcel",
-        "query": "Bulwar Kurlandzki dz. 94 Kraków",
-        "latitude": 50.04681557388398,
-        "longitude": 19.946528910257975,
-        "confidence": 0.65,
-        "precision": "derived/exact_parcel/S-15",
-        "selected": true,
-        "created_at": "2026-08-02T08:33:56Z",
-        "updated_at": "2026-08-02T08:33:56Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_500"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T16:47:19Z",
-      "created_at": "2026-08-05T16:47:19Z",
-      "updated_at": "2026-08-05T16:47:19Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Bulwar Wołyński",
         "building_number": null,
         "address_kind": "parcel",
@@ -56453,48 +54466,6 @@
       "reviewed_at": "2026-08-06T01:00:20Z",
       "created_at": "2026-08-06T01:00:20Z",
       "updated_at": "2026-08-06T01:00:20Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Józefa",
-        "building_number": "6",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": "1",
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "6 LOK 1 P",
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "exact",
-      "original_latitude": 50.050552,
-      "original_longitude": 19.9433645,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "google",
-        "strategy": "address_point",
-        "query": "Józefa 6 Kraków",
-        "latitude": 50.050552,
-        "longitude": 19.9433645,
-        "confidence": 1.0,
-        "precision": "ROOFTOP/premise|street_address",
-        "selected": false,
-        "created_at": "2026-08-03T23:52:38Z",
-        "updated_at": "2026-08-03T23:52:38Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:exact"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-06T00:27:50Z",
-      "created_at": "2026-08-06T00:27:50Z",
-      "updated_at": "2026-08-06T00:27:50Z"
     },
     {
       "transformed_location": {
@@ -57163,47 +55134,6 @@
     },
     {
       "transformed_location": {
-        "address_1": "Białoruska",
-        "building_number": "1",
-        "address_kind": "street_address",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": "1 kiosk 39",
-        "same_as": null
-      },
-      "signal_category": "google_osm_distance_500",
-      "review_status": "verified",
-      "original_latitude": 50.0173964,
-      "original_longitude": 19.9761443,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "manual_review",
-        "strategy": "address_point",
-        "query": "Białoruska 1 Kraków",
-        "latitude": 50.0173964,
-        "longitude": 19.9761443,
-        "confidence": 0.8,
-        "precision": "RANGE_INTERPOLATED/street_address",
-        "selected": true,
-        "created_at": "2026-08-04T02:57:19Z",
-        "updated_at": "2026-08-10T06:41:45Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "google_osm_distance_500"
-      ],
-      "note": null,
-      "sim_circle_within_area": null,
-      "reviewed_at": "2026-08-05T17:22:46Z",
-      "created_at": "2026-08-05T17:22:46Z",
-      "updated_at": "2026-08-05T17:22:46Z"
-    },
-    {
-      "transformed_location": {
         "address_1": "Kawiory",
         "building_number": "8",
         "address_kind": "street_address",
@@ -57690,6 +55620,174 @@
       "reviewed_at": "2026-08-10T04:06:27Z",
       "created_at": "2026-08-10T04:06:27Z",
       "updated_at": "2026-08-10T04:06:27Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Aleja Adama Mickiewicza",
+        "building_number": null,
+        "address_kind": "parcel",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": "65/3",
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "dz. 65/3/Piłsudkiego",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.05613577058489,
+      "original_longitude": 19.917961257316716,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "uldk",
+        "strategy": "cadastral_parcel",
+        "query": "126102_9.0014.65/3",
+        "latitude": 50.05613577058489,
+        "longitude": 19.917961257316716,
+        "confidence": null,
+        "precision": "parcel/K-14",
+        "selected": true,
+        "created_at": "2026-08-09T03:12:41Z",
+        "updated_at": "2026-08-09T03:12:41Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T13:27:14Z",
+      "created_at": "2026-08-11T13:27:14Z",
+      "updated_at": "2026-08-11T13:27:14Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Aleja Adama Mickiewicza",
+        "building_number": null,
+        "address_kind": "parcel",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": "65/3",
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "dz. 65/3/Piłsudkiego",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.05613577058489,
+      "original_longitude": 19.917961257316716,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "uldk",
+        "strategy": "cadastral_parcel",
+        "query": "126102_9.0014.65/3",
+        "latitude": 50.05613577058489,
+        "longitude": 19.917961257316716,
+        "confidence": null,
+        "precision": "parcel/K-14",
+        "selected": true,
+        "created_at": "2026-08-09T03:12:41Z",
+        "updated_at": "2026-08-09T03:12:41Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T13:35:46Z",
+      "created_at": "2026-08-11T13:35:46Z",
+      "updated_at": "2026-08-11T13:35:46Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Aleja Adama Mickiewicza",
+        "building_number": null,
+        "address_kind": "parcel",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": "65/3",
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "dz. 65/3/Piłsudkiego",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.05613577058489,
+      "original_longitude": 19.917961257316716,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "uldk",
+        "strategy": "cadastral_parcel",
+        "query": "126102_9.0014.65/3",
+        "latitude": 50.05613577058489,
+        "longitude": 19.917961257316716,
+        "confidence": null,
+        "precision": "parcel/K-14",
+        "selected": true,
+        "created_at": "2026-08-09T03:12:41Z",
+        "updated_at": "2026-08-09T03:12:41Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T13:36:20Z",
+      "created_at": "2026-08-11T13:36:20Z",
+      "updated_at": "2026-08-11T13:36:20Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Aleja Adama Mickiewicza",
+        "building_number": null,
+        "address_kind": "parcel",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": "65/3",
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "dz. 65/3/Piłsudkiego",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.05613577058489,
+      "original_longitude": 19.917961257316716,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "uldk",
+        "strategy": "cadastral_parcel",
+        "query": "126102_9.0014.65/3",
+        "latitude": 50.05613577058489,
+        "longitude": 19.917961257316716,
+        "confidence": null,
+        "precision": "parcel/K-14",
+        "selected": true,
+        "created_at": "2026-08-09T03:12:41Z",
+        "updated_at": "2026-08-09T03:12:41Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T14:01:25Z",
+      "created_at": "2026-08-11T14:01:25Z",
+      "updated_at": "2026-08-11T14:01:25Z"
     },
     {
       "transformed_location": {
@@ -58400,6 +56498,130 @@
       "reviewed_at": "2026-08-10T04:04:02Z",
       "created_at": "2026-08-10T04:04:02Z",
       "updated_at": "2026-08-10T04:04:02Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Aleja 29 Listopada",
+        "building_number": null,
+        "address_kind": "parcel",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": "199|200",
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "dz. nr 199 i 200",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0991545,
+      "original_longitude": 19.9628152,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": null,
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T13:27:33Z",
+      "created_at": "2026-08-11T13:27:33Z",
+      "updated_at": "2026-08-11T13:27:33Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Aleja 29 Listopada",
+        "building_number": null,
+        "address_kind": "parcel",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": "199|200",
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "dz. nr 199 i 200",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0991545,
+      "original_longitude": 19.9628152,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": null,
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T13:35:58Z",
+      "created_at": "2026-08-11T13:35:58Z",
+      "updated_at": "2026-08-11T13:35:58Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Aleja 29 Listopada",
+        "building_number": null,
+        "address_kind": "parcel",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": "199|200",
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "dz. nr 199 i 200",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0991545,
+      "original_longitude": 19.9628152,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": null,
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T13:39:29Z",
+      "created_at": "2026-08-11T13:39:29Z",
+      "updated_at": "2026-08-11T13:39:29Z"
+    },
+    {
+      "transformed_location": {
+        "address_1": "Aleja 29 Listopada",
+        "building_number": null,
+        "address_kind": "parcel",
+        "address_relation": null,
+        "unit_number": null,
+        "parcel_number": "199|200",
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "dz. nr 199 i 200",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "hard_to_tell",
+      "original_latitude": 50.0991545,
+      "original_longitude": 19.9628152,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": null,
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:hard_to_tell"
+      ],
+      "note": null,
+      "sim_circle_within_area": false,
+      "reviewed_at": "2026-08-11T14:01:28Z",
+      "created_at": "2026-08-11T14:01:28Z",
+      "updated_at": "2026-08-11T14:01:28Z"
     },
     {
       "transformed_location": {
@@ -59857,6 +58079,48 @@
     },
     {
       "transformed_location": {
+        "address_1": "dr. Ludwika Zamenhofa",
+        "building_number": "4",
+        "address_kind": "street_address",
+        "address_relation": null,
+        "unit_number": "2A",
+        "parcel_number": null,
+        "parcel_region": null,
+        "parcel_cadastral_unit": null,
+        "raw_address_2": "4/2A",
+        "same_as": null
+      },
+      "signal_category": "random_sample",
+      "review_status": "exact",
+      "original_latitude": 50.06350845667586,
+      "original_longitude": 19.945745335258326,
+      "manual_latitude": null,
+      "manual_longitude": null,
+      "selected_geocoding_result": {
+        "source": "krakow_msip",
+        "strategy": "address_point",
+        "query": "dr. Ludwika Zamenhofa 4 Kraków",
+        "latitude": 50.06350845667586,
+        "longitude": 19.945745335258326,
+        "confidence": null,
+        "precision": "address_point/msip_emuia",
+        "selected": true,
+        "created_at": "2026-08-09T00:11:13Z",
+        "updated_at": "2026-08-09T00:11:13Z"
+      },
+      "manual_geocoding_result": null,
+      "quality_signals": [
+        "random_sample",
+        "random_sample_quality:exact"
+      ],
+      "note": null,
+      "sim_circle_within_area": true,
+      "reviewed_at": "2026-08-11T13:35:14Z",
+      "created_at": "2026-08-11T13:35:14Z",
+      "updated_at": "2026-08-11T13:35:14Z"
+    },
+    {
+      "transformed_location": {
         "address_1": "Plac Bawół",
         "building_number": "6",
         "address_kind": "street_address",
@@ -60905,245 +59169,6 @@
       "reviewed_at": "2026-08-09T03:50:27Z",
       "created_at": "2026-08-09T03:50:27Z",
       "updated_at": "2026-08-09T03:50:27Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Meiselsa",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": null,
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "hard_to_tell",
-      "original_latitude": 50.05135067321644,
-      "original_longitude": 19.94390353090937,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Meiselsa 20 Kraków",
-        "latitude": 50.05135067321644,
-        "longitude": 19.94390353090937,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-09T00:18:51Z",
-        "updated_at": "2026-08-09T00:18:51Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:hard_to_tell"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-09T03:55:37Z",
-      "created_at": "2026-08-09T03:55:37Z",
-      "updated_at": "2026-08-09T03:55:37Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Meiselsa",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": null,
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "hard_to_tell",
-      "original_latitude": 50.05135067321644,
-      "original_longitude": 19.94390353090937,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Meiselsa 20 Kraków",
-        "latitude": 50.05135067321644,
-        "longitude": 19.94390353090937,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-09T00:18:51Z",
-        "updated_at": "2026-08-09T00:18:51Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:hard_to_tell"
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-10T03:28:57Z",
-      "created_at": "2026-08-10T03:28:57Z",
-      "updated_at": "2026-08-10T03:28:57Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Miodowa",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": null,
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "hard_to_tell",
-      "original_latitude": 50.05335556034614,
-      "original_longitude": 19.94667189043517,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Miodowa 32 Kraków",
-        "latitude": 50.05335556034614,
-        "longitude": 19.94667189043517,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-09T00:18:51Z",
-        "updated_at": "2026-08-09T00:18:51Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:hard_to_tell"
-      ],
-      "note": null,
-      "sim_circle_within_area": false,
-      "reviewed_at": "2026-08-09T04:00:58Z",
-      "created_at": "2026-08-09T04:00:58Z",
-      "updated_at": "2026-08-09T04:00:58Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Miodowa",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": null,
-        "same_as": null
-      },
-      "signal_category": "random_sample",
-      "review_status": "hard_to_tell",
-      "original_latitude": 50.05335556034614,
-      "original_longitude": 19.94667189043517,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Miodowa 32 Kraków",
-        "latitude": 50.05335556034614,
-        "longitude": 19.94667189043517,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-09T00:18:51Z",
-        "updated_at": "2026-08-09T00:18:51Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "random_sample",
-        "random_sample_quality:hard_to_tell"
-      ],
-      "note": null,
-      "sim_circle_within_area": false,
-      "reviewed_at": "2026-08-10T03:43:12Z",
-      "created_at": "2026-08-10T03:43:12Z",
-      "updated_at": "2026-08-10T03:43:12Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Miodowa",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": null,
-        "same_as": null
-      },
-      "signal_category": "sim_area_ambiguous",
-      "review_status": "unresolved",
-      "original_latitude": 50.05335556034614,
-      "original_longitude": 19.94667189043517,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": {
-        "source": "krakow_msip",
-        "strategy": "address_point",
-        "query": "Miodowa 32 Kraków",
-        "latitude": 50.05335556034614,
-        "longitude": 19.94667189043517,
-        "confidence": null,
-        "precision": "address_point/msip_emuia",
-        "selected": true,
-        "created_at": "2026-08-09T00:18:51Z",
-        "updated_at": "2026-08-09T00:18:51Z"
-      },
-      "manual_geocoding_result": null,
-      "quality_signals": [
-        "sim_area_ambiguous"
-      ],
-      "note": null,
-      "sim_circle_within_area": false,
-      "reviewed_at": "2026-08-10T03:53:25Z",
-      "created_at": "2026-08-10T03:53:25Z",
-      "updated_at": "2026-08-10T03:53:25Z"
-    },
-    {
-      "transformed_location": {
-        "address_1": "Miodowa",
-        "building_number": null,
-        "address_kind": "landmark",
-        "address_relation": null,
-        "unit_number": null,
-        "parcel_number": null,
-        "parcel_region": null,
-        "parcel_cadastral_unit": null,
-        "raw_address_2": null,
-        "same_as": null
-      },
-      "signal_category": "sim_area_ambiguous",
-      "review_status": "verified",
-      "original_latitude": null,
-      "original_longitude": null,
-      "manual_latitude": null,
-      "manual_longitude": null,
-      "selected_geocoding_result": null,
-      "manual_geocoding_result": null,
-      "quality_signals": [
-
-      ],
-      "note": null,
-      "sim_circle_within_area": true,
-      "reviewed_at": "2026-08-10T04:07:44Z",
-      "created_at": "2026-08-10T04:07:44Z",
-      "updated_at": "2026-08-10T04:07:44Z"
     },
     {
       "transformed_location": {

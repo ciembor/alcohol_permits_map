@@ -176,7 +176,7 @@ module DatasetExport
       district_code = row.fetch('district_code')
       sim_unit_code = row.fetch('sim_unit_code')
       keys << [reported_at, 'district', district_code] if district_code.present?
-      keys << [reported_at, 'sim', sim_unit_code] if sim_unit_code.present?
+      keys << [reported_at, 'sim_unit', sim_unit_code] if sim_unit_code.present?
       keys
     end
 
@@ -211,7 +211,7 @@ module DatasetExport
         sim_code = row.fetch('sim_unit_code')
         district_code = row.fetch('district_code')
 
-        metrics[[observed_on, 'sim', sim_code]] = {
+        metrics[[observed_on, 'sim_unit', sim_code]] = {
           observed_on: observed_on,
           population_total: total
         }
@@ -260,7 +260,7 @@ module DatasetExport
 
     def sim_area(unit)
       {
-        area_type: 'sim',
+        area_type: 'sim_unit',
         area_code: unit.fetch(:code),
         area_name: unit.fetch(:name),
         district_code: unit.fetch(:district_code),

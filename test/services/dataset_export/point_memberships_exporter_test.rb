@@ -21,6 +21,7 @@ class DatasetExport::PointMembershipsExporterTest < ActiveSupport::TestCase
 
       csv = CSV.read(path, headers: true, encoding: 'UTF-8')
       assert_equal DatasetExport::MembershipRows::COLUMNS, csv.headers
+      assert_empty csv.headers.grep(/\Ainternal_/)
       assert_equal %w[fallback_business_location license_point_group not_geocoded], csv.map { |row| row.fetch('membership_method') }.uniq.sort
       assert_equal 4, csv.map { |row| row.fetch('license_id') }.uniq.size
       assert_equal 1, csv.count { |row| row.fetch('membership_method') == 'not_geocoded' && row.fetch('point_id').blank? }
@@ -40,7 +41,6 @@ class DatasetExport::PointMembershipsExporterTest < ActiveSupport::TestCase
         assert_equal license_row.fetch('point_id'), membership.fetch('point_id')
       end
       assert_equal license_row.fetch('report_id'), membership.fetch('report_id')
-      assert_equal license_row.fetch('internal_license_id').to_s, membership.fetch('internal_license_id').to_s
     end
   end
 

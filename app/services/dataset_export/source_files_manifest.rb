@@ -68,7 +68,7 @@ module DatasetExport
           source_origin: 'historical_spreadsheet_public_information_request',
           row_count_extracted: nil,
           row_count_imported: nil,
-          notes: 'source_row_number not stored in current alcohol_licenses schema'
+          notes: 'source file is linked at report/category level; source row numbers are not part of the public release'
         ))
       end
     end

@@ -153,6 +153,14 @@ krakow-alcohol-licenses-2010-2026-v1.0.0/
   - [x] `notes`.
 - [x] Sprawdzic, czy import CSV/PDF pozwala odtworzyc `source_row_number`.
 - [x] Sprawdzic, czy import XLS/XLSX pozwala odtworzyc `source_row_number`.
+- [x] Ustalic i zaimplementowac regule wyboru zrodel dla importu publikacyjnego:
+  - [x] do ostatniego arkusza importowac XLS/XLSX jako jedyne zrodlo rekordow licencji;
+  - [x] ostatni arkusz XLS/XLSX = `2021-04-15`;
+  - [x] PDF/CSV importowac dopiero po 7-dniowej karencji od ostatniego XLS/XLSX;
+  - [x] pierwszy importowany PDF/CSV po karencji = `2021-12-30`;
+  - [x] pominac PDF/CSV `2021-04-16`, bo roznica od ostatniego XLSX wynosi 1 dzien;
+  - [x] wynik po regule: `336` plikow XLS/XLSX + `48` plikow PDF/CSV;
+  - [x] wynik po regule: `64` daty raportow, zgodnie ze stanem referencyjnym.
 - [ ] Jesli nie, dodac migracje albo pomocnicza tabele `license_source_records`.
 - [ ] Dodac zadanie naprawcze przypisujace istniejacym rekordom `source_file_id` i `source_row_number`, jesli da sie to zrobic deterministycznie.
 - [ ] Jesli nie da sie przypisac w 100%, opisac ograniczenie w `README.md` i `CODEBOOK.md`.
@@ -853,3 +861,372 @@ app/services/dataset_export/exporters/aggregates_exporter.rb
 - [ ] Czy GeoPackage ma byc wymaganym artefaktem, czy opcjonalnym formatem pochodnym.
 - [ ] Czy Parquet ma byc wymaganym artefaktem, czy opcjonalnym formatem pochodnym.
 - [ ] Czy stare `transformed_locations.csv` usunac, czy zastapic eksportem generowanym przez `dataset:export`.
+## 24. Przebudowa paperu pod Scientific Data
+
+Cel: przerobic obecna `paper/praca.md` z narracyjnego opisu projektu na klasyczny `Scientific Data Data Descriptor`, zgodny ze wzorcem z przeanalizowanych 15 najnowszych publikacji `Scientific Data` oraz z ustaleniami zapisanymi w `wnioski.md`.
+
+### 24.1. Zamrozenie stanu danych do opisania
+
+- [ ] Wygenerowac finalny release datasetu jedna komenda:
+  - [ ] `bin/rails dataset:release`;
+  - [ ] `bin/rails dataset:prepare_publication_repo`;
+  - [ ] potwierdzic, ze repo publikacyjne jest w `../krakow-alcohol-licenses`.
+- [ ] Spisac finalne wartosci do paperu z wygenerowanego release:
+  - [ ] liczba raportow;
+  - [ ] zakres dat raportow;
+  - [ ] liczba rekordow `alcohol_licenses.csv`;
+  - [ ] liczba punktow w `license_points.csv`;
+  - [ ] liczba punktow w ostatnim raporcie;
+  - [ ] liczba `locations_raw.csv`;
+  - [ ] liczba `locations_normalized.csv`;
+  - [ ] liczba `address_corrections.csv`;
+  - [ ] liczba `geocoding_results.csv`;
+  - [ ] liczba `geocoding_reviews.csv`;
+  - [ ] liczba agregatow city/district/SIM;
+  - [ ] liczba plikow w paczce i checksumy.
+- [ ] Spisac finalne wyniki walidacji:
+  - [ ] wynik `dataset:validate`;
+  - [ ] brak `internal_*` w publicznych CSV;
+  - [ ] brak Google/raw provider responses w publicznym eksporcie;
+  - [ ] brak duplikatow `point_id`;
+  - [ ] spojnosc `license_id -> point_id -> point_memberships`;
+  - [ ] wynik proby losowej geokodowania `357`;
+  - [ ] liczba `exact`, `nearest_area`, `area`, `far`, `very_far`, `hard_to_tell`;
+  - [ ] status SIM circle validation.
+- [ ] Zdecydowac, czy przed submission domykamy pozostale `hard_to_tell`, czy opisujemy je jako nierozstrzygniete:
+  - [ ] jesli domykamy, zaktualizowac review, snapshot, release i liczby;
+  - [ ] jesli nie domykamy, opisac je jawnie jako konserwatywna klase nierozstrzygnieta.
+
+### 24.2. Docelowa struktura paperu
+
+- [ ] Zmienic strukture `paper/praca.md` na uklad typowy dla `Scientific Data`:
+  - [ ] `Title`;
+  - [ ] `Abstract`;
+  - [ ] `Background & Summary`;
+  - [ ] `Methods`;
+  - [ ] `Data Records`;
+  - [ ] `Technical Validation`;
+  - [ ] `Usage Notes`;
+  - [ ] `Data availability`;
+  - [ ] `Code availability`;
+  - [ ] `Acknowledgements`;
+  - [ ] `Author contributions`;
+  - [ ] `Competing interests`;
+  - [ ] `References`.
+- [ ] Przeniesc obecne sekcje do nowej struktury:
+  - [ ] obecne `Wprowadzenie` -> `Background & Summary`;
+  - [ ] obecne `Zakres i zrodla danych` -> `Methods / Source acquisition` oraz `Data Records`;
+  - [ ] obecne `Ekstrakcja i import danych` -> `Methods / PDF/XLSX extraction and import`;
+  - [ ] obecne `Jakosc danych`, `Normalizacja danych`, `Korekty danych wejsciowych` -> `Methods / Address normalization and curation` plus czesc do `Technical Validation`;
+  - [ ] obecne `Geokodowanie` -> `Methods / Geocoding and source priority`;
+  - [ ] obecne `Kontrola robocza geokodowania` i `Ocena jakosci geokodowania` -> `Technical Validation`;
+  - [ ] obecne `Grupowanie punktow sprzedazy` -> `Methods / Sales-point grouping` plus walidacja do `Technical Validation`;
+  - [ ] obecne `Wyniki podstawowe` -> skrocic i przeniesc do `Background & Summary`, `Data Records` albo `Usage Notes`;
+  - [ ] obecne `Ograniczenia` -> rozdzielic miedzy `Technical Validation` i `Usage Notes`;
+  - [ ] obecne `Zastosowania zbioru danych` -> `Usage Notes`;
+  - [ ] obecne `Reprodukowalnosc` -> `Data Records`, `Technical Validation`, `Code availability`.
+- [ ] Usunac lub skrocic elementy zbyt narracyjne:
+  - [ ] pojedyncze anegdotyczne przypadki lokali/adresow zostawic tylko wtedy, gdy ilustruja ograniczenie walidacyjne;
+  - [ ] nie robic z paperu analizy trendow miejskich;
+  - [ ] nie eksponowac wynikow jako glownej tezy badawczej, tylko jako charakterystyke datasetu.
+
+### 24.3. Title i Abstract
+
+- [ ] Przerobic tytul na datasetowy, np. roboczo:
+  - [ ] `A geocoded longitudinal dataset of alcohol-sale licences and sales points in Kraków, Poland, 2010-2026`.
+- [ ] Abstract ma w pierwszych zdaniach odpowiedziec na pytania typowe dla `Scientific Data`:
+  - [ ] co to za dataset;
+  - [ ] jaki ma zakres czasowy i przestrzenny;
+  - [ ] z jakich zrodel powstal;
+  - [ ] jakie jednostki danych publikuje: licencje, lokalizacje, punkty, agregaty;
+  - [ ] jak zostal zwalidowany;
+  - [ ] gdzie jest dostepny: Zenodo DOI;
+  - [ ] gdzie jest kod: GitHub release/tag.
+- [ ] Abstract powinien zawierac finalne liczby:
+  - [ ] zakres dat;
+  - [ ] liczba raportow;
+  - [ ] liczba rekordow licencji;
+  - [ ] liczba punktow/lokalizacji;
+  - [ ] liczba jednostek SIM / agregatow;
+  - [ ] glowny wynik walidacji geokodowania.
+
+### 24.4. Background & Summary
+
+- [ ] Skrocic motywacje do 3-5 akapitow:
+  - [ ] dlaczego zezwolenia alkoholowe sa waznym zrodlem administracyjnym;
+  - [ ] dlaczego potrzebne jest geokodowanie i grupowanie punktow;
+  - [ ] dlaczego Krakow/SIM jest dobrym przypadkiem;
+  - [ ] jakie luki wypelnia dataset.
+- [ ] Jasno napisac, ze dataset nie jest oficjalnym rejestrem lokali:
+  - [ ] licencja != punkt sprzedazy;
+  - [ ] punkt sprzedazy = jednostka analityczna;
+  - [ ] nazwy podmiotow nie sa szyldami lokali.
+- [ ] Zostawic tylko minimalne statystyki zakresu, bez rozbudowanej analizy wynikowej.
+
+### 24.5. Methods
+
+- [ ] `Source acquisition`:
+  - [ ] opisac zrodla BIP i arkusze XLSX/XLS;
+  - [ ] opisac crawler PDF i generowanie CSV z PDF;
+  - [ ] jasno opisac regule `XLSX-first, PDF-only-after-last-XLSX`;
+  - [ ] opisac regule pomijania PDF po ostatnim XLSX, jesli roznica jest mniejsza niz tydzien;
+  - [ ] wskazac, gdzie jest manifest zrodel.
+- [ ] `PDF/XLSX extraction and import`:
+  - [ ] opisac konwersje PDF do CSV;
+  - [ ] opisac walidacje ekstrakcji PDF;
+  - [ ] opisac, jakie artefakty PDF sa naprawialne normalizacja, a jakie sa ryzykiem ekstrakcji;
+  - [ ] opisac deduplikacje raportow i priorytet zrodel.
+- [ ] `Address normalization and curation`:
+  - [ ] opisac transformacje `Location -> TransformedLocation`;
+  - [ ] opisac korekty reczne z `db/curation/current.json`;
+  - [ ] opisac automatyczne inferencje korekt jako oddzielne od korekt recznych;
+  - [ ] opisac usuniecie osieroconych `transformed_locations` jako czyszczenie stanu publikacyjnego;
+  - [ ] opisac, ze snapshot kuratorski jest czescia reprodukowalnosci.
+- [ ] `Geocoding and source priority`:
+  - [ ] opisac MSIP, GUS/TERYT, ULDK, OSM/Nominatim;
+  - [ ] opisac Google jako opcjonalne quality-control, nie jako publikowane dane;
+  - [ ] opisac wybor `selected_geocoding_result`;
+  - [ ] opisac klasy precyzji geokodowania.
+- [ ] `Sales-point grouping`:
+  - [ ] opisac roznice miedzy licencjami a punktami;
+  - [ ] opisac stabilne `point_id` bez wewnetrznych ID bazy;
+  - [ ] opisac `point_memberships.csv` jako tabele relacyjna;
+  - [ ] opisac fallback points dla geokodowanych licencji bez utrwalonej grupy.
+- [ ] `SIM/population linkage`:
+  - [ ] opisac przypisanie punktow do SIM point-in-polygon;
+  - [ ] opisac populacje SIM jako najnowszy snapshot nie pozniejszy niz raport;
+  - [ ] opisac agregaty city/district/SIM i roznice w liczeniu licencji.
+
+### 24.6. Data Records
+
+- [ ] Dodac centralna sekcje `Data Records`, zgodna ze wzorcem z przykladow `Scientific Data`.
+- [ ] W pierwszym akapicie wskazac:
+  - [ ] Zenodo DOI;
+  - [ ] wersje datasetu;
+  - [ ] nazwe archiwum ZIP;
+  - [ ] licencje danych;
+  - [ ] checksumy.
+- [ ] Dodac tabele `Package contents`:
+  - [ ] `data/tables/reports.csv`;
+  - [ ] `data/tables/alcohol_licenses.csv`;
+  - [ ] `data/tables/license_points.csv`;
+  - [ ] `data/tables/point_memberships.csv`;
+  - [ ] `data/tables/locations_raw.csv`;
+  - [ ] `data/tables/locations_normalized.csv`;
+  - [ ] `data/tables/sim_populations.csv`;
+  - [ ] `data/geospatial/license_points_latest.geojson`;
+  - [ ] `data/geospatial/sim_units.geojson`;
+  - [ ] `data/aggregates/city_summary_by_report.csv`;
+  - [ ] `data/aggregates/district_summary_by_report.csv`;
+  - [ ] `data/aggregates/sim_summary_by_report.csv`;
+  - [ ] `data/tables/source_files_manifest.csv`;
+  - [ ] `data/tables/address_corrections.csv`;
+  - [ ] `data/tables/geocoding_results.csv`;
+  - [ ] `data/tables/geocoding_reviews.csv`;
+  - [ ] `README.md`, `CODEBOOK.md`, `CITATION.cff`, `metadata/datacite.json`, `checksums.txt`, validation reports.
+- [ ] Dla kazdego pliku w tabeli podac:
+  - [ ] warstwe danych: `core`, `provenance/audit`, `metadata`, `geospatial`, `aggregate`;
+  - [ ] format;
+  - [ ] liczbe wierszy;
+  - [ ] klucz glowny;
+  - [ ] glowne klucze obce;
+  - [ ] jednozdaniowe zastosowanie.
+- [ ] Dodac diagram albo opis relacji:
+  - [ ] `reports.report_id -> alcohol_licenses.report_id`;
+  - [ ] `alcohol_licenses.license_id -> point_memberships.license_id`;
+  - [ ] `license_points.point_id -> point_memberships.point_id`;
+  - [ ] `locations_raw.raw_location_id -> alcohol_licenses.raw_location_id`;
+  - [ ] `locations_normalized.normalized_location_id -> alcohol_licenses.normalized_location_id`;
+  - [ ] `geocoding_results.geocoding_result_id -> locations_normalized.selected_geocoding_result_id`;
+  - [ ] `sim_unit_code` i `district_code` jako klucze przestrzenne.
+- [ ] Wyjasnic warstwy danych:
+  - [ ] `raw` = zrodla i adresy z wykazow;
+  - [ ] `extracted` = CSV z PDF / import XLSX;
+  - [ ] `normalized` = przetworzone adresy;
+  - [ ] `geocoded` = publiczne wyniki geokodowania bez Google;
+  - [ ] `curated` = korekty i review;
+  - [ ] `derived` = punkty i agregaty.
+- [ ] Jasno napisac, ktore pliki sa kanoniczne dla uzytkownika:
+  - [ ] podstawowy poziom licencji: `alcohol_licenses.csv`;
+  - [ ] podstawowy poziom przestrzenny: `license_points.csv` i `license_points_latest.geojson`;
+  - [ ] odtwarzanie decyzji: provenance/audit tables.
+
+### 24.7. Technical Validation
+
+- [ ] Zbudowac sekcje walidacji jako kilka niezaleznych kontroli, zgodnie z przykladami `Scientific Data`.
+- [ ] `Source completeness and duplicate handling`:
+  - [ ] pokazac liczbe raportow i kryteria wyboru XLSX/PDF;
+  - [ ] opisac brak dublowania PDF z okresu XLSX;
+  - [ ] opisac regule tygodniowa po ostatnim XLSX;
+  - [ ] opisac manifest zrodel jako audyt kompletności.
+- [ ] `PDF extraction validation`:
+  - [ ] opisac konwerter PDF->CSV;
+  - [ ] opisac kontrole liczby wierszy i struktury kolumn;
+  - [ ] opisac ograniczenia ekstrakcji, w tym mieszanie tekstu z sasiednich wierszy;
+  - [ ] wskazac, ze najgorsze artefakty sa traktowane jako ryzyko zrodla, nie jako bezpieczna normalizacja whitespace.
+- [ ] `Address normalization validation`:
+  - [ ] opisac porownanie oryginalnej bazy i swiezo odtworzonego klonu;
+  - [ ] opisac 8 roznic uznanych za poprawy;
+  - [ ] opisac usuniecie osieroconych `transformed_locations`;
+  - [ ] opisac aktualny stan `Location -> TransformedLocation`.
+- [ ] `Geocoding quality sample`:
+  - [ ] opisac dobor proby `357`;
+  - [ ] podac finalne rozklady statusow;
+  - [ ] osobno raportowac `hard_to_tell` jako nierozstrzygniete, nie pozytywne;
+  - [ ] podac konserwatywny odsetek akceptowalnych geokodowan;
+  - [ ] opisac wplyw aktualizacji `Meiselsa` i `Miodowa`.
+- [ ] `SIM assignment validation`:
+  - [ ] opisac test `sim_circle_within_area`;
+  - [ ] podac liczbe potwierdzonych i nierozstrzygnietych przypadkow;
+  - [ ] opisac przypadki parcel/ambiguous.
+- [ ] `Sales-point grouping validation`:
+  - [ ] opisac walidacje liczby punktow vs licencji;
+  - [ ] opisac audyt grupowania;
+  - [ ] wskazac, ze `point_id` nie zalezy od ID bazy i nie ma duplikatow w release;
+  - [ ] opisac role `point_memberships.csv` jako kontroli relacji.
+- [ ] `Export/package validation`:
+  - [ ] opisac `dataset:validate`;
+  - [ ] opisac kontrole UTF-8, dat ISO, koordynatow, JSON fields, local absolute paths;
+  - [ ] opisac kontrole braku `internal_*`;
+  - [ ] opisac checksumy i manifest;
+  - [ ] opisac test importu w Python/R/QGIS, jesli wykonany.
+
+### 24.8. Usage Notes
+
+- [ ] Dodac sekcje `Usage Notes`, ktora nie sprzedaje funkcji, tylko prowadzi naukowca po danych.
+- [ ] Opisac rekomendowane wejscia:
+  - [ ] analiza licencji administracyjnych: `alcohol_licenses.csv`;
+  - [ ] analiza przestrzenna punktow: `license_points.csv`;
+  - [ ] szybka mapa najnowszego raportu: `license_points_latest.geojson`;
+  - [ ] agregaty czasowo-przestrzenne: `data/aggregates/*.csv`;
+  - [ ] audyt pochodzenia: provenance tables.
+- [ ] Dodac minimalny przyklad uzycia w Pythonie:
+  - [ ] `pandas.read_csv` dla licencji;
+  - [ ] `geopandas.read_file` dla GeoJSON;
+  - [ ] join po `point_id` albo `sim_unit_code`.
+- [ ] Dodac minimalny przyklad uzycia w R:
+  - [ ] `readr::read_csv`;
+  - [ ] `sf::st_read`;
+  - [ ] przyklad agregacji po SIM/dzielnicy.
+- [ ] Dodac uwagi interpretacyjne:
+  - [ ] nie sumowac bezrefleksyjnie licencji jako lokali;
+  - [ ] nie traktowac punktow jako oficjalnych szyldow;
+  - [ ] `business_key` jest pseudonimem/hash, nie anonimizacja absolutna;
+  - [ ] punkty przy granicach SIM moga wymagac ostroznosci;
+  - [ ] Google nie jest publikowanym zrodlem wspolrzednych.
+
+### 24.9. Data availability i Code availability
+
+- [ ] `Data availability`:
+  - [ ] wskazac finalny Zenodo DOI;
+  - [ ] wskazac wersje datasetu;
+  - [ ] wskazac nazwe archiwum;
+  - [ ] wskazac licencje danych;
+  - [ ] opisac, czy raw PDF/XLSX sa w paczce, czy sa odtwarzane przez crawler/manifest;
+  - [ ] wskazac, ze Google/raw responses nie sa publikowane.
+- [ ] `Code availability`:
+  - [ ] wskazac GitHub repo;
+  - [ ] wskazac tag/release albo commit SHA;
+  - [ ] wskazac taski odtworzeniowe;
+  - [ ] wskazac wersje Ruby/Rails i zaleznosci kluczowe;
+  - [ ] wskazac, ze snapshot kuratorski jest w `db/curation/current.json`.
+- [ ] Usunac stare zdanie, ze dataset i kod sa materialami wewnetrznymi projektu.
+
+### 24.10. Licencje, atrybucje, etyka i ograniczenia
+
+- [ ] Oddzielic licencje danych od licencji kodu:
+  - [ ] dane: CC BY 4.0, jesli finalnie utrzymujemy te decyzje;
+  - [ ] kod: licencja repozytorium, jawnie wskazana.
+- [ ] Dodac atrybucje zrodel:
+  - [ ] Municipality of Krakow / BIP;
+  - [ ] MSIP Obserwatorium;
+  - [ ] ULDK/GUGiK, jesli dotyczy;
+  - [ ] OpenStreetMap/Nominatim, jesli dotyczy.
+- [ ] Opisac niepublikowanie nazw podmiotow domyslnie:
+  - [ ] mozliwa obecnosc jednoosobowych dzialalnosci;
+  - [ ] publikacja `business_key` zamiast nazw;
+  - [ ] opcjonalna warstwa z nazwami tylko poza domyslnym release i po audycie.
+- [ ] Opisac ograniczenia:
+  - [ ] jakosc PDF;
+  - [ ] adresy opisowe/landmarki/parcele;
+  - [ ] niejednoznaczne lokale narozne;
+  - [ ] roznica miedzy licencja, lokalizacja i punktem;
+  - [ ] ograniczenia danych meldunkowych SIM;
+  - [ ] brak terenowej weryfikacji szyldow.
+
+### 24.11. Figury i tabele do paperu
+
+- [ ] Przygotowac tabele `Data Records` z plikami release.
+- [ ] Przygotowac tabele walidacji:
+  - [ ] proba geokodowania `357`;
+  - [ ] walidacja SIM;
+  - [ ] walidacja eksportu;
+  - [ ] kompletność zrodel.
+- [ ] Przygotowac figure pipeline:
+  - [ ] source acquisition;
+  - [ ] extraction/import;
+  - [ ] normalization/curation;
+  - [ ] geocoding/review;
+  - [ ] point grouping;
+  - [ ] export/validation/Zenodo.
+- [ ] Przygotowac figure relacji danych:
+  - [ ] `reports`;
+  - [ ] `alcohol_licenses`;
+  - [ ] `locations_raw`;
+  - [ ] `locations_normalized`;
+  - [ ] `license_points`;
+  - [ ] `point_memberships`;
+  - [ ] provenance tables;
+  - [ ] SIM/geospatial layers.
+- [ ] Przygotowac figure/mapę pogladowa:
+  - [ ] najnowsze punkty sprzedazy;
+  - [ ] granice SIM/dzielnic;
+  - [ ] bez marketingowego charakteru, tylko informacyjna mapa datasetu.
+- [ ] Trzymac prace z figurami w katalogu ignorowanym przez git, jezeli to sa artefakty robocze; finalne figury paperu trzymac jawnie w `paper/` albo innym ustalonym katalogu zrodlowym.
+
+### 24.12. Przepisywanie i kontrola jakosci tekstu
+
+> Status 2026-08-11: wykonano pierwszą przebudowę `paper/praca.md` pod Data Descriptor i wygenerowano `paper/praca.pdf` oraz `paper/praca.tex`. Do finalnego submission zostają DOI Zenodo, publiczny URL/tag GitHuba, licencje i ostateczna kontrola po zamrożeniu release.
+
+- [x] Zrobic pierwsza wersje przebudowanego `paper/praca.md` bez zmiany sensu liczb.
+- [ ] Po przebudowie sprawdzic kazda liczbe z aktualnym release:
+  - [ ] grep/tabela wszystkich liczb w paperze;
+  - [x] porownanie z `metadata/export_manifest.json`;
+  - [x] porownanie z `metadata/validation_report.json`;
+  - [x] porownanie z wynikami review sample w bazie/snapshot.
+- [ ] Sprawdzic, czy wszystkie nazwy plikow z paperu istnieja w paczce Zenodo.
+- [ ] Sprawdzic, czy paper nie odwoluje sie do usunietych kolumn eksportu:
+  - [x] `internal_*`;
+  - [x] `source_row_number`;
+  - [x] `reviewed_by`;
+  - [ ] `note`;
+  - [x] `selected_geocoding_query`;
+  - [x] `raw_address_2` zamiast `normalization_input_address_2`.
+- [ ] Sprawdzic, czy `area_type` jest opisane jako `sim_unit`, nie `sim`.
+- [x] Sprawdzic, czy `hard_to_tell` nie jest liczone jako wynik pozytywny.
+- [ ] Wygenerowac PDF i TeX:
+  - [x] `paper/praca.pdf`;
+  - [x] `paper/praca.tex`.
+- [ ] Przeczytac finalnie caly paper jak reviewer `Scientific Data`:
+  - [ ] czy wiadomo, co jest datasetem;
+  - [ ] czy wiadomo, gdzie sa dane;
+  - [ ] czy wiadomo, jak je odtworzyc;
+  - [ ] czy wiadomo, jak ich uzyc;
+  - [ ] czy walidacja jest konkretna i liczbowa;
+  - [ ] czy ograniczenia sa jawne.
+
+### 24.13. Kryteria gotowosci paperu do submission
+
+- [x] Paper ma strukture `Scientific Data Data Descriptor`, nie raportu projektowego.
+- [ ] `Data Records` opisuje wszystkie pliki release z row countami i kluczami.
+- [x] `Technical Validation` ma konkretne kontrole i liczby.
+- [x] `Usage Notes` pozwala naukowcowi zaczac prace bez reverse-engineeringu repo.
+- [ ] `Data availability` ma Zenodo DOI i wersje datasetu.
+- [ ] `Code availability` ma GitHub release/tag albo commit SHA.
+- [ ] Wszystkie liczby w paperze zgadzaja sie z finalnym release.
+- [x] Paper nie wspomina starych kolumn eksportu ani wewnetrznych ID bazy.
+- [x] Paper rozroznia licencje, lokalizacje i punkty sprzedazy.
+- [x] Paper jasno opisuje, co jest core datasetem, a co provenance/audit.
+- [x] Paper jasno opisuje, ze Google nie jest czescia publicznego eksportu danych.
+- [ ] PDF generuje sie bez bledow i wszystkie figury/tabele sa czytelne.
+

@@ -41,7 +41,7 @@ bin/rails license_point_groups:rebuild ALL=1
 bin/rails grouping_audit:write
 
 bin/rails dataset:release
-bin/rails dataset:prepare_publication_repo
+bin/rails dataset:prepare_publication_repo # stages into ../krakow-alcohol-licenses by default
 ```
 
 ## Research Pipeline

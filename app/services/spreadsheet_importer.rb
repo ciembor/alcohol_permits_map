@@ -42,7 +42,7 @@ class SpreadsheetImporter
       name: metadata[:business_category]
     })
 
-    AlcoholLicense.create!({
+    AlcoholLicense.find_or_create_by!({
       location: location,
       business: business,
       license_category: license_cat,

@@ -298,13 +298,27 @@ class GeocodingReviewCandidateFinderTest < ActiveSupport::TestCase
     assert_not_includes reviewed_ids, transformed_location.id
   end
 
-  test 'random sample keeps hard to tell locations in review queue until resolved' do
+  test 'random sample keeps hard to tell and follow-up locations in review queue' do
     hard_to_tell_location = TransformedLocation.create!(
       address_1: 'Długa',
       building_number: '15',
       address_kind: 'street_address',
       latitude: 50.0645,
       longtitude: 19.9395
+    )
+    newer_hard_to_tell_location = TransformedLocation.create!(
+      address_1: 'Architektów',
+      address_kind: 'landmark',
+      latitude: 50.0821,
+      longtitude: 20.0301
+    )
+    follow_up_location = TransformedLocation.create!(
+      address_1: 'Meiselsa',
+      building_number: '20',
+      unit_number: '1',
+      address_kind: 'street_address',
+      latitude: 50.0513,
+      longtitude: 19.9439
     )
     resolved_location = TransformedLocation.create!(
       address_1: 'Długa',
@@ -314,13 +328,27 @@ class GeocodingReviewCandidateFinderTest < ActiveSupport::TestCase
       longtitude: 19.9396
     )
     create_license_for(hard_to_tell_location, business_name: 'HARD TO TELL SAMPLE TEST')
+    create_license_for(newer_hard_to_tell_location, business_name: 'NEWER HARD TO TELL SAMPLE TEST')
+    create_license_for(follow_up_location, business_name: 'FOLLOW UP SAMPLE TEST')
     create_license_for(resolved_location, business_name: 'RESOLVED SAMPLE TEST')
 
     GeocodingReview.create!(
       transformed_location: hard_to_tell_location,
       signal_category: 'random_sample',
       review_status: 'hard_to_tell',
-      reviewed_at: Time.current
+      reviewed_at: Time.utc(2026, 8, 11, 13, 34, 0)
+    )
+    GeocodingReview.create!(
+      transformed_location: newer_hard_to_tell_location,
+      signal_category: 'random_sample',
+      review_status: 'hard_to_tell',
+      reviewed_at: Time.utc(2026, 8, 11, 13, 35, 0)
+    )
+    GeocodingReview.create!(
+      transformed_location: follow_up_location,
+      signal_category: 'random_sample',
+      review_status: 'exact',
+      reviewed_at: Time.utc(2026, 8, 11, 13, 33, 32)
     )
     GeocodingReview.create!(
       transformed_location: resolved_location,
@@ -330,10 +358,14 @@ class GeocodingReviewCandidateFinderTest < ActiveSupport::TestCase
     )
 
     finder = GeocodingReviewCandidateFinder.new
-    remaining = finder.send(:without_reviewed, [hard_to_tell_location, resolved_location], 'random_sample')
+    remaining = finder.send(:without_reviewed, [hard_to_tell_location, newer_hard_to_tell_location, follow_up_location, resolved_location], 'random_sample')
+    sorted = finder.send(:sort_locations, remaining, 'random_sample')
 
     assert_includes remaining, hard_to_tell_location
+    assert_includes remaining, newer_hard_to_tell_location
+    assert_includes remaining, follow_up_location
     assert_not_includes remaining, resolved_location
+    assert_equal [follow_up_location, hard_to_tell_location, newer_hard_to_tell_location], sorted
   end
 
 end

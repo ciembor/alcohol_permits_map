@@ -21,6 +21,7 @@ class DatasetExport::RawLocationsExporterTest < ActiveSupport::TestCase
 
       csv = CSV.read(path, headers: true, encoding: 'UTF-8')
       assert_equal DatasetExport::LocationRows::COLUMNS, csv.headers
+      assert_empty csv.headers.grep(/\Ainternal_/)
 
       rynek = csv.find { |row| row.fetch('source_address_1') == 'RYNEK' }
       assert rynek.fetch('raw_location_id').start_with?('raw-location-')

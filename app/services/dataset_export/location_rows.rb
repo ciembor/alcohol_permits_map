@@ -1,13 +1,10 @@
 require 'time'
-require 'json'
-
 require 'dataset_export/stable_id'
 
 module DatasetExport
   class LocationRows
     COLUMNS = %w[
       raw_location_id
-      internal_location_ids
       source_address_1
       source_address_2
       normalized_location_id
@@ -50,7 +47,6 @@ module DatasetExport
       representative = locations.min_by(&:id)
       {
         'raw_location_id' => raw_location_id(representative),
-        'internal_location_ids' => internal_location_ids(locations),
         'source_address_1' => representative.address_1,
         'source_address_2' => representative.address_2,
         'normalized_location_id' => normalized_location_id(representative),
@@ -107,9 +103,6 @@ module DatasetExport
       )
     end
 
-    def internal_location_ids(locations)
-      JSON.generate(locations.map(&:id).sort)
-    end
 
     def normalized_location_id(location)
       return unless location.normalized_address_1.present?

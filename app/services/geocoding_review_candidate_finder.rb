@@ -6,6 +6,11 @@ class GeocodingReviewCandidateFinder
   RANDOM_SAMPLE_SEED = 'geocoding-quality-sample-v1'
   MSIP_REVIEW_DISTANCE_THRESHOLD_METERS = 25
   RANDOM_SAMPLE_CATEGORIES = %w[random_sample random_sample_msip_regression].freeze
+  RANDOM_SAMPLE_REVIEW_FOLLOW_UP_KEYS = %w[
+    Meiselsa|20|1||||street_address
+    Miodowa|32|3||||street_address
+  ].freeze
+  RANDOM_SAMPLE_REVIEW_FOLLOW_UP_REVIEWED_AFTER = Time.utc(2026, 8, 11, 13, 33, 33)
 
   CATEGORY_DEFINITIONS = [
     ['critical_missing', 'Braki krytyczne', 'priority'],
@@ -210,9 +215,10 @@ class GeocodingReviewCandidateFinder
   def random_sample_review_queue_sort_value(location, category)
     review = latest_random_sample_reviews_by_location_id(category)[location.id]
     return 0 unless review
-    return 1 if review.review_status == 'hard_to_tell'
+    return 1 if random_sample_follow_up_required?(location, review)
+    return 2 if review.review_status == 'hard_to_tell'
 
-    2
+    3
   end
 
   def review_queue_time_sort_value(location, category)
@@ -259,15 +265,56 @@ class GeocodingReviewCandidateFinder
 
   def random_sample_locations_for(category)
     @random_sample_locations_by_category ||= {}
-    @random_sample_locations_by_category[category] ||= random_sample_universe_for(category)
-      .sort_by { |location| random_sample_sort_value(location, category) }
-      .first(RANDOM_SAMPLE_SIZE)
+    @random_sample_locations_by_category[category] ||= begin
+      universe = random_sample_universe_for(category)
+      required = random_sample_review_required_locations_for(category, universe)
+      required_keys = required.map { |location| normalized_location_key(location) }.to_set
+      selected = reviewed_random_sample_locations_for(category, universe)
+        .reject { |location| required_keys.include?(normalized_location_key(location)) }
+      selected_keys = (required + selected).map { |location| normalized_location_key(location) }.to_set
+      top_up = universe
+        .reject { |location| selected_keys.include?(normalized_location_key(location)) }
+        .sort_by { |location| random_sample_sort_value(location, category) }
+
+      (required + selected + top_up).first(RANDOM_SAMPLE_SIZE)
+    end
   end
 
   def random_sample_universe_for(category)
     return msip_regression_locations if category == 'random_sample_msip_regression'
 
     all_normalized_locations
+  end
+
+  def reviewed_random_sample_locations_for(category, universe)
+    latest_random_sample_reviews_for_universe(category, universe).values
+      .map(&:transformed_location)
+      .sort_by { |location| random_sample_sort_value(location, category) }
+  end
+
+  def random_sample_review_required_locations_for(category, universe)
+    latest_random_sample_reviews_for_universe(category, universe).values
+      .select { |review| random_sample_review_required?(review) }
+      .map(&:transformed_location)
+      .sort_by { |location| random_sample_sort_value(location, category) }
+  end
+
+  def latest_random_sample_reviews_for_universe(category, universe)
+    return {} unless category == 'random_sample'
+
+    locations_by_id = universe.index_by(&:id)
+
+    GeocodingReview
+      .includes(:transformed_location)
+      .where(signal_category: 'random_sample')
+      .order(:transformed_location_id, reviewed_at: :desc, id: :desc)
+      .to_a
+      .each_with_object({}) do |review, memo|
+        location = locations_by_id[review.transformed_location_id]
+        next unless location
+
+        memo[review.transformed_location_id] ||= review
+      end
   end
 
   def msip_regression_locations
@@ -348,7 +395,7 @@ class GeocodingReviewCandidateFinder
     cache_key = [category, Array(statuses).sort]
 
     if random_sample_category?(category) && statuses.blank?
-      return random_sample_resolved_location_ids(category)
+      return random_sample_reviewed_location_ids(category)
     end
 
     @reviewed_location_ids_by_category[cache_key] ||= GeocodingReview
@@ -367,26 +414,44 @@ class GeocodingReviewCandidateFinder
   end
 
   def unresolved_location_ids_for(category)
-    return random_sample_hard_to_tell_location_ids(category) if random_sample_category?(category)
+    return unreviewed_random_sample_location_ids(category) if random_sample_category?(category)
 
     reviewed_location_ids_for(category, statuses: ['unresolved'])
   end
 
-  def random_sample_resolved_location_ids(category)
+  def random_sample_reviewed_location_ids(category)
+    latest_random_sample_reviews_by_location_id(category).keys.to_set - random_sample_review_required_location_ids(category)
+  end
+
+  def random_sample_review_required_location_ids(category)
+    return Set.new unless category == 'random_sample'
+
     latest_random_sample_reviews_by_location_id(category).each_with_object(Set.new) do |(location_id, review), ids|
-      ids << location_id unless review.review_status == 'hard_to_tell'
+      ids << location_id if random_sample_review_required?(review)
     end
   end
 
-  def random_sample_hard_to_tell_location_ids(category)
-    latest_random_sample_reviews_by_location_id(category).each_with_object(Set.new) do |(location_id, review), ids|
-      ids << location_id if review.review_status == 'hard_to_tell'
-    end
+  def random_sample_review_required?(review)
+    location = review.transformed_location
+    return false unless location
+
+    review.review_status == 'hard_to_tell' || random_sample_follow_up_required?(location, review)
+  end
+
+  def random_sample_follow_up_required?(location, review)
+    return false unless RANDOM_SAMPLE_REVIEW_FOLLOW_UP_KEYS.include?(normalized_location_key(location))
+
+    review.reviewed_at <= RANDOM_SAMPLE_REVIEW_FOLLOW_UP_REVIEWED_AFTER
+  end
+
+  def unreviewed_random_sample_location_ids(category)
+    random_sample_location_ids_for(category).to_set - random_sample_reviewed_location_ids(category)
   end
 
   def latest_random_sample_reviews_by_location_id(category)
     @latest_random_sample_reviews_by_location_id ||= {}
     @latest_random_sample_reviews_by_location_id[category] ||= GeocodingReview
+      .includes(:transformed_location)
       .where(transformed_location_id: random_sample_location_ids_for(category), signal_category: review_signal_categories_for(category))
       .order(:transformed_location_id, reviewed_at: :desc, id: :desc)
       .to_a

@@ -36,12 +36,21 @@ class DatasetExport::DocumentationWriterTest < ActiveSupport::TestCase
       assert_includes paths.notice_md.read, 'Reuse Review'
       assert_includes paths.notice_md.read, 'spreadsheet files obtained through access to public information'
       assert_includes paths.notice_md.read, 'Google coordinates and raw Google geocoding responses are not published'
-      assert_includes paths.citation_cff.read, 'type: dataset'
+      citation = paths.citation_cff.read
+      assert_includes citation, 'type: dataset'
+      assert_includes citation, 'orcid: "https://orcid.org/0009-0009-6877-9931"'
+      assert_includes citation, 'doi: "10.5281/zenodo.21895077"'
+      assert_includes citation, 'url: "https://doi.org/10.5281/zenodo.21895077"'
       assert_includes paths.validation_report_md.read, 'All validation checks passed.'
 
       datacite = JSON.parse(paths.datacite_json.read)
       assert_equal 'Dataset', datacite.fetch('types').fetch('resourceTypeGeneral')
-      assert_equal 'Maciej Ciemborowicz', datacite.fetch('creators').first.fetch('name')
+      assert_equal '10.5281/zenodo.21895077', datacite.fetch('identifiers').first.fetch('identifier')
+      assert_equal 'DOI', datacite.fetch('identifiers').first.fetch('identifierType')
+      creator = datacite.fetch('creators').first
+      assert_equal 'Maciej Ciemborowicz', creator.fetch('name')
+      assert_equal 'https://orcid.org/0009-0009-6877-9931', creator.fetch('nameIdentifiers').first.fetch('nameIdentifier')
+      assert_equal 'ORCID', creator.fetch('nameIdentifiers').first.fetch('nameIdentifierScheme')
     end
   end
 

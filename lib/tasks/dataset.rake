@@ -48,7 +48,7 @@ namespace :dataset do
     Rake::Task['dataset:package'].invoke
   end
 
-  desc 'Prepare external publication repository. Env: VERSION=v1.0.0 OUTPUT_DIR=tmp/dataset_release PUBLISH_DIR=/Users/maciej/Projects/krakow-alcohol-licenses'
+  desc 'Prepare external publication repository. Env: VERSION=v1.0.0 OUTPUT_DIR=tmp/dataset_release PUBLISH_DIR=../krakow-alcohol-licenses'
   task prepare_publication_repo: :environment do
     require 'dataset_export/config'
     require 'dataset_export/paths'

@@ -8,7 +8,6 @@ module DatasetExport
   class PointRows
     COLUMNS = %w[
       point_id
-      internal_license_point_group_id
       report_id
       reported_at
       report_date
@@ -29,7 +28,6 @@ module DatasetExport
       business_key
       business_keys
       business_count
-      business_id_count
       license_count
       license_categories
       license_count_a
@@ -41,14 +39,11 @@ module DatasetExport
       retail_flag
       gastronomy_flag
       mixed_flag
-      similarity_floor
       geocoding_source
       geocoding_strategy
       geocoding_precision
-      geocoding_query
       location_uncertain
       location_uncertainty_reasons
-      latest_review_status
       sim_unit_code
       sim_unit_name
       district_code
@@ -63,7 +58,6 @@ module DatasetExport
       @include_business_names = include_business_names
       @latest_only = latest_only
       @sim_locator = sim_locator
-      @latest_review_status_by_location_id = build_latest_review_status_by_location_id
     end
 
     def columns
@@ -91,7 +85,7 @@ module DatasetExport
 
     private
 
-    attr_reader :include_business_names, :latest_only, :sim_locator, :latest_review_status_by_location_id
+    attr_reader :include_business_names, :latest_only, :sim_locator
 
     def group_scope
       scope = LicensePointGroup.order(:reported_at, :id)
@@ -132,8 +126,7 @@ module DatasetExport
           'transformed_locations.longtitude AS longitude',
           'selected_geocoding_results.source AS geocoding_source',
           'selected_geocoding_results.strategy AS geocoding_strategy',
-          'selected_geocoding_results.precision AS geocoding_precision',
-          'selected_geocoding_results.query AS geocoding_query'
+          'selected_geocoding_results.precision AS geocoding_precision'
         )
         .order(:license_point_group_id, :id)
         .group_by(&:license_point_group_id)
@@ -175,8 +168,7 @@ module DatasetExport
           'transformed_locations.longtitude AS longitude',
           'selected_geocoding_results.source AS geocoding_source',
           'selected_geocoding_results.strategy AS geocoding_strategy',
-          'selected_geocoding_results.precision AS geocoding_precision',
-          'selected_geocoding_results.query AS geocoding_query'
+          'selected_geocoding_results.precision AS geocoding_precision'
         )
         .order(:reported_at, :business_id, :location_id, :id)
 
@@ -185,8 +177,8 @@ module DatasetExport
       scope.group_by do |license|
         [
           license.reported_at.utc.iso8601,
-          license.business_id,
-          license.location_id,
+          license.business_name,
+          normalized_location_id_for(license),
           license.latitude,
           license.longitude
         ]
@@ -212,9 +204,8 @@ module DatasetExport
           latitude: group.latitude,
           longitude: group.longitude,
           normalized_business_name: group.normalized_business_name,
-          internal_group_id: group.id
+          raw_location_ids: raw_location_ids(licenses)
         ),
-        'internal_license_point_group_id' => group.id,
         'report_id' => DatasetExport::StableId.report_id(group.reported_at),
         'reported_at' => group.reported_at.utc.iso8601,
         'report_date' => group.reported_at.to_date.iso8601,
@@ -235,7 +226,6 @@ module DatasetExport
         'business_key' => DatasetExport::StableId.business_key(group.normalized_business_name),
         'business_keys' => json_array(business_keys),
         'business_count' => business_names.size,
-        'business_id_count' => licenses.map(&:business_id).uniq.size,
         'license_count' => licenses.size,
         'license_categories' => json_array(license_categories),
         'license_count_a' => license_counts.fetch('A', 0),
@@ -247,14 +237,11 @@ module DatasetExport
         'retail_flag' => retail_count.positive?,
         'gastronomy_flag' => gastronomy_count.positive?,
         'mixed_flag' => retail_count.positive? && gastronomy_count.positive?,
-        'similarity_floor' => group.similarity_floor,
         'geocoding_source' => representative.geocoding_source,
         'geocoding_strategy' => representative.geocoding_strategy,
         'geocoding_precision' => representative.geocoding_precision,
-        'geocoding_query' => representative.geocoding_query,
         'location_uncertain' => uncertainty_reasons.any?,
         'location_uncertainty_reasons' => json_array(uncertainty_reasons),
-        'latest_review_status' => json_array(latest_review_statuses(licenses)),
         'sim_unit_code' => sim&.fetch(:code),
         'sim_unit_name' => sim&.fetch(:name),
         'district_code' => sim&.fetch(:district_code),
@@ -288,9 +275,8 @@ module DatasetExport
           reported_at: representative.reported_at,
           normalized_location_id: normalized_location_id,
           unit_number: representative.normalized_unit_number,
-          normalized_business_name: "business:#{representative.business_id}"
+          normalized_business_name: representative.business_name
         ),
-        'internal_license_point_group_id' => nil,
         'report_id' => DatasetExport::StableId.report_id(representative.reported_at),
         'reported_at' => representative.reported_at.utc.iso8601,
         'report_date' => representative.reported_at.to_date.iso8601,
@@ -311,7 +297,6 @@ module DatasetExport
         'business_key' => DatasetExport::StableId.business_key(representative.business_name),
         'business_keys' => json_array(business_keys),
         'business_count' => business_names.size,
-        'business_id_count' => licenses.map(&:business_id).uniq.size,
         'license_count' => licenses.size,
         'license_categories' => json_array(license_categories),
         'license_count_a' => license_counts.fetch('A', 0),
@@ -323,14 +308,11 @@ module DatasetExport
         'retail_flag' => retail_count.positive?,
         'gastronomy_flag' => gastronomy_count.positive?,
         'mixed_flag' => retail_count.positive? && gastronomy_count.positive?,
-        'similarity_floor' => 1.0,
         'geocoding_source' => representative.geocoding_source,
         'geocoding_strategy' => representative.geocoding_strategy,
         'geocoding_precision' => representative.geocoding_precision,
-        'geocoding_query' => representative.geocoding_query,
         'location_uncertain' => uncertainty_reasons.any?,
         'location_uncertainty_reasons' => json_array(uncertainty_reasons),
-        'latest_review_status' => json_array(latest_review_statuses(licenses)),
         'sim_unit_code' => sim&.fetch(:code),
         'sim_unit_name' => sim&.fetch(:name),
         'district_code' => sim&.fetch(:district_code),
@@ -386,23 +368,6 @@ module DatasetExport
         license.normalized_address_1.presence || license.source_address_1,
         license.normalized_building_number.presence || license.source_address_2
       ].compact.join(' ')
-    end
-
-    def latest_review_statuses(licenses)
-      licenses
-        .filter_map { |license| @latest_review_status_by_location_id[license.transformed_location_internal_id.to_i] }
-        .uniq
-        .sort
-    end
-
-    def build_latest_review_status_by_location_id
-      return {} unless defined?(GeocodingReview)
-
-      GeocodingReview
-        .order(:transformed_location_id, :reviewed_at, :id)
-        .each_with_object({}) do |review, memo|
-          memo[review.transformed_location_id] = review.review_status
-        end
     end
 
     def json_array(values)

@@ -38,8 +38,8 @@ czy pozniejszej interpretacji.
 Publiczne `raw_location_id` powstaje z kanonicznej postaci adresu zrodlowego:
 wartosci sa przycinane i wielokrotne spacje sa redukowane. Dlatego kilka
 wewnetrznych rekordow `locations` rozniacych sie tylko spacja moze trafic do
-jednego wiersza `locations_raw.csv`. W takim przypadku `internal_location_ids`
-zawiera liste wszystkich scalonych identyfikatorow wewnetrznych.
+jednego wiersza `locations_raw.csv`. Wewnetrzne identyfikatory rekordow
+aplikacji nie sa publikowane.
 
 Korekty adresow sa publikowane osobno w `address_corrections.csv`. Korekta nie
 nadpisuje adresu zrodlowego; pokazuje, jaka poprawka zostala uzyta w procesie
@@ -63,12 +63,11 @@ zawiera `raw_response`. Rekordy `source = google` sa wykluczone z publicznego
 eksportu; w obecnym stanie danych zaden wybrany wynik (`selected = true`) nie
 pochodzi z Google.
 
-`geocoding_reviews.csv` publikuje decyzje audytowe lokalizacji. Pole
-`reviewed_by` jest redagowane: puste wartosci pozostaja puste, a ewentualne
-niepuste identyfikatory recenzentow sa zastapione wartoscia `redacted`.
-Referencje do wynikow geokodowania sa publikowane tylko wtedy, gdy wskazywany
-wynik istnieje w publicznym `geocoding_results.csv`; referencje do wykluczonych
-wynikow Google pozostaja puste.
+`geocoding_reviews.csv` publikuje decyzje audytowe lokalizacji bez
+identyfikatorow recenzentow i bez wolnotekstowych notatek. Referencje do
+wynikow geokodowania sa publikowane tylko wtedy, gdy wskazywany wynik istnieje
+w publicznym `geocoding_results.csv`; referencje do wykluczonych wynikow Google
+pozostaja puste.
 
 ### `business`
 
@@ -197,7 +196,9 @@ license
   -> sim_unit / district
 ```
 
-W pierwszym release brak jawnego `source_file_id` i `source_row_number` w
-obecnym modelu aplikacji jest znanym ryzykiem. Do czasu pelnego domkniecia tego
-modelu `license_id` moze byc liczony deterministycznie z dostepnych pol
-rekordu, a manifest zrodel dokumentuje pliki, z ktorych rekordy powstaly.
+`alcohol_licenses.csv` zawiera publiczne `source_file_id`, ktore laczy rekord
+z manifestem zrodel na poziomie raportu, kategorii dzialalnosci i kategorii
+zezwolenia. Publiczny release nie publikuje numerow wierszy zrodlowych, dopoki
+nie sa utrwalone jako stabilna czesc modelu importu. `license_id` jest liczony
+deterministycznie z dostepnych pol rekordu, a manifest zrodel dokumentuje pliki,
+z ktorych rekordy powstaly.

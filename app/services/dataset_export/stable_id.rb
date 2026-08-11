@@ -106,14 +106,14 @@ module DatasetExport
         )
       end
 
-      def group_point_id(reported_at:, latitude:, longitude:, normalized_business_name:, unit_number: nil, internal_group_id: nil)
+      def group_point_id(reported_at:, latitude:, longitude:, normalized_business_name:, raw_location_ids: [], unit_number: nil)
         scoped_hash_id(
           'point',
           reported_at: normalize_time(reported_at),
           latitude: normalize_coordinate(latitude),
           longitude: normalize_coordinate(longitude),
+          raw_location_ids: normalize_array(raw_location_ids),
           unit_number: normalize_value(unit_number),
-          internal_group_id: normalize_value(internal_group_id),
           normalized_business_name: normalize_value(normalized_business_name)
         )
       end
@@ -161,6 +161,10 @@ module DatasetExport
 
       def normalize_value(value)
         value.to_s.strip.squeeze(' ')
+      end
+
+      def normalize_array(values)
+        Array(values).map { |value| normalize_value(value) }.sort.join('|')
       end
 
       def normalize_coordinate(value)

@@ -52,6 +52,36 @@ class LocationTransformer::TransformerTest < ActiveSupport::TestCase
     assert_equal '2', parsed_address[:address_2]
   end
 
+  test 'does not split numeric address_2 prefixes as street names' do
+    Street.create!(name_1: 'Kawiory')
+    Street.create!(name_1: 'Józefa')
+    Street.create!(name_1: '8 Pułku Ułanów')
+    Street.create!(name_1: '6 Sierpnia')
+
+    transformer = LocationTransformer::Transformer.new
+
+    kawiory = transformer.send(:parse_address_parts, 'KAWIORY', '8 / 1 I 2')
+    assert_equal 'KAWIORY', kawiory[:address_1]
+    assert_equal '8 / 1 I 2', kawiory[:address_2]
+
+    jozefa = transformer.send(:parse_address_parts, 'JÓZEFA', '6 / 2U, 3U')
+    assert_equal 'JÓZEFA', jozefa[:address_1]
+    assert_equal '6 / 2U, 3U', jozefa[:address_2]
+  end
+
+  test 'infers cadastral unit for known parcel street hints' do
+    Street.create!(name_1: 'Plac Inwalidow')
+    location = Location.create!(address_1: 'PLAC INWALIDOW', address_2: 'dz.652/3 obr.4')
+
+    LocationTransformer::Transformer.new.transform_locations
+
+    transformed_location = location.reload.transformed_location
+    assert_equal 'parcel', transformed_location.address_kind
+    assert_equal '652/3', transformed_location.parcel_number
+    assert_equal '4', transformed_location.parcel_region
+    assert_equal 'krowodrza', transformed_location.parcel_cadastral_unit
+  end
+
   test 'normalizes bare Jozefa to Kazimierz street, not patron streets' do
     Street.create!(name_1: 'Becka', name_2: 'Józefa')
     Street.create!(name_1: 'Józefa')

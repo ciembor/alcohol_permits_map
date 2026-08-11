@@ -69,6 +69,7 @@ module DatasetExport
         validate_csv_coordinates(path)
         validate_csv_json_fields(path)
         validate_csv_no_local_absolute_paths(path)
+        validate_csv_no_internal_columns(path)
       end
     end
 
@@ -195,6 +196,15 @@ module DatasetExport
       end
 
       add_check("#{check_prefix_for(path)}_no_local_absolute_paths", matches.empty?, expected: [], actual: matches)
+    end
+
+
+    def validate_csv_no_internal_columns(path)
+      headers = CSV.open(path, 'r:UTF-8', &:readline)
+      internal_columns = headers.select { |header| header.start_with?('internal_') }
+      add_check("#{check_prefix_for(path)}_no_internal_columns", internal_columns.empty?, expected: [], actual: internal_columns)
+    rescue CSV::MalformedCSVError, ArgumentError => error
+      add_check("#{check_prefix_for(path)}_no_internal_columns", false, expected: 'parseable CSV headers', actual: error.message)
     end
 
     def local_absolute_path?(value)
@@ -692,8 +702,6 @@ module DatasetExport
       blank_ids = 0
       row_count = 0
       invalid_statuses = Set.new
-      invalid_reviewers = Set.new
-      allowed_reviewers = Set.new(['redacted', nil])
 
       CSV.foreach(paths.geocoding_reviews_csv, headers: true, encoding: 'UTF-8') do |row|
         if row_count.zero?
@@ -706,8 +714,6 @@ module DatasetExport
         duplicate_ids += 1 if review_id.present? && seen_ids.include?(review_id)
         seen_ids << review_id if review_id.present?
         invalid_statuses << row.fetch('review_status') unless GeocodingReview::STATUSES.include?(row.fetch('review_status'))
-        reviewer = row.fetch('reviewed_by')
-        invalid_reviewers << reviewer unless allowed_reviewers.include?(reviewer)
         row_count += 1
       end
 
@@ -715,7 +721,6 @@ module DatasetExport
       add_check('geocoding_reviews_csv_no_blank_review_id', blank_ids.zero?, expected: 0, actual: blank_ids)
       add_check('geocoding_reviews_csv_no_duplicate_review_id', duplicate_ids.zero?, expected: 0, actual: duplicate_ids)
       add_check('geocoding_reviews_csv_review_statuses', invalid_statuses.empty?, expected: GeocodingReview::STATUSES.sort, actual: invalid_statuses.to_a.sort)
-      add_check('geocoding_reviews_csv_reviewed_by_redacted', invalid_reviewers.empty?, expected: allowed_reviewers.to_a.compact, actual: invalid_reviewers.to_a.sort)
     end
 
     def validate_sim_populations_csv
@@ -949,13 +954,20 @@ module DatasetExport
 
     def fallback_point_count_for_report(reported_at)
       AlcoholLicense
-        .joins(location: :transformed_location)
+        .joins(:business, location: :transformed_location)
         .where(reported_at: reported_at, license_point_group_id: nil)
         .where.not(transformed_locations: { latitude: nil, longtitude: nil })
         .group(
           'alcohol_licenses.reported_at',
-          'alcohol_licenses.business_id',
-          'alcohol_licenses.location_id',
+          'businesses.name',
+          'transformed_locations.address_1',
+          'transformed_locations.building_number',
+          'transformed_locations.address_kind',
+          'transformed_locations.address_relation',
+          'transformed_locations.unit_number',
+          'transformed_locations.parcel_number',
+          'transformed_locations.parcel_region',
+          'transformed_locations.parcel_cadastral_unit',
           'transformed_locations.latitude',
           'transformed_locations.longtitude'
         )

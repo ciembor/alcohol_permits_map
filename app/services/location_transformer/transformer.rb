@@ -20,6 +20,10 @@ module LocationTransformer
       ['Plac', 'Pl.', 'Pl'],
     ].freeze
 
+    PARCEL_CADASTRAL_UNIT_BY_STREET = [
+      [/plac inwalid/i, 'krowodrza']
+    ].freeze
+
     NOT_UNIQUE_WORDS = Street.all
       .pluck(:name_1, :name_2)
       .flatten
@@ -86,11 +90,16 @@ module LocationTransformer
       normalized_address_2 = address_2.to_s.strip.squeeze(' ')
       match = normalized_address_2.match(/\A(.+?)\s+(\d+[[:alpha:]]?(?:\b|\/).*)\z/i)
       return unless match
+      return if numeric_street_candidate?(match[1])
 
       candidate_street = address_1_transformer.transform_address_1(match[1])
       return unless candidate_street
 
       { address_1: candidate_street, address_2: match[2] }
+    end
+
+    def numeric_street_candidate?(candidate)
+      candidate.to_s.strip.match?(/\A\d+[[:alpha:]]?\s*(?:[\/.,;-]|\z)/i)
     end
 
     def split_embedded_address(address_1)
@@ -124,6 +133,8 @@ module LocationTransformer
         parcel_cadastral_unit: address_2[:parcel_cadastral_unit]
       }
 
+      geocoding_identity[:parcel_cadastral_unit] ||= inferred_parcel_cadastral_unit(address_1, address_2)
+
       transformed_location = TransformedLocation.find_or_initialize_by(geocoding_identity)
       transformed_location.raw_address_2 = address_2[:raw_address_2]
       transformed_location.same_as = merged_same_as(transformed_location.same_as, same_as)
@@ -134,6 +145,16 @@ module LocationTransformer
       )
 
       sync_raw_address_2(transformed_location, address_2[:raw_address_2])
+    end
+
+    def inferred_parcel_cadastral_unit(address_1, address_2)
+      return unless address_2[:address_kind] == 'parcel'
+
+      PARCEL_CADASTRAL_UNIT_BY_STREET.each do |street_pattern, cadastral_unit|
+        return cadastral_unit if address_1.to_s.match?(street_pattern)
+      end
+
+      nil
     end
 
     def merged_same_as(existing_value, new_value)

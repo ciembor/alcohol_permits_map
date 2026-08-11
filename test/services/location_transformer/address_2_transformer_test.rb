@@ -44,6 +44,27 @@ class LocationTransformer::Address2TransformerTest < ActiveSupport::TestCase
     end
   end
 
+  test 'extracts unit before second address after slash' do
+    address = @transformer.transform('44 LOK. 50/ UL. STRADOMSKA 18')
+
+    assert_equal 'street_address', address[:address_kind]
+    assert_equal '44', address[:building_number]
+    assert_equal '50', address[:unit_number]
+  end
+
+  test 'does not extract unit from second address after slash' do
+    examples = [
+      '68/Śliska9 lok.U3,U4',
+      '15/rynek kleparski 4 lok U'
+    ]
+
+    examples.each do |raw_address|
+      address = @transformer.transform(raw_address)
+
+      assert_nil address[:unit_number], raw_address
+    end
+  end
+
   test 'does not extract slash unit from compound street address' do
     examples = [
       '44/50/ STRADOMSKA 18',

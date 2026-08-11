@@ -25,6 +25,8 @@ class DatasetExport::AlcoholLicensesExporterTest < ActiveSupport::TestCase
 
       csv = CSV.read(path, headers: true, encoding: 'UTF-8')
       assert_equal DatasetExport::LicenseRows::BASE_COLUMNS, csv.headers
+      assert_empty csv.headers.grep(/\Ainternal_/)
+      refute_includes csv.headers, 'source_row_number'
       refute_includes csv.headers, 'business_name'
       assert_equal 3, csv.map { |row| row.fetch('license_id') }.uniq.size
       assert csv.all? { |row| row.fetch('license_id').present? }

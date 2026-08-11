@@ -22,6 +22,7 @@ class DatasetExport::GeocodingResultsExporterTest < ActiveSupport::TestCase
       csv = CSV.read(path, headers: true, encoding: 'UTF-8')
       assert_equal DatasetExport::GeocodingResultRows::COLUMNS, csv.headers
       refute_includes csv.headers, 'raw_response'
+      refute_includes csv.headers, 'created_at'
       assert_equal %w[krakow_msip nominatim], csv.map { |row| row.fetch('source') }.sort
       assert csv.all? { |row| row.fetch('geocoding_result_id').start_with?('geocoding-result-') }
 

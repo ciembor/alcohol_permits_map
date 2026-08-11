@@ -23,13 +23,14 @@ class DatasetExport::LicensePointsExporterTest < ActiveSupport::TestCase
 
       csv = CSV.read(path, headers: true, encoding: 'UTF-8')
       assert_equal DatasetExport::PointRows::COLUMNS, csv.headers
+      assert_empty csv.headers.grep(/\Ainternal_/)
       row = csv.first
       assert_equal DatasetExport::StableId.group_point_id(
         reported_at: @report,
         latitude: 50.061,
         longitude: 19.936,
         normalized_business_name: 'TEST BUSINESS',
-        internal_group_id: @group.id
+        raw_location_ids: [DatasetExport::StableId.raw_location_id(source_address_1: 'RYNEK', source_address_2: '1')]
       ), row.fetch('point_id')
       assert_equal '2', row.fetch('license_count')
       assert_equal '1', row.fetch('license_count_a')
@@ -85,7 +86,14 @@ class DatasetExport::LicensePointsExporterTest < ActiveSupport::TestCase
 
     point_rows = DatasetExport::PointRows.new.each.to_a
     license_rows = DatasetExport::LicenseRows.new.each.to_a
-    fallback_point = point_rows.find { |row| row.fetch('internal_license_point_group_id').blank? }
+    grouped_point_id = DatasetExport::StableId.group_point_id(
+      reported_at: @report,
+      latitude: 50.061,
+      longitude: 19.936,
+      normalized_business_name: 'TEST BUSINESS',
+      raw_location_ids: [DatasetExport::StableId.raw_location_id(source_address_1: 'RYNEK', source_address_2: '1')]
+    )
+    fallback_point = point_rows.find { |row| row.fetch('point_id') != grouped_point_id }
 
     assert fallback_point
     assert_equal '1', fallback_point.fetch('license_count').to_s

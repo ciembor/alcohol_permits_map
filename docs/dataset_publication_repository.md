@@ -4,9 +4,9 @@ The processing repository remains:
 
 `/Users/maciej/Projects/alcohol_permits_map`
 
-The publication staging repository is separate and lives one level higher:
+The publication staging repository is separate and lives next to the application repository:
 
-`/Users/maciej/Projects/krakow-alcohol-licenses`
+`../krakow-alcohol-licenses`
 
 This separation keeps generated publication artifacts out of the working
 application/code repository. The publication repository is intended to contain
@@ -36,13 +36,13 @@ After `dataset:release` has generated and packaged a release:
 DISABLE_SPRING=1 bin/rails dataset:prepare_publication_repo \
   VERSION=v1.0.0 \
   OUTPUT_DIR=tmp/dataset_release \
-  PUBLISH_DIR=/Users/maciej/Projects/krakow-alcohol-licenses
+  PUBLISH_DIR=../krakow-alcohol-licenses
 ```
 
 Expected staging layout:
 
 ```text
-/Users/maciej/Projects/krakow-alcohol-licenses/
+../krakow-alcohol-licenses/
   README.md
   ZENODO.md
   .gitignore

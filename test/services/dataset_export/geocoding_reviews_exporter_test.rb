@@ -13,7 +13,7 @@ class DatasetExport::GeocodingReviewsExporterTest < ActiveSupport::TestCase
     clear_dataset_records
   end
 
-  test 'writes geocoding review rows with public references and redacted reviewer' do
+  test 'writes geocoding review rows with public references and without reviewer notes' do
     Dir.mktmpdir do |dir|
       path = File.join(dir, 'geocoding_reviews.csv')
       count = DatasetExport::Exporters::GeocodingReviewsExporter.new(path: path).write
@@ -26,7 +26,8 @@ class DatasetExport::GeocodingReviewsExporterTest < ActiveSupport::TestCase
       assert csv.all? { |row| row.fetch('review_id').start_with?('geocoding-review-') }
 
       manual = csv.find { |row| row.fetch('review_status') == 'corrected' }
-      assert_equal 'redacted', manual.fetch('reviewed_by')
+      refute_includes csv.headers, 'reviewed_by'
+      refute_includes csv.headers, 'note'
       assert manual.fetch('normalized_location_id').start_with?('normalized-location-')
       assert manual.fetch('selected_geocoding_result_id').start_with?('geocoding-result-')
       assert manual.fetch('manual_geocoding_result_id').start_with?('geocoding-result-')

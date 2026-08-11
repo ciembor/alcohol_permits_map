@@ -13,7 +13,6 @@ module DatasetExport
       confidence
       selected
       evidence
-      created_at
     ].freeze
 
     def initialize(latest_only: false)
@@ -49,8 +48,7 @@ module DatasetExport
           'method' => correction.method,
           'confidence' => correction.confidence,
           'selected' => correction.selected,
-          'evidence' => correction.evidence,
-          'created_at' => correction.created_at.utc.iso8601
+          'evidence' => correction.evidence
         })
       end
     end

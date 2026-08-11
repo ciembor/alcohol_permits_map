@@ -6,8 +6,6 @@ module DatasetExport
       point_id
       license_id
       report_id
-      internal_license_point_group_id
-      internal_license_id
       membership_method
     ].freeze
 
@@ -29,8 +27,6 @@ module DatasetExport
           'point_id' => identifiers.point_id(license, normalized_location_id: normalized_location_id),
           'license_id' => identifiers.license_id(license),
           'report_id' => DatasetExport::StableId.report_id(license.reported_at),
-          'internal_license_point_group_id' => license.license_point_group_id,
-          'internal_license_id' => license.id,
           'membership_method' => membership_method(license)
         })
       end

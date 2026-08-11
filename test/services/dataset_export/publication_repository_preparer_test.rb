@@ -23,7 +23,7 @@ class DatasetExport::PublicationRepositoryPreparerTest < ActiveSupport::TestCase
         ).prepare
 
         release_dir = Pathname(publish_dir).join('releases/v-test-publication')
-        assert_equal publish_dir, result.fetch(:destination)
+        assert_equal Pathname(publish_dir).expand_path.to_s, result.fetch(:destination)
         assert release_dir.join('krakow-alcohol-licenses-2010-2026-v-test-publication.zip').exist?
         assert release_dir.join('checksums.txt').exist?
         assert release_dir.join('CITATION.cff').exist?
@@ -35,6 +35,17 @@ class DatasetExport::PublicationRepositoryPreparerTest < ActiveSupport::TestCase
         assert Pathname(publish_dir).join('ZENODO.md').exist?
         assert_includes Pathname(publish_dir).join('ZENODO.md').read, 'Target repository: Zenodo'
       end
+    end
+  end
+
+  test 'defaults publication repository to sibling krakow alcohol licenses directory' do
+    Dir.mktmpdir do |output_dir|
+      config = DatasetExport::Config.new(version: 'v-test-publication', output_dir: output_dir)
+      paths = DatasetExport::Paths.new(config)
+      preparer = DatasetExport::PublicationRepositoryPreparer.new(paths: paths)
+      expected = Rails.root.join('..', 'krakow-alcohol-licenses').expand_path.to_s
+
+      assert_equal expected, preparer.send(:destination).to_s
     end
   end
 end

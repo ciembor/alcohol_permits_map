@@ -1,6 +1,7 @@
 require 'json'
 require 'time'
 
+require 'dataset_export/geocoding_result_rows'
 require 'dataset_export/stable_id'
 require 'geocoding/location_uncertainty'
 
@@ -8,13 +9,12 @@ module DatasetExport
   class NormalizedLocationRows
     COLUMNS = %w[
       normalized_location_id
-      internal_transformed_location_id
       address_1
       building_number
       unit_number
       address_kind
       address_relation
-      raw_address_2
+      normalization_input_address_2
       parcel_number
       parcel_region
       parcel_cadastral_unit
@@ -26,7 +26,6 @@ module DatasetExport
       selected_geocoding_source
       selected_geocoding_strategy
       selected_geocoding_precision
-      selected_geocoding_query
       location_uncertain
       location_uncertainty_reasons
       raw_location_count
@@ -72,13 +71,12 @@ module DatasetExport
 
       {
         'normalized_location_id' => normalized_location_id(location),
-        'internal_transformed_location_id' => location.id,
         'address_1' => location.address_1,
         'building_number' => location.building_number,
         'unit_number' => location.unit_number,
         'address_kind' => location.address_kind,
         'address_relation' => location.address_relation,
-        'raw_address_2' => location.raw_address_2,
+        'normalization_input_address_2' => location.raw_address_2,
         'parcel_number' => location.parcel_number,
         'parcel_region' => location.parcel_region,
         'parcel_cadastral_unit' => location.parcel_cadastral_unit,
@@ -86,11 +84,10 @@ module DatasetExport
         'latitude' => location.latitude,
         'longitude' => location.longtitude,
         'crs' => geocoded?(location) ? 'EPSG:4326' : nil,
-        'selected_geocoding_result_id' => location.selected_geocoding_result_id,
+        'selected_geocoding_result_id' => selected_geocoding_result_id(location),
         'selected_geocoding_source' => location.selected_geocoding_source,
         'selected_geocoding_strategy' => location.selected_geocoding_strategy,
         'selected_geocoding_precision' => location.selected_geocoding_precision,
-        'selected_geocoding_query' => location.selected_geocoding_query,
         'location_uncertain' => uncertainty_reasons.any?,
         'location_uncertainty_reasons' => JSON.generate(uncertainty_reasons),
         'raw_location_count' => metrics.fetch(:raw_location_count),
@@ -139,6 +136,21 @@ module DatasetExport
         parcel_number: location.parcel_number,
         parcel_region: location.parcel_region,
         parcel_cadastral_unit: location.parcel_cadastral_unit
+      )
+    end
+
+    def selected_geocoding_result_id(location)
+      return if location.selected_geocoding_result_id.blank?
+
+      result = GeocodingResult.find_by(id: location.selected_geocoding_result_id)
+      return if result.nil?
+      return if DatasetExport::GeocodingResultRows::EXCLUDED_SOURCES.include?(result.source)
+
+      DatasetExport::StableId.geocoding_result_id(
+        normalized_location_id: normalized_location_id(location),
+        source: result.source,
+        strategy: result.strategy,
+        query: result.query
       )
     end
 

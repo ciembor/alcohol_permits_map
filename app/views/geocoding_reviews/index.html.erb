@@ -593,11 +593,6 @@
       });
       if (!category) return;
 
-      if (isRandomSampleCategory(activeCategory) && statusValue === 'hard_to_tell') {
-        category.unresolved += 1;
-        return;
-      }
-
       if (statusValue === 'corrected') {
         category.reviewed += 1;
         category.corrected += 1;

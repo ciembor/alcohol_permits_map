@@ -7,7 +7,6 @@ module DatasetExport
   class LicenseRows
     BASE_COLUMNS = %w[
       license_id
-      internal_license_id
       report_id
       reported_at
       report_date
@@ -22,7 +21,6 @@ module DatasetExport
       source_address_1
       source_address_2
       source_file_id
-      source_row_number
       geocoded
       latitude
       longitude
@@ -104,7 +102,6 @@ module DatasetExport
 
       row = {
         'license_id' => identifiers.license_id(license),
-        'internal_license_id' => license.id,
         'report_id' => DatasetExport::StableId.report_id(license.reported_at),
         'reported_at' => license.reported_at.utc.iso8601,
         'report_date' => license.reported_at.to_date.iso8601,
@@ -123,7 +120,6 @@ module DatasetExport
           business_category: license.business_category_name,
           license_category: license.license_category_name
         ),
-        'source_row_number' => nil,
         'geocoded' => geocoded?(latitude, longitude),
         'latitude' => latitude,
         'longitude' => longitude,

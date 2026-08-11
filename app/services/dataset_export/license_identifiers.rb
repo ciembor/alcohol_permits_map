@@ -4,6 +4,7 @@ module DatasetExport
   class LicenseIdentifiers
     def initialize
       @natural_key_counts = Hash.new(0)
+      @group_raw_location_ids = build_group_raw_location_ids
     end
 
     def license_id(license)
@@ -53,7 +54,7 @@ module DatasetExport
           latitude: license.group_latitude,
           longitude: license.group_longitude,
           normalized_business_name: license.group_normalized_business_name,
-          internal_group_id: license.license_point_group_id
+          raw_location_ids: raw_location_ids_for_group(license.license_point_group_id)
         )
       end
 
@@ -64,7 +65,7 @@ module DatasetExport
         reported_at: license.reported_at,
         normalized_location_id: normalized_location_id,
         unit_number: license.normalized_unit_number,
-        normalized_business_name: license.group_normalized_business_name.presence || "business:#{license.business_id}"
+        normalized_business_name: license.group_normalized_business_name.presence || license.business_name
       )
     end
 
@@ -74,7 +75,25 @@ module DatasetExport
 
     private
 
-    attr_reader :natural_key_counts
+    attr_reader :natural_key_counts, :group_raw_location_ids
+
+    def raw_location_ids_for_group(group_id)
+      group_raw_location_ids.fetch(group_id, [])
+    end
+
+    def build_group_raw_location_ids
+      rows = AlcoholLicense
+        .joins(:location)
+        .where.not(license_point_group_id: nil)
+        .pluck('alcohol_licenses.license_point_group_id', 'locations.address_1', 'locations.address_2')
+
+      rows.each_with_object(Hash.new { |hash, key| hash[key] = [] }) do |(group_id, address_1, address_2), memo|
+        memo[group_id] << DatasetExport::StableId.raw_location_id(
+          source_address_1: address_1,
+          source_address_2: address_2
+        )
+      end.transform_values { |ids| ids.uniq.sort }
+    end
 
     def natural_key_for(license)
       [

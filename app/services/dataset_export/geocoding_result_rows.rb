@@ -14,7 +14,6 @@ module DatasetExport
       confidence
       precision
       selected
-      created_at
     ].freeze
 
     EXCLUDED_SOURCES = %w[google].freeze
@@ -50,8 +49,7 @@ module DatasetExport
           'crs' => geocoded?(result) ? 'EPSG:4326' : nil,
           'confidence' => result.confidence,
           'precision' => result.precision,
-          'selected' => result.selected,
-          'created_at' => result.created_at.utc.iso8601
+          'selected' => result.selected
         })
       end
     end

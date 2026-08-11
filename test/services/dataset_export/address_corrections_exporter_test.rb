@@ -29,7 +29,7 @@ class DatasetExport::AddressCorrectionsExporterTest < ActiveSupport::TestCase
       assert selected.fetch('source_raw_location_id').start_with?('raw-location-')
       assert_equal 'manual', selected.fetch('source')
       assert_equal 'review', selected.fetch('method')
-      assert_equal '2026-01-01T00:00:00Z', selected.fetch('created_at')
+      refute_includes csv.headers, 'created_at'
 
       inferred = csv.find { |row| row.fetch('selected') == 'false' }
       assert_nil inferred.fetch('source_raw_location_id')

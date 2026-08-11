@@ -10,6 +10,9 @@ module DatasetExport
   class DocumentationWriter
     TITLE = 'Krakow alcohol licenses and sales points, 2010-2026'.freeze
     CREATOR = 'Maciej Ciemborowicz'.freeze
+    CREATOR_ORCID = 'https://orcid.org/0009-0009-6877-9931'.freeze
+    DATASET_DOI = '10.5281/zenodo.21895077'.freeze
+    DATASET_DOI_URL = 'https://doi.org/10.5281/zenodo.21895077'.freeze
     DESCRIPTION = 'A curated, geocoded dataset of alcohol-sale license records and derived sales points in Krakow, Poland, 2010-2026.'.freeze
     KEYWORDS = ['alcohol licenses', 'Krakow', 'geocoding', 'administrative data', 'open data', 'urban studies', 'spatial data'].freeze
 
@@ -22,7 +25,7 @@ module DatasetExport
       'data/tables/locations_normalized.csv' => 'Normalized locations used for geocoding and spatial joins.',
       'data/tables/address_corrections.csv' => 'Address-correction provenance used during normalization.',
       'data/tables/geocoding_results.csv' => 'Public non-Google geocoding candidate results without raw provider responses.',
-      'data/tables/geocoding_reviews.csv' => 'Manual and semi-manual geocoding review decisions with reviewer identity redacted.',
+      'data/tables/geocoding_reviews.csv' => 'Manual and semi-manual geocoding review decisions without reviewer identity or free-text notes.',
       'data/tables/sim_populations.csv' => 'Registered resident counts by SIM unit and snapshot date.',
       'data/geospatial/sim_units.geojson' => 'SIM unit boundaries in EPSG:4326 with district attributes and area.',
       'data/aggregates/city_summary_by_report.csv' => 'City-level summary by report.',
@@ -140,6 +143,8 @@ module DatasetExport
 
         See `CODEBOOK.md` for column-level documentation. CSV files are the canonical tabular release. Parquet files in `data/parquet/`, when present, are derived from CSV by `dataset:package`.
 
+        Core analysis files are `reports.csv`, `alcohol_licenses.csv`, `license_points.csv`, `point_memberships.csv`, `locations_raw.csv`, `locations_normalized.csv`, `sim_populations.csv`, the aggregate CSV files, and the GeoJSON layers. Provenance/audit files are `source_files_manifest.csv`, `address_corrections.csv`, `geocoding_results.csv`, and `geocoding_reviews.csv`.
+
         ## Quick Start: Python
 
         ```python
@@ -166,7 +171,7 @@ module DatasetExport
 
         ## Citation
 
-        Use `CITATION.cff` or `metadata/datacite.json`. Until a DOI is assigned, cite the dataset by title, creator, version, year, and repository URL.
+        Use `CITATION.cff` or `metadata/datacite.json`. Dataset DOI: `#{DATASET_DOI}` (`#{DATASET_DOI_URL}`).
 
         ## License And Attribution
 
@@ -310,7 +315,10 @@ module DatasetExport
         authors:
           - family-names: "Ciemborowicz"
             given-names: "Maciej"
+            orcid: "#{CREATOR_ORCID}"
         version: "#{dataset.fetch('version')}"
+        doi: "#{DATASET_DOI}"
+        url: "#{DATASET_DOI_URL}"
         date-released: "#{Date.today.iso8601}"
         abstract: "#{DESCRIPTION}"
         keywords:
@@ -330,7 +338,20 @@ module DatasetExport
             name: CREATOR,
             nameType: 'Personal',
             familyName: 'Ciemborowicz',
-            givenName: 'Maciej'
+            givenName: 'Maciej',
+            nameIdentifiers: [
+              {
+                nameIdentifier: CREATOR_ORCID,
+                nameIdentifierScheme: 'ORCID',
+                schemeUri: 'https://orcid.org/'
+              }
+            ]
+          }
+        ],
+        identifiers: [
+          {
+            identifier: DATASET_DOI,
+            identifierType: 'DOI'
           }
         ],
         titles: [{ title: TITLE }],
@@ -443,7 +464,7 @@ module DatasetExport
     def column_description(column)
       case column
       when /_id\z/
-        'Stable public identifier unless prefixed with `internal_`; internal identifiers are included only for provenance and debugging.'
+        'Stable public identifier generated from dataset content. Database primary keys are not exported in the public release.'
       when /reported_at/
         'Report timestamp in ISO 8601.'
       when /report_date/
