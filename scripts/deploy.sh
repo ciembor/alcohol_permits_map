@@ -29,16 +29,8 @@ case "$DEPLOY_ACTION" in
 esac
 
 sync_checkout() {
-  rsync -az --delete \
-    --exclude '.env.local' \
-    --exclude '.git/' \
-    --exclude 'coverage/' \
-    --exclude 'db/*.sqlite3' \
-    --exclude 'db/*.sqlite3-*' \
-    --exclude 'log/' \
-    --exclude 'tmp/' \
-    --exclude 'vendor/bundle/' \
-    ./ "${REMOTE_HOST}:${REMOTE_DIR}/"
+  git archive --format=tar HEAD | ssh "${REMOTE_HOST}" \
+    "mkdir -p '${REMOTE_DIR}' && tar -xf - -C '${REMOTE_DIR}'"
 }
 
 if [ "$DEPLOY_ACTION" = "deploy" ]; then
