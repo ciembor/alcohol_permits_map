@@ -15,7 +15,8 @@ ENV APP_HOME=/app \
 
 WORKDIR ${APP_HOME}
 
-RUN apt-get update \
+RUN mkdir -p "${TMPDIR}" \
+    && apt-get update \
     && apt-get install -y --no-install-recommends build-essential ca-certificates libsqlite3-0 nodejs pkg-config \
     && groupadd --gid "${APP_GID}" app \
     && useradd --uid "${APP_UID}" --gid app --home-dir "${APP_HOME}" --shell /usr/sbin/nologin app \
