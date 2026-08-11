@@ -52,7 +52,9 @@ jobs:
           mkdir -p tmp/container-smoke/db tmp/container-smoke/log tmp/container-smoke/storage
           chmod 0777 tmp/container-smoke/db tmp/container-smoke/log tmp/container-smoke/storage
 
-          docker run --rm -d \
+          docker rm -f alcohol-permits-map-smoke >/dev/null 2>&1 || true
+
+          docker run -d \
             --name alcohol-permits-map-smoke \
             -p 127.0.0.1:9294:9294 \
             -e RAILS_ENV=production \
@@ -78,7 +80,9 @@ jobs:
             sleep 2
           done
 
-          docker logs alcohol-permits-map-smoke
+          docker ps -a
+          docker logs alcohol-permits-map-smoke || true
+          docker inspect alcohol-permits-map-smoke || true
           exit 1
 
   deploy:
