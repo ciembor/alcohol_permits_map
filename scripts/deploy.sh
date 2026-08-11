@@ -29,8 +29,26 @@ case "$DEPLOY_ACTION" in
 esac
 
 sync_checkout() {
-  git archive --format=tar HEAD | ssh "${REMOTE_HOST}" \
-    "mkdir -p '${REMOTE_DIR}' && tar -xf - -C '${REMOTE_DIR}'"
+  git archive --format=tar HEAD -- \
+    .dockerignore \
+    .ruby-version \
+    Dockerfile \
+    Gemfile \
+    Gemfile.lock \
+    Rakefile \
+    app \
+    bin \
+    config \
+    config.ru \
+    db/migrate \
+    db/schema.rb \
+    db/seeds.rb \
+    deploy \
+    lib \
+    public \
+    scripts \
+    package.json | ssh "${REMOTE_HOST}" \
+      "mkdir -p '${REMOTE_DIR}' && tar -xf - -C '${REMOTE_DIR}'"
 }
 
 if [ "$DEPLOY_ACTION" = "deploy" ]; then
