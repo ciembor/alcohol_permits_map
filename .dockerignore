@@ -6,3 +6,8 @@ db/*.sqlite3-*
 log/*
 tmp/*
 vendor/bundle/
+
+.DS_Store
+paper/
+storage/*
+!storage/.keep
