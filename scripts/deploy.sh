@@ -8,6 +8,8 @@ IMAGE_NAME="${IMAGE_NAME:-localhost/alcohol-permits-map:latest}"
 PUBLIC_BASE_URL="${PUBLIC_BASE_URL:-}"
 HEALTHCHECK_ATTEMPTS="${HEALTHCHECK_ATTEMPTS:-30}"
 HEALTHCHECK_SLEEP_SECONDS="${HEALTHCHECK_SLEEP_SECONDS:-2}"
+WARM_REPORT_CACHE="${WARM_REPORT_CACHE:-1}"
+WARM_REPORT_CACHE_MAX_TIME="${WARM_REPORT_CACHE_MAX_TIME:-90}"
 DEPLOY_ACTION="${1:-${DEPLOY_ACTION:-deploy}}"
 RELEASE_NAME="${RELEASE_NAME:-$(git rev-parse --short HEAD)}"
 IMAGE_REPOSITORY="${IMAGE_NAME%:*}"
@@ -67,6 +69,8 @@ ssh "${REMOTE_HOST}" \
   PUBLIC_BASE_URL='${PUBLIC_BASE_URL}' \
   HEALTHCHECK_ATTEMPTS='${HEALTHCHECK_ATTEMPTS}' \
   HEALTHCHECK_SLEEP_SECONDS='${HEALTHCHECK_SLEEP_SECONDS}' \
+  WARM_REPORT_CACHE='${WARM_REPORT_CACHE}' \
+  WARM_REPORT_CACHE_MAX_TIME='${WARM_REPORT_CACHE_MAX_TIME}' \
   bash -s -- '${DEPLOY_ACTION}'" <<'REMOTE'
 set -euo pipefail
 
@@ -182,6 +186,25 @@ write_release_env() {
   fi
 }
 
+warm_report_cache() {
+  if [ "${WARM_REPORT_CACHE}" != "1" ]; then
+    return 0
+  fi
+
+  echo "Warming map report cache for release ${RELEASE_NAME}"
+
+  sudo podman exec "${SERVICE_NAME}" bundle exec rails runner \
+    'puts AlcoholLicense.where.not(reported_at: nil).distinct.order(:reported_at).pluck(:reported_at).map { |report| report.utc.iso8601 }' |
+    while IFS= read -r report_at; do
+      [ -n "${report_at}" ] || continue
+      printf '  %s... ' "${report_at}"
+      curl --connect-timeout 2 --max-time "${WARM_REPORT_CACHE_MAX_TIME}" -fsSL -o /dev/null \
+        --get --data-urlencode "report_at=${report_at}" \
+        "http://127.0.0.1:9294/map/licenses"
+      printf 'ok\n'
+    done
+}
+
 deploy_release() {
   local previous_release=""
 
@@ -203,6 +226,17 @@ deploy_release() {
 
   if ! wait_for_smoke_checks; then
     echo "Deploy smoke checks failed; restoring previous image" >&2
+    if image_exists "${PREVIOUS_IMAGE_NAME}"; then
+      sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
+      restart_app_service
+      wait_for_smoke_checks || true
+    fi
+    sudo systemctl status "${SERVICE_NAME}" --no-pager || true
+    exit 1
+  fi
+
+  if ! warm_report_cache; then
+    echo "Report cache warm-up failed; restoring previous image" >&2
     if image_exists "${PREVIOUS_IMAGE_NAME}"; then
       sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
       restart_app_service
