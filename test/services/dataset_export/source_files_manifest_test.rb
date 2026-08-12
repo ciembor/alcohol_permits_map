@@ -28,9 +28,14 @@ class DatasetExport::SourceFilesManifestTest < ActiveSupport::TestCase
       assert_equal '2026-02-06T08:43:09Z', pdf_row.fetch('reported_at')
       assert_equal 'detal', pdf_row.fetch('business_category')
       assert_equal 'A', pdf_row.fetch('license_category')
+      assert_equal DatasetExport::SourceFilesManifest::BIP_ALCOHOL_LICENSES_URL, pdf_row.fetch('source_url')
+      assert_match(/\A\d{4}-\d{2}-\d{2}T/, pdf_row.fetch('retrieved_at'))
 
       xls_row = rows.find { |row| row.fetch('file_format') == 'xls' }
       assert_equal '2010-11-01T00:00:00Z', xls_row.fetch('reported_at')
+      assert_nil xls_row.fetch('source_url')
+      assert_match(/\A\d{4}-\d{2}-\d{2}T/, xls_row.fetch('retrieved_at'))
+      assert_includes xls_row.fetch('notes'), 'public-information-request response'
     end
   end
 

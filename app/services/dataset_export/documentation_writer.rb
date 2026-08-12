@@ -42,6 +42,113 @@ module DatasetExport
       'area_type' => 'city, district, sim_unit.'
     }.freeze
 
+    COLUMN_DESCRIPTIONS = {
+      'address_1' => 'Normalized street name or non-street location name used for matching and geocoding.',
+      'address_2' => 'Address complement from the source record, usually building, unit, parcel, or descriptive information.',
+      'address_kind' => 'Normalized address class, for example building, parcel, or descriptive location.',
+      'address_relation' => 'Relationship between the source address and normalized location, where recorded.',
+      'area_code' => 'Stable public code of the aggregation area: city, district, or SIM unit.',
+      'area_km2' => 'Area size in square kilometres used for density calculations.',
+      'area_name' => 'Human-readable name of the aggregation area.',
+      'area_type' => 'Aggregation level of the row.',
+      'building_number' => 'Building number parsed from the source or normalized address.',
+      'business_category' => 'Activity type from the source register.',
+      'business_categories' => 'Business categories represented by licenses grouped into the sales point.',
+      'business_count' => 'Number of distinct pseudonymized business keys represented in the sales point.',
+      'business_key' => 'Stable pseudonymized business identifier; full source business names are not included by default.',
+      'business_keys' => 'Distinct pseudonymized business identifiers represented in the sales point.',
+      'category_a_license_count' => 'Number of category A licenses in the aggregation area and report.',
+      'category_b_license_count' => 'Number of category B licenses in the aggregation area and report.',
+      'category_c_license_count' => 'Number of category C licenses in the aggregation area and report.',
+      'confidence' => 'Internal confidence score or label assigned by the correction or geocoding workflow.',
+      'correction_id' => 'Stable public identifier of an address-correction provenance row.',
+      'corrected_address_1' => 'Corrected primary address text used during normalization.',
+      'corrected_address_2' => 'Corrected secondary address text used during normalization.',
+      'crs' => 'Coordinate reference system used by latitude and longitude.',
+      'display_address' => 'Display-ready address assembled from normalized address fields.',
+      'evidence' => 'Short provenance evidence for an address correction.',
+      'expires_at' => 'License expiry date from the source register, when available.',
+      'expires_at_max' => 'Latest expiry date among licenses grouped into the sales point.',
+      'file_format' => 'Source file format in the processing archive.',
+      'first_reported_at' => 'First report timestamp in which this entity appears.',
+      'gastronomy_flag' => 'True when the sales point has at least one gastronomy license in the report.',
+      'gastronomy_license_count' => 'Number of gastronomy licenses in the sales point or aggregation area.',
+      'geocoded' => 'True when the license has coordinates through its normalized location or grouped sales point.',
+      'geocoded_license_count' => 'Number of license records with an assigned public coordinate.',
+      'geocoded_license_percent' => 'Percent of license records in the report with an assigned public coordinate.',
+      'geocoding_result_id' => 'Stable public identifier of a non-Google geocoding candidate.',
+      'geocoding_source' => 'Selected public geocoding source used for the sales point location.',
+      'geocoding_strategy' => 'Strategy used to obtain or select the coordinate.',
+      'geocoding_precision' => 'Precision class of the selected coordinate.',
+      'last_reported_at' => 'Last report timestamp in which this entity appears.',
+      'license_categories' => 'Alcohol license categories represented in the sales point.',
+      'license_category' => 'Alcohol license category from the source register.',
+      'license_category_description' => 'Source description of the alcohol license category.',
+      'license_count_a' => 'Number of category A licenses grouped into the sales point.',
+      'license_count_b' => 'Number of category B licenses grouped into the sales point.',
+      'license_count_c' => 'Number of category C licenses grouped into the sales point.',
+      'licenses_per_1000_registered_residents' => 'License records per 1000 registered residents in the aggregation area.',
+      'licenses_per_km2' => 'License records per square kilometre in the aggregation area.',
+      'location_uncertain' => 'True when the selected location remains uncertain after automated and manual review.',
+      'location_uncertainty_reasons' => 'Machine-readable reasons for location uncertainty.',
+      'manual_geocoding_result_id' => 'Identifier of a manually created geocoding result, when used.',
+      'manual_latitude' => 'Latitude manually assigned during review, if present.',
+      'manual_longitude' => 'Longitude manually assigned during review, if present.',
+      'membership_method' => 'Method used to link the license record to a sales point.',
+      'method' => 'Correction or matching method used to produce the row.',
+      'mixed_flag' => 'True when both retail and gastronomy categories are represented in the sales point.',
+      'normalization_input_address_2' => 'Secondary address text used as input to the normalization step.',
+      'notes' => 'Free-text release note or provenance note for the row.',
+      'observed_on' => 'Date of the population snapshot.',
+      'observed_on_code' => 'Compact date code for the population snapshot.',
+      'original_filename' => 'Filename preserved from the source or intermediate extraction file.',
+      'original_latitude' => 'Latitude before manual review, when recorded.',
+      'original_longitude' => 'Longitude before manual review, when recorded.',
+      'parcel_cadastral_unit' => 'Cadastral unit name or code for parcel-based addresses.',
+      'parcel_number' => 'Parcel number for parcel-based source or normalized addresses.',
+      'parcel_region' => 'Cadastral precinct or region for parcel-based addresses.',
+      'point_id' => 'Stable identifier of an analytical sales point in one report.',
+      'points_per_1000_registered_residents' => 'Sales points per 1000 registered residents in the aggregation area.',
+      'points_per_km2' => 'Sales points per square kilometre in the aggregation area.',
+      'population_snapshot_date' => 'Population snapshot date used for per-resident rates.',
+      'population_total' => 'Registered resident count used for rate calculations.',
+      'precision' => 'Geocoding precision class returned or assigned for the candidate result.',
+      'query' => 'Query string sent to the public geocoder or constructed for the geocoding attempt.',
+      'quality_signals' => 'JSON quality-control signals used during review.',
+      'raw_location_count' => 'Number of raw source addresses linked to the normalized location.',
+      'raw_location_ids' => 'Raw source location identifiers grouped into the sales point.',
+      'relative_path' => 'Path of the source or intermediate file relative to the processing repository root.',
+      'retrieved_at' => 'Timestamp when the local source-file copy was acquired or last preserved in the processing snapshot.',
+      'row_count_extracted' => 'Number of data rows extracted from the intermediate source file, when applicable.',
+      'row_count_imported' => 'Number of data rows imported from the intermediate source file, when applicable.',
+      'retail_flag' => 'True when the sales point has at least one retail license in the report.',
+      'retail_license_count' => 'Number of retail licenses in the sales point or aggregation area.',
+      'retail_point_count' => 'Number of sales points with at least one retail license.',
+      'review_id' => 'Stable public identifier of a geocoding review decision.',
+      'review_status' => 'Outcome of the manual or semi-manual geocoding review.',
+      'reviewed_at' => 'Timestamp when the geocoding review decision was recorded, when available.',
+      'same_as' => 'Canonical normalized location identifier when this row is known to duplicate another location.',
+      'selected' => 'True when the correction or geocoding result was selected for downstream processing.',
+      'selected_geocoding_result_id' => 'Selected public geocoding candidate used for the normalized location.',
+      'selected_geocoding_source' => 'Source of the selected public geocoding candidate.',
+      'selected_geocoding_strategy' => 'Strategy used by the selected geocoding candidate.',
+      'selected_geocoding_precision' => 'Precision class of the selected geocoding candidate.',
+      'sha256' => 'SHA-256 checksum of the source or generated file.',
+      'signal_category' => 'Review signal category that caused the location to be inspected.',
+      'sim_circle_within_area' => 'True when a small circle around the reviewed point stays within the expected SIM unit.',
+      'source' => 'Source system or processing step that produced the row.',
+      'source_address_1' => 'Primary address text as preserved from the administrative source record.',
+      'source_address_2' => 'Secondary address text as preserved from the administrative source record.',
+      'source_file_id' => 'Stable identifier of the source or intermediate file listed in source_files_manifest.csv.',
+      'source_origin' => 'Source-file origin class, such as BIP PDF, spreadsheet from public-information request, or extracted CSV.',
+      'source_raw_location_id' => 'Raw location used as source evidence for an address correction.',
+      'source_url' => 'Source landing page or file URL when known; blank means the original delivery URL was not preserved.',
+      'strategy' => 'Geocoding strategy used for the candidate result.',
+      'unit' => 'Measurement unit for the value in this row.',
+      'unit_number' => 'Apartment, premises, or unit number when available.',
+      'ungrouped_license_count' => 'Number of licenses not assigned to an analytical sales point in the report.'
+    }.freeze
+
     def initialize(paths:)
       @paths = paths
     end
@@ -153,6 +260,49 @@ module DatasetExport
 
         licenses = pd.read_csv("data/tables/alcohol_licenses.csv")
         points = gpd.read_file("data/geospatial/license_points_latest.geojson")
+
+        latest_report = pd.read_csv("data/tables/reports.csv").sort_values("report_date").iloc[-1]
+        print(latest_report[["report_date", "license_count", "point_count"]])
+        ```
+
+        ## Analysis Examples
+
+        Count sales points in the latest report:
+
+        ```python
+        import pandas as pd
+
+        reports = pd.read_csv("data/tables/reports.csv").sort_values("report_date")
+        latest = reports.iloc[-1]
+        print(latest["report_date"], latest["point_count"])
+        ```
+
+        Join license records to their analytical sales points:
+
+        ```python
+        import pandas as pd
+
+        licenses = pd.read_csv("data/tables/alcohol_licenses.csv")
+        memberships = pd.read_csv("data/tables/point_memberships.csv")
+        points = pd.read_csv("data/tables/license_points.csv")
+
+        license_points = (
+            licenses.drop(columns=["point_id"], errors="ignore")
+                    .merge(memberships[["license_id", "point_id"]], on="license_id")
+                    .merge(points[["point_id", "display_address", "latitude", "longitude"]], on="point_id", how="left")
+        )
+        ```
+
+        Reproduce the Kazimierz sales-point change quoted in the manuscript:
+
+        ```python
+        import pandas as pd
+
+        sim = pd.read_csv("data/aggregates/sim_summary_by_report.csv")
+        kazimierz = sim[sim["area_name"].eq("Kazimierz")].sort_values("report_date")
+        first, latest = kazimierz.iloc[0], kazimierz.iloc[-1]
+        change = (latest["point_count"] - first["point_count"]) / first["point_count"] * 100
+        print(first["point_count"], latest["point_count"], round(change, 1))
         ```
 
         ## Quick Start: R
@@ -294,11 +444,9 @@ module DatasetExport
 
         The default release does not publish full business names because source registers can include names of sole proprietorships or natural persons conducting business. Public identifiers such as `business_key` and aggregate counts are used instead. If a separate provenance layer with business names is generated, it must be documented and reviewed before publication.
 
-        ## Publication Blockers Before Final DOI
+        ## Release Review
 
-        - Confirm whether the spreadsheet files obtained through access to public information were delivered with any specific reuse offer or restriction.
-        - Confirm final publication venue metadata fields and repository URL.
-        - Re-check source terms immediately before public release if the release date differs materially from `#{Date.today.iso8601}`.
+        The release archive excludes full Google geocoding output, local SQLite databases, cache files, and processing-repository metadata. Spreadsheet files obtained through access to public information are represented in `source_files_manifest.csv`; exact source-file mirrors are not included in the default Zenodo archive.
 
         ## Prepared
 
@@ -462,6 +610,8 @@ module DatasetExport
     end
 
     def column_description(column)
+      return COLUMN_DESCRIPTIONS.fetch(column) if COLUMN_DESCRIPTIONS.key?(column)
+
       case column
       when /_id\z/
         'Stable public identifier generated from dataset content. Database primary keys are not exported in the public release.'

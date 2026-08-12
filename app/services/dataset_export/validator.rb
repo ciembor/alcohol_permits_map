@@ -1018,7 +1018,13 @@ module DatasetExport
     def write_report
       report = {
         generated_at: Time.now.utc.iso8601,
+        status: errors.empty? ? 'passed' : 'failed',
         passed: errors.empty?,
+        summary: {
+          total_checks: checks.size,
+          passed_checks: checks.count { |check| check.fetch(:passed) },
+          failed_checks: checks.count { |check| !check.fetch(:passed) }
+        },
         errors: errors,
         checks: checks
       }

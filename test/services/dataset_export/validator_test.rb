@@ -28,6 +28,10 @@ class DatasetExport::ValidatorTest < ActiveSupport::TestCase
       assert paths.validation_report_md.exist?
 
       report = JSON.parse(paths.validation_report_json.read)
+      assert_equal 'passed', report.fetch('status')
+      assert_equal true, report.fetch('passed')
+      assert_equal 0, report.fetch('summary').fetch('failed_checks')
+      assert_equal report.fetch('checks').size, report.fetch('summary').fetch('total_checks')
       check_names = report.fetch('checks').map { |check| check.fetch('name') }
       assert_includes check_names, 'data_tables_alcohol_licenses_csv_utf8'
       assert_includes check_names, 'data_tables_alcohol_licenses_csv_unique_headers'

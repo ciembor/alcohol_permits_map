@@ -8,6 +8,8 @@ require 'dataset_export/stable_id'
 
 module DatasetExport
   class SourceFilesManifest
+    BIP_ALCOHOL_LICENSES_URL = 'http://www.bip.krakow.pl/?dok_id=30394&vReg=2'.freeze
+
     COLUMNS = %w[
       source_file_id
       reported_at
@@ -66,9 +68,11 @@ module DatasetExport
 
         build_row(path, metadata.merge(
           source_origin: 'historical_spreadsheet_public_information_request',
+          source_url: nil,
+          retrieved_at: file_timestamp(path),
           row_count_extracted: nil,
           row_count_imported: nil,
-          notes: 'source file is linked at report/category level; source row numbers are not part of the public release'
+          notes: 'spreadsheet preserved from a public-information-request response; original delivery URL is not part of the repository snapshot and source row numbers are not part of the public release'
         ))
       end
     end
@@ -80,9 +84,11 @@ module DatasetExport
 
         build_row(path, metadata.merge(
           source_origin: 'bip_krakow_pdf',
+          source_url: BIP_ALCOHOL_LICENSES_URL,
+          retrieved_at: file_timestamp(path),
           row_count_extracted: nil,
           row_count_imported: nil,
-          notes: 'original PDF; extracted table is listed separately when available'
+          notes: 'original PDF from the Krakow BIP alcohol-license register landing page; exact historical file URL was not preserved in the repository snapshot'
         ))
       end
     end
@@ -95,9 +101,11 @@ module DatasetExport
         row_count = csv_data_row_count(path)
         build_row(path, metadata.merge(
           source_origin: 'pdf_table_extraction',
+          source_url: BIP_ALCOHOL_LICENSES_URL,
+          retrieved_at: file_timestamp(path),
           row_count_extracted: row_count,
           row_count_imported: row_count,
-          notes: nil
+          notes: 'CSV derived from the corresponding BIP PDF listed in this manifest'
         ))
       end
     end
@@ -121,8 +129,8 @@ module DatasetExport
         'source_origin' => metadata.fetch(:source_origin),
         'original_filename' => path.basename.to_s,
         'relative_path' => relative_path(path),
-        'source_url' => nil,
-        'retrieved_at' => nil,
+        'source_url' => metadata[:source_url],
+        'retrieved_at' => metadata[:retrieved_at],
         'sha256' => Digest::SHA256.file(path).hexdigest,
         'row_count_extracted' => metadata[:row_count_extracted],
         'row_count_imported' => metadata[:row_count_imported],
@@ -195,6 +203,10 @@ module DatasetExport
 
     def relative_path(path)
       path.relative_path_from(root).to_s
+    end
+
+    def file_timestamp(path)
+      path.mtime.utc.iso8601
     end
   end
 end
