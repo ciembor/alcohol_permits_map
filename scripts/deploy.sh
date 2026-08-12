@@ -172,10 +172,21 @@ install_units() {
   sudo systemctl enable "${SERVICE_NAME}.service"
 }
 
+write_release_env() {
+  local env_file="${REMOTE_DIR}/.env.local"
+  touch "$env_file"
+  if grep -q '^ALKOMAPA_DATA_CACHE_VERSION=' "$env_file"; then
+    sed -i "s/^ALKOMAPA_DATA_CACHE_VERSION=.*/ALKOMAPA_DATA_CACHE_VERSION=${RELEASE_NAME}/" "$env_file"
+  else
+    printf '\nALKOMAPA_DATA_CACHE_VERSION=%s\n' "${RELEASE_NAME}" >> "$env_file"
+  fi
+}
+
 deploy_release() {
   local previous_release=""
 
   assert_secret_key_base
+  write_release_env
   install_units
 
   if image_exists "${IMAGE_NAME}"; then

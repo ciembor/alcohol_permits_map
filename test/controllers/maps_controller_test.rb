@@ -153,6 +153,42 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 19.9391, mixed_point.fetch('lng')
   end
 
+  test 'materializes report cache on first request and reuses it afterwards' do
+    report_at = Time.utc(2026, 2, 6, 8, 43, 9)
+    cache_root = Rails.root.join('tmp/tests/map-report-cache')
+    cache_path = cache_root.join('unit-test', '2026-02-06T08-43-09Z.json')
+    FileUtils.rm_rf(cache_root)
+
+    with_modified_env(
+      'ALKOMAPA_REPORT_CACHE_IN_TEST' => '1',
+      'ALKOMAPA_REPORT_CACHE_ROOT' => cache_root.to_s,
+      'ALKOMAPA_DATA_CACHE_VERSION' => 'unit-test'
+    ) do
+      get map_licenses_path(report_at: report_at.iso8601)
+
+      assert_response :success
+      assert cache_path.exist?
+      assert_equal 2, JSON.parse(cache_path.read).fetch('points').size
+
+      AlcoholLicense.where.not(id: AlcoholLicense.minimum(:id)).delete_all
+      get map_licenses_path(report_at: report_at.iso8601)
+
+      assert_response :success
+      assert_equal 2, JSON.parse(response.body).fetch('points').size
+    end
+  ensure
+    FileUtils.rm_rf(cache_root)
+  end
+
+  test 'uses deploy cache version in report cache path' do
+    report_at = Time.utc(2026, 2, 6, 8, 43, 9)
+
+    with_modified_env('ALKOMAPA_DATA_CACHE_VERSION' => 'release/one') do
+      assert_includes MapsController.new.send(:report_cache_path, report_at).to_s,
+        '/cache/release-one/2026-02-06T08-43-09Z.json'
+    end
+  end
+
   test 'locates Kazimierz with official SIM polygons' do
     sim = Sim::Locator.new.locate(50.052, 19.945)
 
@@ -185,5 +221,24 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 2.0, report.fetch('rates').fetch('per_1000_registered')
     assert_nil report.fetch('change_from_previous_percent')
     assert_equal 0.0, report.fetch('change_from_first_percent')
+  end
+
+  private
+
+  def with_modified_env(values)
+    previous = values.transform_values { |_value| nil }
+    values.each do |key, value|
+      previous[key] = ENV[key]
+      ENV[key] = value
+    end
+    yield
+  ensure
+    previous.each do |key, value|
+      if value.nil?
+        ENV.delete(key)
+      else
+        ENV[key] = value
+      end
+    end
   end
 end

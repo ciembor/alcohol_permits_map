@@ -1,3 +1,4 @@
+require 'fileutils'
 require 'geocoding/location_uncertainty'
 
 class MapsController < ApplicationController
@@ -9,16 +10,21 @@ class MapsController < ApplicationController
 
   def licenses
     report_at = requested_report || available_reports.last
-    points = report_at ? license_points(report_at) : []
+    cached_path = report_cache_path(report_at)
 
-    render json: {
-      year: report_at&.year,
-      report_at: report_at,
-      summary: report_at ? report_summary(report_at) : empty_summary,
-      population: report_at ? population_snapshot(report_at) : empty_population_snapshot,
-      sim_areas: report_at ? sim_areas(points) : [],
-      points: points
-    }
+    if report_at && report_cache_enabled?
+      if File.file?(cached_path)
+        return send_cached_json(cached_path)
+      end
+
+      payload = report_payload(report_at)
+      json = JSON.generate(payload)
+      write_report_cache(cached_path, json)
+      response.headers['Cache-Control'] = report_cache_control
+      return render body: json, content_type: 'application/json'
+    end
+
+    render json: report_payload(report_at)
   end
 
   def raw_records
@@ -76,6 +82,62 @@ class MapsController < ApplicationController
       .pick(:reported_at)
   rescue ArgumentError, TypeError
     nil
+  end
+
+  def report_payload(report_at)
+    points = report_at ? license_points(report_at) : []
+
+    {
+      year: report_at&.year,
+      report_at: report_at,
+      summary: report_at ? report_summary(report_at) : empty_summary,
+      population: report_at ? population_snapshot(report_at) : empty_population_snapshot,
+      sim_areas: report_at ? sim_areas(points) : [],
+      points: points
+    }
+  end
+
+  def report_cache_enabled?
+    !Rails.env.test? || ENV['ALKOMAPA_REPORT_CACHE_IN_TEST'] == '1'
+  end
+
+  def report_cache_path(report_at)
+    return if report_at.blank?
+
+    report_cache_root.join(
+      report_cache_version,
+      "#{report_at.utc.iso8601.gsub(':', '-')}.json"
+    )
+  end
+
+  def report_cache_root
+    Pathname(ENV.fetch('ALKOMAPA_REPORT_CACHE_ROOT') do
+      Rails.root.join('storage/prod_alkomapa_data_local/data/cache').to_s
+    end)
+  end
+
+  def report_cache_version
+    ENV.fetch('ALKOMAPA_DATA_CACHE_VERSION') do
+      ENV.fetch('APP_REVISION', 'development')
+    end.to_s.gsub(/[^0-9A-Za-z._-]/, '-').presence || 'development'
+  end
+
+  def report_cache_control
+    'public, max-age=86400'
+  end
+
+  def send_cached_json(path)
+    response.headers['Cache-Control'] = report_cache_control
+    send_file path, type: 'application/json', disposition: 'inline'
+  end
+
+  def write_report_cache(path, json)
+    FileUtils.mkdir_p(path.dirname)
+    temp_path = path.sub_ext("#{path.extname}.#{$$}.#{Thread.current.object_id}.tmp")
+    File.binwrite(temp_path, json)
+    File.rename(temp_path, path)
+  ensure
+    FileUtils.rm_f(temp_path) if temp_path && File.exist?(temp_path)
   end
 
   def available_reports

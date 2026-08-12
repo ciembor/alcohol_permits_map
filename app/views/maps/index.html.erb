@@ -1873,7 +1873,7 @@
       if (reportDataCache[report]) return reportDataCache[report];
 
       reportDataCache[report] = fetch(reportDataUrl(report), {
-        cache: 'no-store',
+        cache: 'force-cache',
         signal: options.signal
       })
         .then(function (response) {
