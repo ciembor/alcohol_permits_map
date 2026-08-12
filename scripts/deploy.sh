@@ -47,6 +47,7 @@ sync_checkout() {
     lib \
     public \
     scripts \
+    vendor/data/sim \
     package.json | ssh "${REMOTE_HOST}" \
       "mkdir -p '${REMOTE_DIR}' && tar -xf - -C '${REMOTE_DIR}'"
 }
