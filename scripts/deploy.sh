@@ -86,9 +86,9 @@ restart_app_service() {
 }
 
 smoke_check_once() {
-  curl -fsSL -o /dev/null "http://127.0.0.1:9294/healthz"
+  curl --connect-timeout 2 --max-time 5 -fsSL -o /dev/null "http://127.0.0.1:9294/healthz"
   if [ -n "${PUBLIC_BASE_URL}" ]; then
-    curl -fsSL -o /dev/null "${PUBLIC_BASE_URL%/}/healthz"
+    curl --connect-timeout 2 --max-time 5 -fsSL -o /dev/null "${PUBLIC_BASE_URL%/}/healthz"
   fi
 }
 
