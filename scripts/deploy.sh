@@ -194,7 +194,8 @@ warm_report_cache() {
   echo "Warming map report cache for release ${RELEASE_NAME}"
 
   sudo podman exec "${SERVICE_NAME}" bundle exec rails runner \
-    'puts AlcoholLicense.where.not(reported_at: nil).distinct.order(:reported_at).pluck(:reported_at).map { |report| report.utc.iso8601 }' |
+    'ActiveRecord::Base.logger = nil; puts AlcoholLicense.where.not(reported_at: nil).distinct.order(:reported_at).pluck(:reported_at).map { |report| report.utc.iso8601 }' |
+    grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$' |
     while IFS= read -r report_at; do
       [ -n "${report_at}" ] || continue
       printf '  %s... ' "${report_at}"
