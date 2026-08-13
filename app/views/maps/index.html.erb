@@ -1012,6 +1012,11 @@
     }
 
     function renderSummaryLoading() {
+      if (currentPoints.length) {
+        renderSummary(visiblePoints());
+        return;
+      }
+
       reportSummary.innerHTML = [
         reportSummaryTitleHtml(),
         summaryRows({ total: null, gastronomy: null, mixed: null, detail: null }).map(function (row) {
