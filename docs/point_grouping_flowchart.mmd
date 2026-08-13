@@ -1,20 +1,25 @@
-%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "12px", "primaryColor": "#f7f7f3", "primaryBorderColor": "#4f5f5b", "primaryTextColor": "#202321", "lineColor": "#68736f", "tertiaryColor": "#eef3f0"}, "flowchart": {"curve": "basis", "nodeSpacing": 18, "rankSpacing": 22, "htmlLabels": true}}}%%
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "11px", "primaryColor": "#f7f7f3", "primaryBorderColor": "#4f5f5b", "primaryTextColor": "#202321", "lineColor": "#68736f", "tertiaryColor": "#eef3f0"}, "flowchart": {"curve": "basis", "nodeSpacing": 12, "rankSpacing": 14, "htmlLabels": true}}}%%
 flowchart TB
   title["<b>Public dataset processing flow</b>"]
 
-  sources["<b>1. Sources</b><br/>XLS/XLSX reports, BIP PDFs/CSVs,<br/>source manifest"]
-  import["<b>2. Import</b><br/><code>research:import_sources</code><br/>licenses, operators, raw locations,<br/>streets and SIM population"]
-  normalize["<b>3. Normalize</b><br/><code>research:normalize_locations</code><br/>street names, numbers, units,<br/>parcels and address corrections"]
-  geocode["<b>4. Geocode</b><br/><code>research:geocode_open</code><br/>MSIP, GUS, ULDK, OSM/Nominatim<br/>plus manual review decisions"]
-  grouping["<b>5. Group points</b><br/><code>research:rebuild_analysis</code><br/>coordinates, unit context and<br/>operator-name similarity"]
-  aggregate["<b>6. Aggregate</b><br/>SIM assignment, city/district/SIM summaries,<br/>density and resident indicators"]
-  release["<b>7. Release</b><br/><code>research:release_dataset</code><br/><code>research:prepare_zenodo_repository</code><br/>validated CSV/GeoJSON package"]
+  xlsx["<b>1a. Spreadsheet source</b><br/>XLS/XLSX reports<br/>from the municipal office"]
+  crawler["<b>1b. BIP source</b><br/>crawler downloads PDFs<br/>and source metadata"]
+  pdfcsv["<b>PDF extraction</b><br/>PDF archive -> CSV tables<br/>with extraction checks"]
+  sources["<b>2. Source selection</b><br/>XLS/XLSX preferred where available;<br/>later reports use PDF-derived CSVs"]
+  import["<b>3. Import and provenance</b><br/><code>research:import_sources</code><br/>licenses, operators, raw locations,<br/>streets and SIM population"]
+  normalize["<b>4. Normalize</b><br/><code>research:normalize_locations</code><br/>street names, numbers, units,<br/>parcels and address corrections"]
+  geocode["<b>5. Geocode</b><br/><code>research:geocode_open</code><br/>MSIP, GUS, ULDK, OSM/Nominatim<br/>plus manual review decisions"]
+  grouping["<b>6. Group points</b><br/><code>research:rebuild_analysis</code><br/>coordinates, unit context and<br/>operator-name similarity"]
+  aggregate["<b>7. Aggregate</b><br/>SIM assignment, city/district/SIM summaries,<br/>density and resident indicators"]
+  release["<b>8. Release</b><br/><code>research:release_dataset</code><br/><code>research:prepare_zenodo_repository</code><br/>validated CSV/GeoJSON package"]
 
   curation[("<b>Curated snapshot</b><br/><code>db/curation/current.json</code><br/>address fixes, selected points,<br/>review outcomes")]
   validation[("<b>Validation gates</b><br/>IDs, relations, dates, coordinates,<br/>GeoJSON, restricted-response checks")]
-  outputs[("<b>Outputs</b><br/>Zenodo package and public map layer<br/>licenses, locations, sales points,<br/>memberships, audits and aggregates")]
+  outputs[("<b>Outputs</b><br/>Zenodo package and public map layer<br/>licenses, locations, points,<br/>memberships and aggregates")]
 
-  title --> sources --> import --> normalize --> geocode --> grouping --> aggregate --> release --> outputs
+  title --> xlsx --> sources
+  title --> crawler --> pdfcsv --> sources
+  sources --> import --> normalize --> geocode --> grouping --> aggregate --> release --> outputs
 
   curation -.-> normalize
   curation -.-> geocode
@@ -27,6 +32,6 @@ flowchart TB
   classDef output fill:#f2f0ea,stroke:#8a7d63,stroke-width:1.1px,color:#202321;
 
   class title header;
-  class sources,import,normalize,geocode,grouping,aggregate,release main;
+  class xlsx,crawler,pdfcsv,sources,import,normalize,geocode,grouping,aggregate,release main;
   class curation,validation side;
   class outputs output;
