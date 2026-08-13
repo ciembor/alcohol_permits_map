@@ -1,39 +1,32 @@
-flowchart TD
-  pdf[PDF z BIP] --> extractor[Ekstrakcja PDF do CSV<br/>vendor/extractor/extractor.py]
-  xlsx[XLS / XLSX] --> spreadsheet[Import arkuszy<br/>SpreadsheetImporter]
+%%{init: {"theme": "base", "themeVariables": {"fontFamily": "Arial", "fontSize": "12px", "primaryColor": "#f7f7f3", "primaryBorderColor": "#4f5f5b", "primaryTextColor": "#202321", "lineColor": "#68736f", "tertiaryColor": "#eef3f0"}, "flowchart": {"curve": "basis", "nodeSpacing": 18, "rankSpacing": 22, "htmlLabels": true}}}%%
+flowchart TB
+  title["<b>Public dataset processing flow</b>"]
 
-  extractor --> csv[CSV w vendor/data/files/output]
-  csv --> importCsv[bin/rails source_data:import_csv_reports]
-  spreadsheet --> importRows[bin/rails source_data:import_spreadsheet_reports]
+  sources["<b>1. Sources</b><br/>XLS/XLSX reports, BIP PDFs/CSVs,<br/>source manifest"]
+  import["<b>2. Import</b><br/><code>research:import_sources</code><br/>licenses, operators, raw locations,<br/>streets and SIM population"]
+  normalize["<b>3. Normalize</b><br/><code>research:normalize_locations</code><br/>street names, numbers, units,<br/>parcels and address corrections"]
+  geocode["<b>4. Geocode</b><br/><code>research:geocode_open</code><br/>MSIP, GUS, ULDK, OSM/Nominatim<br/>plus manual review decisions"]
+  grouping["<b>5. Group points</b><br/><code>research:rebuild_analysis</code><br/>coordinates, unit context and<br/>operator-name similarity"]
+  aggregate["<b>6. Aggregate</b><br/>SIM assignment, city/district/SIM summaries,<br/>density and resident indicators"]
+  release["<b>7. Release</b><br/><code>research:release_dataset</code><br/><code>research:prepare_zenodo_repository</code><br/>validated CSV/GeoJSON package"]
 
-  importCsv --> rawTables[(businesses<br/>locations<br/>alcohol_licenses<br/>business_categories<br/>license_categories)]
-  importRows --> rawTables
+  curation[("<b>Curated snapshot</b><br/><code>db/curation/current.json</code><br/>address fixes, selected points,<br/>review outcomes")]
+  validation[("<b>Validation gates</b><br/>IDs, relations, dates, coordinates,<br/>GeoJSON, restricted-response checks")]
+  outputs[("<b>Outputs</b><br/>Zenodo package and public map layer<br/>licenses, locations, sales points,<br/>memberships, audits and aggregates")]
 
-  rawTables --> streets[(streets<br/>slownik ulic SIMC)]
-  streets --> transform[bin/rails locations:normalize<br/>LocationTransformer::Transformer]
-  rawTables --> transform
-  corrections[(address_corrections<br/>opcjonalne korekty)] --> transform
+  title --> sources --> import --> normalize --> geocode --> grouping --> aggregate --> release --> outputs
 
-  transform --> transformed[(transformed_locations<br/>znormalizowany adres i typ adresu)]
+  curation -.-> normalize
+  curation -.-> geocode
+  curation -.-> grouping
+  validation -.-> release
 
-  transformed --> queries[TransformedLocation#geocoding_queries<br/>address_point / parcel / landmark / fallback]
+  classDef header fill:#4f5f5b,stroke:#4f5f5b,stroke-width:1px,color:#ffffff;
+  classDef main fill:#f7f7f3,stroke:#4f5f5b,stroke-width:1.2px,color:#202321;
+  classDef side fill:#eef3f0,stroke:#6c7c77,stroke-width:1px,color:#202321,stroke-dasharray: 4 3;
+  classDef output fill:#f2f0ea,stroke:#8a7d63,stroke-width:1.1px,color:#202321;
 
-  queries --> nominatim[bin/rails geocoding:osm_missing_locations<br/>OSM Nominatim]
-  queries --> parcels[bin/rails geocoding:uldk_parcels]
-  queries --> google[bin/rails geocoding:google<br/>Google Maps / Places]
-
-  nominatim --> results[(geocoding_results)]
-  parcels --> results
-  google --> results
-
-  results --> select{Wybor wyniku<br/>selected = true}
-  select --> coordinates[(transformed_locations<br/>latitude / longtitude<br/>osm_latitude / osm_longitude)]
-
-  coordinates --> groupingInput[Geokodowane licencje dla report_at<br/>AlcoholLicense + Business + TransformedLocation]
-  groupingInput --> groupByCoords[Grupowanie po wspolrzednych<br/>latitude + longitude]
-  groupByCoords --> normalizeBusiness[Normalizacja nazw firm<br/>BusinessNameNormalizer]
-  normalizeBusiness --> clusterBusiness[Klasteryzacja firm w tym samym punkcie<br/>similarity >= 0.90 albo alias]
-  clusterBusiness --> createGroups[(license_point_groups)]
-  createGroups --> attachLicenses[Ustawienie alcohol_licenses.license_point_group_id]
-
-  attachLicenses --> groupedReady[Gotowe grupy punktow<br/>dla mapy i statystyk]
+  class title header;
+  class sources,import,normalize,geocode,grouping,aggregate,release main;
+  class curation,validation side;
+  class outputs output;
