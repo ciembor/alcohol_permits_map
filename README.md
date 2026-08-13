@@ -4,10 +4,18 @@
 
 ## About
 
-
 This repository processes Kraków alcohol-license reports into normalized
 locations, geocoding provenance, analytical sales points, and an open dataset
 release prepared for Zenodo.
+
+## Dataset
+
+The versioned open-data package is available on Zenodo:
+[https://zenodo.org/records/21895077](https://zenodo.org/records/21895077).
+It contains the publication-ready CSV and GeoJSON files, including license
+records, raw and normalized locations, sales points, license-to-point
+memberships, geocoding and review audit tables, SIM-unit boundaries,
+population snapshots, city/district/SIM aggregates, and source metadata.
 
 ## Prerequisites
 * ruby (see `ruby_version`, install via rbenv, rvm or whatever you want)
