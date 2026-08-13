@@ -1,4 +1,7 @@
 # Alcohol licenses in Kraków
+
+[![Alcohol-sale licenses map in Kraków](docs/images/latest-alcohol-sales-points-map.png)](https://dobra-noc-krakow.pl/alkomapa/)
+
 ## About
 
 
@@ -69,7 +72,3 @@ local SQLite database or raw geocoder responses in git.
 
 ## Paths
 XLSX / XLS files as well as downloaded pdfs and SIMC streets are in `vendor/data/*`
-
-## For developers
-* ERD Diagram: [docs/erd.pdf](docs/erd.pdf)
-* Specs, coding style: Look ma, no hands.
