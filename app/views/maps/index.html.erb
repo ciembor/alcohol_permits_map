@@ -1003,20 +1003,55 @@
       var premises = premiseStats(points);
 
       reportSummary.innerHTML = [
-        '<strong class="report-summary__title">' + escapeHtml(t('premises_based_on_licenses')) + '</strong>',
+        reportSummaryTitleHtml(),
         summaryRows(premises).map(function (row) {
           return summaryPlainRow(row.label, row.count);
         }).join('')
       ].join('');
+      bindReportSummaryInfo();
     }
 
     function renderSummaryLoading() {
       reportSummary.innerHTML = [
-        '<strong class="report-summary__title">' + escapeHtml(t('premises_based_on_licenses')) + '</strong>',
+        reportSummaryTitleHtml(),
         summaryRows({ total: null, gastronomy: null, mixed: null, detail: null }).map(function (row) {
           return summaryPlainRow(row.label, null);
         }).join('')
       ].join('');
+      bindReportSummaryInfo();
+    }
+
+    function reportSummaryTitleHtml() {
+      return '<strong class="report-summary__title">' +
+        '<span>' + escapeHtml(t('premises_based_on_licenses')) + '</span>' +
+        '<button class="report-summary-info" type="button" aria-label="' + escapeHtml(t('premises_grouping_info')) + '">' +
+          '<span class="report-summary-info__icon" aria-hidden="true">i</span>' +
+          '<span class="report-summary-info__tooltip" role="tooltip">' + escapeHtml(t('premises_grouping_info')) + '</span>' +
+        '</button>' +
+      '</strong>';
+    }
+
+    function bindReportSummaryInfo() {
+      var info = reportSummary.querySelector('.report-summary-info');
+      if (!info) return;
+
+      ['mouseenter', 'focus'].forEach(function (eventName) {
+        info.addEventListener(eventName, positionReportSummaryInfoTooltip);
+      });
+    }
+
+    function positionReportSummaryInfoTooltip(event) {
+      var tooltip = event.currentTarget.querySelector('.report-summary-info__tooltip');
+      if (!tooltip) return;
+
+      var iconBounds = event.currentTarget.getBoundingClientRect();
+      var gap = 8;
+      var viewportPadding = 12;
+      var tooltipWidth = 260;
+      var left = Math.min(iconBounds.right + gap, window.innerWidth - tooltipWidth - viewportPadding);
+
+      tooltip.style.left = Math.max(viewportPadding, left) + 'px';
+      tooltip.style.top = iconBounds.top + 'px';
     }
 
     function summaryRows(stats) {
