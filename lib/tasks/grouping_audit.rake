@@ -7,7 +7,7 @@ namespace :grouping_audit do
       AlcoholLicense.maximum(:reported_at)
     end
     sample_size = ENV.fetch('SAMPLE_SIZE', '50').to_i
-    output_path = Rails.root.join(ENV.fetch('OUTPUT', 'docs/audits/grupowanie_audyt.md'))
+    output_path = Rails.root.join(ENV.fetch('OUTPUT', 'tmp/grouping_audit.md'))
 
     licenses = AlcoholLicense
       .where(reported_at: reported_at)
