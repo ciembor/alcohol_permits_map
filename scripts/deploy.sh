@@ -108,6 +108,21 @@ wait_for_smoke_checks() {
   return 1
 }
 
+wait_for_app_container() {
+  local attempt
+  local running
+
+  for attempt in $(seq 1 "${HEALTHCHECK_ATTEMPTS}"); do
+    running="$(sudo podman inspect --format '{{.State.Running}}' "${SERVICE_NAME}" 2>/dev/null || true)"
+    if [ "${running}" = "true" ]; then
+      return 0
+    fi
+    sleep "${HEALTHCHECK_SLEEP_SECONDS}"
+  done
+
+  return 1
+}
+
 cleanup_project_containers() {
   local container_name
   local running
@@ -227,6 +242,17 @@ deploy_release() {
 
   if ! wait_for_smoke_checks; then
     echo "Deploy smoke checks failed; restoring previous image" >&2
+    if image_exists "${PREVIOUS_IMAGE_NAME}"; then
+      sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
+      restart_app_service
+      wait_for_smoke_checks || true
+    fi
+    sudo systemctl status "${SERVICE_NAME}" --no-pager || true
+    exit 1
+  fi
+
+  if ! wait_for_app_container; then
+    echo "App container did not become visible after restart; restoring previous image" >&2
     if image_exists "${PREVIOUS_IMAGE_NAME}"; then
       sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
       restart_app_service
