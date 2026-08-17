@@ -139,7 +139,7 @@ class MapsController < ApplicationController
   end
 
   def report_cache_control
-    'public, max-age=86400'
+    'no-cache'
   end
 
   def send_cached_json(path)
