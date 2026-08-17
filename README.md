@@ -19,7 +19,7 @@ population snapshots, city/district/SIM aggregates, and source metadata.
 
 ## Prerequisites
 
-* Ruby 3.1.2, matching `Gemfile` and `.ruby-version`.
+* Ruby 4.0.6, matching `Gemfile` and `.ruby-version`.
 * Bundler.
 * SQLite, used by the Rails application database.
 * Python with the dependencies from `vendor/extractor/Pipfile` only when
@@ -29,7 +29,7 @@ population snapshots, city/district/SIM aggregates, and source metadata.
 
 ## Setup
 
-Make sure the active Ruby version is 3.1.2 before running Rails commands:
+Make sure the active Ruby version is 4.0.6 before running Rails commands:
 
 ```sh
 ruby -v

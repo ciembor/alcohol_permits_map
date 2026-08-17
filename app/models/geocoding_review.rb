@@ -19,7 +19,7 @@ class GeocodingReview < ApplicationRecord
              class_name: 'GeocodingResult',
              optional: true
 
-  serialize :quality_signals, Array
+  serialize :quality_signals, coder: YAML, type: Array
 
   validates :signal_category, presence: true
   validates :review_status, presence: true, inclusion: { in: STATUSES }

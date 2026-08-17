@@ -108,7 +108,7 @@
 </main>
 
 <script>
-  document.addEventListener('turbolinks:load', function () {
+  document.addEventListener('DOMContentLoaded', function () {
     var page = document.querySelector('.license-map-page');
     if (!page || page.dataset.mapReady === '1') return;
     page.dataset.mapReady = '1';
