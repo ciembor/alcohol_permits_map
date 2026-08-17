@@ -94,6 +94,7 @@ jobs:
     env:
       DEPLOY_HOST: ${{ vars.ALCOHOL_PERMITS_MAP_DEPLOY_HOST }}
       PUBLIC_BASE_URL: ${{ vars.ALCOHOL_PERMITS_MAP_PUBLIC_BASE_URL }}
+      WARM_REPORT_CACHE: "0"
 
     steps:
       - name: Checkout
