@@ -18,6 +18,7 @@
   data-raw-records-url="<%= public_path(map_raw_records_path) %>"
   data-statistics-url="<%= public_path(map_statistics_path) %>"
   data-statistics-static-url="<%= public_path(map_statistics_static_path) %>"
+  data-cache-version="<%= @data_cache_version %>"
   data-locale="<%= I18n.locale %>"
   data-i18n="<%= @map_i18n.to_json %>"
   data-language-urls="<%= language_urls.to_json %>"
@@ -120,6 +121,7 @@
     var rawStaticUrl = page.dataset.rawStaticUrl;
     var statisticsUrl = page.dataset.statisticsUrl;
     var statisticsStaticUrl = page.dataset.statisticsStaticUrl;
+    var cacheVersion = page.dataset.cacheVersion || 'development';
     var i18n = JSON.parse(page.dataset.i18n || '{}');
     var languageUrls = JSON.parse(page.dataset.languageUrls || '{}');
     var currentLocale = page.dataset.locale || 'pl';
@@ -1939,7 +1941,7 @@
     }
 
     function reportDataUrl(report) {
-      return licensesUrl + '?report_at=' + encodeURIComponent(report);
+      return licensesUrl + '?report_at=' + encodeURIComponent(report) + '&v=' + encodeURIComponent(cacheVersion);
     }
 
     function setLoadingStatus() {

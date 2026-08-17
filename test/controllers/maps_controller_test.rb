@@ -17,7 +17,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
       latitude: 50.0641,
       longtitude: 19.9391
     )
-    location = Location.create!(
+    @location = Location.create!(
       address_1: 'DŁUGA',
       address_2: '10',
       transformed_location: transformed_location
@@ -26,7 +26,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
       business: @business,
       business_category: @gastronomy_category,
       license_category: @license_category,
-      location: location,
+      location: @location,
       reported_at: Time.utc(2026, 2, 6, 8, 43, 9),
       expires_at: Time.utc(2027, 1, 1)
     )
@@ -34,7 +34,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
       business: @business,
       business_category: @business_category,
       license_category: @license_category,
-      location: location,
+      location: @location,
       reported_at: Time.utc(2026, 2, 6, 8, 43, 9),
       expires_at: Time.utc(2027, 1, 1)
     )
@@ -42,7 +42,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
       business: @other_business,
       business_category: @business_category,
       license_category: @license_category,
-      location: location,
+      location: @location,
       reported_at: Time.utc(2026, 2, 6, 8, 43, 9),
       expires_at: Time.utc(2027, 1, 1)
     )
@@ -50,7 +50,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
       business: @similar_business,
       business_category: @business_category,
       license_category: @license_category,
-      location: location,
+      location: @location,
       reported_at: Time.utc(2026, 2, 6, 8, 43, 9),
       expires_at: Time.utc(2027, 1, 1)
     )
@@ -90,6 +90,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a[href="https://zenodo.org/records/21895077"][target="_blank"][rel="noopener"]', text: 'Zbiór Danych'
     assert_select 'a[href="https://github.com/ciembor/alcohol_permits_map"][target="_blank"][rel="noopener"]', text: 'Repozytorium'
     assert_includes response.body, 'data-language-urls'
+    assert_includes response.body, 'data-cache-version'
   end
 
   test 'renders map page in English' do
@@ -157,6 +158,25 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'I.1', mixed_point.fetch('sim_area_code')
     assert_equal 50.0641, mixed_point.fetch('lat')
     assert_equal 19.9391, mixed_point.fetch('lng')
+  end
+
+  test 'resolves date-only report parameter to that report instead of latest report' do
+    AlcoholLicense.create!(
+      business: @business,
+      business_category: @business_category,
+      license_category: @license_category,
+      location: @location,
+      reported_at: Time.utc(2025, 2, 27, 14, 5, 43),
+      expires_at: Time.utc(2026, 1, 1)
+    )
+    LicensePointGroupBuilder.rebuild!(reported_at: Time.utc(2025, 2, 27, 14, 5, 43))
+
+    get map_licenses_path(report_at: '2025-02-27')
+
+    assert_response :success
+    body = JSON.parse(response.body)
+    assert_equal '2025-02-27T14:05:43.000Z', body.fetch('report_at')
+    assert_equal 1, body.fetch('summary').fetch('total')
   end
 
   test 'materializes report cache on first request and reuses it afterwards' do

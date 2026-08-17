@@ -6,6 +6,7 @@ class MapsController < ApplicationController
     @reports = available_reports
     @initial_report = @reports.last
     @map_i18n = I18n.t('maps.js')
+    @data_cache_version = report_cache_version
   end
 
   def licenses
@@ -75,11 +76,26 @@ class MapsController < ApplicationController
   private
 
   def requested_report
-    return unless params[:report_at].present?
+    value = params[:report_at].presence
+    return unless value
 
-    AlcoholLicense
-      .where(reported_at: Time.zone.parse(params[:report_at]).utc)
-      .pick(:reported_at)
+    requested_time = parse_report_time(value)
+    reports = available_reports
+    exact_report = reports.find { |report| requested_time && report.to_i == requested_time.to_i }
+    return exact_report if exact_report
+
+    requested_date = requested_time&.to_date || parse_report_date(value)
+    reports.reverse.find { |report| report.to_date == requested_date } if requested_date
+  end
+
+  def parse_report_time(value)
+    Time.zone.parse(value.to_s)&.utc
+  rescue ArgumentError, TypeError
+    nil
+  end
+
+  def parse_report_date(value)
+    Date.iso8601(value.to_s)
   rescue ArgumentError, TypeError
     nil
   end
