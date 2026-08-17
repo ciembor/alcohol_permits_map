@@ -273,6 +273,17 @@ deploy_release() {
     exit 1
   fi
 
+  if ! wait_for_smoke_checks; then
+    echo "App failed smoke checks after report cache warm-up; restoring previous image" >&2
+    if image_exists "${PREVIOUS_IMAGE_NAME}"; then
+      sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
+      restart_app_service
+      wait_for_smoke_checks || true
+    fi
+    sudo systemctl status "${SERVICE_NAME}" --no-pager || true
+    exit 1
+  fi
+
   printf '%s\n' "${RELEASE_NAME}" > "${current_release_file}"
   if [ -n "${previous_release}" ]; then
     printf '%s\n' "${previous_release}" > "${previous_release_file}"
@@ -333,5 +344,5 @@ case "${action}" in
     ;;
 esac
 
-sudo systemctl status "${SERVICE_NAME}" --no-pager
+sudo systemctl status "${SERVICE_NAME}" --no-pager || true
 REMOTE
