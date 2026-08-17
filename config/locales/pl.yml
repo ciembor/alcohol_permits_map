@@ -33,6 +33,10 @@ pl:
     report_date_label: "Data raportu"
     population_source: "MSIP Zameldowania stałe"
     population_unit: "zameldowani na pobyt stały"
+    dataset_link: "Zbiór Danych"
+    dataset_link_label: "Zbiór Danych na Zenodo"
+    repository_link: "Repozytorium"
+    repository_link_label: "Repozytorium na GitHub"
     metric:
       premises: "lokale"
       licenses: "zezwolenia"

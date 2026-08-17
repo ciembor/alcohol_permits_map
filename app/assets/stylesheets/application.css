@@ -742,6 +742,21 @@ body {
   white-space: nowrap;
 }
 
+.map-resource-link {
+  align-items: center;
+  color: #17202a;
+  display: inline-flex;
+  gap: 6px;
+  text-decoration: none;
+}
+
+.map-resource-link__icon {
+  display: block;
+  flex: 0 0 auto;
+  height: 34px;
+  width: 34px;
+}
+
 .map-panel {
   background: rgba(255, 255, 255, 0.94);
   border: 0;
@@ -850,15 +865,16 @@ body {
   color: #17202a;
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 10px;
+  justify-content: flex-end;
   margin: 0;
   max-width: calc(100vw - 380px);
   padding: 8px 10px;
   position: absolute;
   right: 18px;
   text-align: left;
-  white-space: nowrap;
+  white-space: normal;
   z-index: 490;
 }
 
@@ -2108,7 +2124,8 @@ body {
   }
 
   .map-author__avatar,
-  .site-brand__logo {
+  .site-brand__logo,
+  .map-resource-link__icon {
     height: 26px;
     width: 26px;
   }

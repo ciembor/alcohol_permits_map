@@ -33,6 +33,10 @@ en:
     report_date_label: "Report date"
     population_source: "MSIP Registered residents"
     population_unit: "registered residents"
+    dataset_link: "Dataset"
+    dataset_link_label: "Dataset on Zenodo"
+    repository_link: "Repository"
+    repository_link_label: "Repository on GitHub"
     metric:
       premises: "premises"
       licenses: "licenses"

@@ -62,13 +62,23 @@
   </section>
 
   <p class="map-author">
-    <a class="map-author__person" href="https://maciej-ciemborowicz.eu" aria-label="Maciej Ciemborowicz">
+    <a class="map-author__person" href="https://maciej-ciemborowicz.eu" target="_blank" rel="noopener" aria-label="Maciej Ciemborowicz">
       <%= image_tag 'maciej.png', alt: '', class: 'map-author__avatar' %>
       <span>&copy; Maciej Ciemborowicz</span>
     </a>
-    <a class="site-brand" href="https://www.facebook.com/DobraNocKrakow" aria-label="Dobra Noc Kraków">
+    <a class="site-brand" href="https://www.facebook.com/DobraNocKrakow" target="_blank" rel="noopener" aria-label="Dobra Noc Kraków">
       <%= image_tag 'logo.jpg', alt: '', class: 'site-brand__logo' %>
       <span>Dobra Noc Kraków</span>
+    </a>
+    <a class="map-resource-link" href="https://zenodo.org/records/21895077" target="_blank" rel="noopener" aria-label="<%= t('maps.dataset_link_label') %>">
+      <%= image_tag 'zenodo-icon-blue.svg', alt: '', class: 'map-resource-link__icon' %>
+      <span><%= t('maps.dataset_link') %></span>
+    </a>
+    <a class="map-resource-link" href="https://github.com/ciembor/alcohol_permits_map" target="_blank" rel="noopener" aria-label="<%= t('maps.repository_link_label') %>">
+      <svg class="map-resource-link__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 1.6a10.5 10.5 0 0 0-3.32 20.46c.52.1.72-.22.72-.5v-1.95c-2.93.64-3.55-1.25-3.55-1.25-.48-1.22-1.17-1.55-1.17-1.55-.96-.65.07-.64.07-.64 1.06.08 1.62 1.1 1.62 1.1.94 1.61 2.47 1.15 3.07.88.1-.69.37-1.15.67-1.42-2.34-.27-4.8-1.17-4.8-5.2 0-1.15.41-2.09 1.09-2.82-.11-.27-.47-1.34.1-2.79 0 0 .89-.28 2.9 1.08a10.06 10.06 0 0 1 5.28 0c2.01-1.36 2.9-1.08 2.9-1.08.57 1.45.21 2.52.1 2.79.68.73 1.09 1.67 1.09 2.82 0 4.04-2.46 4.93-4.81 5.19.38.33.72.97.72 1.96v2.88c0 .28.19.6.73.5A10.5 10.5 0 0 0 12 1.6z"></path>
+      </svg>
+      <span><%= t('maps.repository_link') %></span>
     </a>
   </p>
 
