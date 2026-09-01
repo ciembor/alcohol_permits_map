@@ -89,6 +89,25 @@ restart_app_service() {
   sudo systemctl restart "${SERVICE_NAME}"
 }
 
+run_database_migrations() {
+  sudo podman rm -f "${SERVICE_NAME}-migrate" >/dev/null 2>&1 || true
+  sudo podman run --rm --name="${SERVICE_NAME}-migrate" \
+    --user=1000:1000 \
+    --read-only \
+    --memory=512m --memory-swap=512m --memory-reservation=256m \
+    --cpus=0.5 --pids-limit=128 \
+    --env-file "${REMOTE_DIR}/.env.local" \
+    -e RAILS_ENV=production \
+    -e RAILS_LOG_TO_STDOUT=1 \
+    -e RAILS_SERVE_STATIC_FILES=1 \
+    -v "${REMOTE_DIR}/db:/app/db:rw" \
+    -v "${REMOTE_DIR}/log:/app/log:rw" \
+    -v "${REMOTE_DIR}/tmp:/app/tmp:rw" \
+    -v "${REMOTE_DIR}/storage:/app/storage:rw" \
+    "${IMAGE_NAME}" \
+    bundle exec rails db:migrate
+}
+
 smoke_check_once() {
   curl --connect-timeout 2 --max-time 5 -fsSL -o /dev/null "http://127.0.0.1:9294/healthz"
   if [ -n "${PUBLIC_BASE_URL}" ]; then
@@ -238,6 +257,7 @@ deploy_release() {
   cd "${REMOTE_DIR}"
   sudo podman build -t "${RELEASE_IMAGE_NAME}" .
   sudo podman tag "${RELEASE_IMAGE_NAME}" "${IMAGE_NAME}"
+  run_database_migrations
   restart_app_service
 
   if ! wait_for_smoke_checks; then
