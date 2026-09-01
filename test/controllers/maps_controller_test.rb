@@ -195,7 +195,6 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
       assert cache_path.exist?
-      assert cache_path.sub_ext('.json.gz').exist?
       assert_equal 2, JSON.parse(cache_path.read).fetch('points').size
 
       AlcoholLicense.where.not(id: AlcoholLicense.minimum(:id)).delete_all
@@ -221,14 +220,15 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
       'ALKOMAPA_DATA_CACHE_VERSION' => 'unit-test'
     ) do
       get map_licenses_path(report_at: report_at.iso8601)
-      assert gzip_path.exist?
+      Zlib::GzipWriter.open(gzip_path) do |gzip|
+        gzip.write(cache_path.read)
+      end
 
       get map_licenses_path(report_at: report_at.iso8601), headers: { 'Accept-Encoding' => 'gzip' }
 
       assert_response :success
       assert_equal 'gzip', response.headers['Content-Encoding']
       assert_equal 'Accept-Encoding', response.headers['Vary']
-      assert_equal JSON.parse(cache_path.read), JSON.parse(Zlib::GzipReader.open(gzip_path, &:read))
     end
   ensure
     FileUtils.rm_rf(cache_root)

@@ -22,4 +22,12 @@ class DeployScriptTest < ActiveSupport::TestCase
     assert_includes script, 'while ! curl --connect-timeout 2'
     assert_includes script, 'retry %s'
   end
+
+  test 'deploy precompresses warmed map report cache outside the app process' do
+    script = Rails.root.join('scripts/deploy.sh').read
+
+    assert_includes script, 'compress_report_cache()'
+    assert_includes script, "find \"${cache_dir}\" -type f -name '*.json' -exec gzip -kf {} +"
+    assert_match(/warm_report_cache.*compress_report_cache/m, script)
+  end
 end

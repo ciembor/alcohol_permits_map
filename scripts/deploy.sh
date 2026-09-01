@@ -252,6 +252,20 @@ warm_report_cache() {
     done
 }
 
+compress_report_cache() {
+  if [ "${WARM_REPORT_CACHE}" != "1" ]; then
+    return 0
+  fi
+
+  local cache_dir="${REMOTE_DIR}/storage/prod_alkomapa_data_local/data/cache/${RELEASE_NAME}"
+  if [ ! -d "${cache_dir}" ]; then
+    return 0
+  fi
+
+  echo "Compressing map report cache for release ${RELEASE_NAME}"
+  find "${cache_dir}" -type f -name '*.json' -exec gzip -kf {} +
+}
+
 deploy_release() {
   local previous_release=""
 
@@ -304,6 +318,8 @@ deploy_release() {
     sudo systemctl status "${SERVICE_NAME}" --no-pager || true
     exit 1
   fi
+
+  compress_report_cache
 
   if ! wait_for_smoke_checks; then
     echo "App failed smoke checks after report cache warm-up; restoring previous image" >&2
