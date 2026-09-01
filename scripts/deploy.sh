@@ -10,6 +10,7 @@ HEALTHCHECK_ATTEMPTS="${HEALTHCHECK_ATTEMPTS:-30}"
 HEALTHCHECK_SLEEP_SECONDS="${HEALTHCHECK_SLEEP_SECONDS:-2}"
 WARM_REPORT_CACHE="${WARM_REPORT_CACHE:-1}"
 WARM_REPORT_CACHE_MAX_TIME="${WARM_REPORT_CACHE_MAX_TIME:-90}"
+WARM_REPORT_CACHE_ATTEMPTS="${WARM_REPORT_CACHE_ATTEMPTS:-3}"
 DEPLOY_ACTION="${1:-${DEPLOY_ACTION:-deploy}}"
 RELEASE_NAME="${RELEASE_NAME:-$(git rev-parse --short HEAD)}"
 IMAGE_REPOSITORY="${IMAGE_NAME%:*}"
@@ -71,6 +72,7 @@ ssh "${REMOTE_HOST}" \
   HEALTHCHECK_SLEEP_SECONDS='${HEALTHCHECK_SLEEP_SECONDS}' \
   WARM_REPORT_CACHE='${WARM_REPORT_CACHE}' \
   WARM_REPORT_CACHE_MAX_TIME='${WARM_REPORT_CACHE_MAX_TIME}' \
+  WARM_REPORT_CACHE_ATTEMPTS='${WARM_REPORT_CACHE_ATTEMPTS}' \
   bash -s -- '${DEPLOY_ACTION}'" <<'REMOTE'
 set -euo pipefail
 
@@ -233,9 +235,19 @@ warm_report_cache() {
     while IFS= read -r report_at; do
       [ -n "${report_at}" ] || continue
       printf '  %s... ' "${report_at}"
-      curl --connect-timeout 2 --max-time "${WARM_REPORT_CACHE_MAX_TIME}" -fsSL -o /dev/null \
+      local attempt=1
+      while ! curl --connect-timeout 2 --max-time "${WARM_REPORT_CACHE_MAX_TIME}" -fsSL -o /dev/null \
         --get --data-urlencode "report_at=${report_at}" \
-        "http://127.0.0.1:9294/map/licenses"
+        "http://127.0.0.1:9294/map/licenses"; do
+        if [ "${attempt}" -ge "${WARM_REPORT_CACHE_ATTEMPTS}" ]; then
+          echo "failed"
+          return 1
+        fi
+
+        printf 'retry %s... ' "${attempt}"
+        attempt=$((attempt + 1))
+        sleep 2
+      done
       printf 'ok\n'
     done
 }
