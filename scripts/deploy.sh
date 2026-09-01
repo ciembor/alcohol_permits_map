@@ -91,14 +91,43 @@ restart_app_service() {
   sudo systemctl restart "${SERVICE_NAME}"
 }
 
-run_database_migrations() {
-  sudo podman rm -f "${SERVICE_NAME}-migrate" >/dev/null 2>&1 || true
-  sudo podman run --rm --name="${SERVICE_NAME}-migrate" \
+write_cache_version() {
+  local cache_version="$1"
+  local env_file="${REMOTE_DIR}/.env.local"
+  touch "$env_file"
+  if grep -q '^ALKOMAPA_DATA_CACHE_VERSION=' "$env_file"; then
+    sed -i "s/^ALKOMAPA_DATA_CACHE_VERSION=.*/ALKOMAPA_DATA_CACHE_VERSION=${cache_version}/" "$env_file"
+  else
+    printf '\nALKOMAPA_DATA_CACHE_VERSION=%s\n' "${cache_version}" >> "$env_file"
+  fi
+}
+
+restore_previous_release() {
+  if image_exists "${PREVIOUS_IMAGE_NAME}"; then
+    sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
+  fi
+  if [ -n "${previous_release}" ]; then
+    write_cache_version "${previous_release}"
+  fi
+  if image_exists "${PREVIOUS_IMAGE_NAME}"; then
+    restart_app_service
+    wait_for_smoke_checks || true
+  fi
+}
+
+run_release_container() {
+  local container_name="$1"
+  shift
+
+  sudo podman rm -f "${container_name}" >/dev/null 2>&1 || true
+  sudo podman run --rm --name="${container_name}" \
     --user=1000:1000 \
     --read-only \
-    --memory=512m --memory-swap=512m --memory-reservation=256m \
-    --cpus=0.5 --pids-limit=128 \
+    --memory=900m --memory-swap=900m --memory-reservation=384m \
+    --cpus=0.75 --pids-limit=192 \
     --env-file "${REMOTE_DIR}/.env.local" \
+    -e ALKOMAPA_DATA_CACHE_VERSION="${RELEASE_NAME}" \
+    -e WARM_REPORT_AT="${WARM_REPORT_AT:-}" \
     -e RAILS_ENV=production \
     -e RAILS_LOG_TO_STDOUT=1 \
     -e RAILS_SERVE_STATIC_FILES=1 \
@@ -106,8 +135,12 @@ run_database_migrations() {
     -v "${REMOTE_DIR}/log:/app/log:rw" \
     -v "${REMOTE_DIR}/tmp:/app/tmp:rw" \
     -v "${REMOTE_DIR}/storage:/app/storage:rw" \
-    "${IMAGE_NAME}" \
-    bundle exec rails db:migrate
+    "${RELEASE_IMAGE_NAME}" \
+    "$@"
+}
+
+run_database_migrations() {
+  run_release_container "${SERVICE_NAME}-migrate" bundle exec rails db:migrate
 }
 
 smoke_check_once() {
@@ -213,13 +246,7 @@ install_units() {
 }
 
 write_release_env() {
-  local env_file="${REMOTE_DIR}/.env.local"
-  touch "$env_file"
-  if grep -q '^ALKOMAPA_DATA_CACHE_VERSION=' "$env_file"; then
-    sed -i "s/^ALKOMAPA_DATA_CACHE_VERSION=.*/ALKOMAPA_DATA_CACHE_VERSION=${RELEASE_NAME}/" "$env_file"
-  else
-    printf '\nALKOMAPA_DATA_CACHE_VERSION=%s\n' "${RELEASE_NAME}" >> "$env_file"
-  fi
+  write_cache_version "${RELEASE_NAME}"
 }
 
 warm_report_cache() {
@@ -229,16 +256,25 @@ warm_report_cache() {
 
   echo "Warming map report cache for release ${RELEASE_NAME}"
 
-  sudo podman exec "${SERVICE_NAME}" bundle exec rails runner \
+  run_release_container "${SERVICE_NAME}-reports" bundle exec rails runner \
     'ActiveRecord::Base.logger = nil; puts AlcoholLicense.where.not(reported_at: nil).distinct.order(:reported_at).pluck(:reported_at).map { |report| report.utc.iso8601 }' |
     grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$' |
     while IFS= read -r report_at; do
       [ -n "${report_at}" ] || continue
       printf '  %s... ' "${report_at}"
       local attempt=1
-      while ! curl --connect-timeout 2 --max-time "${WARM_REPORT_CACHE_MAX_TIME}" -fsSL -o /dev/null \
-        --get --data-urlencode "report_at=${report_at}" \
-        "http://127.0.0.1:9294/map/licenses"; do
+      while ! WARM_REPORT_AT="${report_at}" run_release_container "${SERVICE_NAME}-report-cache" bundle exec rails runner '
+        ActiveRecord::Base.logger = nil
+        requested_at = Time.zone.parse(ENV.fetch("WARM_REPORT_AT")).utc
+        controller = MapsController.new
+        report = controller.send(:available_reports).find { |available_report| available_report.to_i == requested_at.to_i }
+        raise "Report not found: #{requested_at.iso8601}" unless report
+        path = controller.send(:report_cache_path, report)
+        unless File.file?(path)
+          json = JSON.generate(controller.send(:report_payload, report))
+          controller.send(:write_report_cache, path, json)
+        end
+      '; do
         if [ "${attempt}" -ge "${WARM_REPORT_CACHE_ATTEMPTS}" ]; then
           echo "failed"
           return 1
@@ -270,7 +306,6 @@ deploy_release() {
   local previous_release=""
 
   assert_secret_key_base
-  write_release_env
   install_units
 
   if image_exists "${IMAGE_NAME}"; then
@@ -282,52 +317,36 @@ deploy_release() {
 
   cd "${REMOTE_DIR}"
   sudo podman build -t "${RELEASE_IMAGE_NAME}" .
-  sudo podman tag "${RELEASE_IMAGE_NAME}" "${IMAGE_NAME}"
   run_database_migrations
+
+  if ! warm_report_cache; then
+    echo "Report cache warm-up failed; keeping previous image active" >&2
+    sudo systemctl status "${SERVICE_NAME}" --no-pager || true
+    exit 1
+  fi
+
+  compress_report_cache
+  write_release_env
+  sudo podman tag "${RELEASE_IMAGE_NAME}" "${IMAGE_NAME}"
   restart_app_service
 
   if ! wait_for_smoke_checks; then
     echo "Deploy smoke checks failed; restoring previous image" >&2
-    if image_exists "${PREVIOUS_IMAGE_NAME}"; then
-      sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
-      restart_app_service
-      wait_for_smoke_checks || true
-    fi
+    restore_previous_release
     sudo systemctl status "${SERVICE_NAME}" --no-pager || true
     exit 1
   fi
 
   if ! wait_for_app_container; then
     echo "App container did not become visible after restart; restoring previous image" >&2
-    if image_exists "${PREVIOUS_IMAGE_NAME}"; then
-      sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
-      restart_app_service
-      wait_for_smoke_checks || true
-    fi
+    restore_previous_release
     sudo systemctl status "${SERVICE_NAME}" --no-pager || true
     exit 1
   fi
-
-  if ! warm_report_cache; then
-    echo "Report cache warm-up failed; restoring previous image" >&2
-    if image_exists "${PREVIOUS_IMAGE_NAME}"; then
-      sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
-      restart_app_service
-      wait_for_smoke_checks || true
-    fi
-    sudo systemctl status "${SERVICE_NAME}" --no-pager || true
-    exit 1
-  fi
-
-  compress_report_cache
 
   if ! wait_for_smoke_checks; then
     echo "App failed smoke checks after report cache warm-up; restoring previous image" >&2
-    if image_exists "${PREVIOUS_IMAGE_NAME}"; then
-      sudo podman tag "${PREVIOUS_IMAGE_NAME}" "${IMAGE_NAME}"
-      restart_app_service
-      wait_for_smoke_checks || true
-    fi
+    restore_previous_release
     sudo systemctl status "${SERVICE_NAME}" --no-pager || true
     exit 1
   fi

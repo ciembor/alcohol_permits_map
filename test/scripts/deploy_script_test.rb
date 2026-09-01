@@ -6,7 +6,8 @@ class DeployScriptTest < ActiveSupport::TestCase
 
     assert_includes script, 'run_database_migrations()'
     assert_includes script, 'bundle exec rails db:migrate'
-    assert_match(/run_database_migrations\n\s+restart_app_service/, script)
+    assert_match(/run_database_migrations\n\s+if ! warm_report_cache/m, script)
+    assert_match(/write_release_env\n\s+sudo podman tag "\$\{RELEASE_IMAGE_NAME\}" "\$\{IMAGE_NAME\}"\n\s+restart_app_service/, script)
   end
 
   test 'deploy workflow warms map report cache' do
@@ -19,7 +20,7 @@ class DeployScriptTest < ActiveSupport::TestCase
     script = Rails.root.join('scripts/deploy.sh').read
 
     assert_includes script, 'WARM_REPORT_CACHE_ATTEMPTS="${WARM_REPORT_CACHE_ATTEMPTS:-3}"'
-    assert_includes script, 'while ! curl --connect-timeout 2'
+    assert_includes script, 'while ! WARM_REPORT_AT="${report_at}" run_release_container'
     assert_includes script, 'retry %s'
   end
 
