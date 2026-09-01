@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'zlib'
 require 'geocoding/location_uncertainty'
 
 class MapsController < ApplicationController
@@ -21,6 +22,7 @@ class MapsController < ApplicationController
       payload = report_payload(report_at)
       json = JSON.generate(payload)
       write_report_cache(cached_path, json)
+      write_gzip_report_cache(cached_path, json)
       response.headers['Cache-Control'] = report_cache_control
       return render body: json, content_type: 'application/json'
     end
@@ -143,6 +145,17 @@ class MapsController < ApplicationController
   end
 
   def send_cached_json(path)
+    response.headers['Vary'] = 'Accept-Encoding'
+
+    if gzip_accepted?
+      gzip_path = gzip_report_cache_path(path)
+      write_gzip_report_cache(path, File.binread(path)) unless File.file?(gzip_path)
+
+      response.headers['Cache-Control'] = report_cache_control
+      response.headers['Content-Encoding'] = 'gzip'
+      return send_file gzip_path, type: 'application/json', disposition: 'inline'
+    end
+
     response.headers['Cache-Control'] = report_cache_control
     send_file path, type: 'application/json', disposition: 'inline'
   end
@@ -152,6 +165,29 @@ class MapsController < ApplicationController
     temp_path = path.sub_ext("#{path.extname}.#{$$}.#{Thread.current.object_id}.tmp")
     File.binwrite(temp_path, json)
     File.rename(temp_path, path)
+  ensure
+    FileUtils.rm_f(temp_path) if temp_path && File.exist?(temp_path)
+  end
+
+  def gzip_accepted?
+    request.headers.fetch('Accept-Encoding', '').split(',').any? do |encoding|
+      encoding.split(';', 2).first.strip.casecmp?('gzip')
+    end
+  end
+
+  def gzip_report_cache_path(path)
+    path.sub_ext("#{path.extname}.gz")
+  end
+
+  def write_gzip_report_cache(path, json)
+    gzip_path = gzip_report_cache_path(path)
+    FileUtils.mkdir_p(gzip_path.dirname)
+    temp_path = gzip_path.sub_ext("#{gzip_path.extname}.#{$$}.#{Thread.current.object_id}.tmp")
+
+    Zlib::GzipWriter.open(temp_path) do |gzip|
+      gzip.write(json)
+    end
+    File.rename(temp_path, gzip_path)
   ensure
     FileUtils.rm_f(temp_path) if temp_path && File.exist?(temp_path)
   end

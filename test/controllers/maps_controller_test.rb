@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'zlib'
 
 class MapsControllerTest < ActionDispatch::IntegrationTest
   setup do
@@ -194,6 +195,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
       assert cache_path.exist?
+      assert cache_path.sub_ext('.json.gz').exist?
       assert_equal 2, JSON.parse(cache_path.read).fetch('points').size
 
       AlcoholLicense.where.not(id: AlcoholLicense.minimum(:id)).delete_all
@@ -201,6 +203,32 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
 
       assert_response :success
       assert_equal 2, JSON.parse(response.body).fetch('points').size
+    end
+  ensure
+    FileUtils.rm_rf(cache_root)
+  end
+
+  test 'serves precompressed report cache when gzip is accepted' do
+    report_at = Time.utc(2026, 2, 6, 8, 43, 9)
+    cache_root = Rails.root.join('tmp/tests/map-report-gzip-cache')
+    cache_path = cache_root.join('unit-test', '2026-02-06T08-43-09Z.json')
+    gzip_path = cache_path.sub_ext('.json.gz')
+    FileUtils.rm_rf(cache_root)
+
+    with_modified_env(
+      'ALKOMAPA_REPORT_CACHE_IN_TEST' => '1',
+      'ALKOMAPA_REPORT_CACHE_ROOT' => cache_root.to_s,
+      'ALKOMAPA_DATA_CACHE_VERSION' => 'unit-test'
+    ) do
+      get map_licenses_path(report_at: report_at.iso8601)
+      assert gzip_path.exist?
+
+      get map_licenses_path(report_at: report_at.iso8601), headers: { 'Accept-Encoding' => 'gzip' }
+
+      assert_response :success
+      assert_equal 'gzip', response.headers['Content-Encoding']
+      assert_equal 'Accept-Encoding', response.headers['Vary']
+      assert_equal JSON.parse(cache_path.read), JSON.parse(Zlib::GzipReader.open(gzip_path, &:read))
     end
   ensure
     FileUtils.rm_rf(cache_root)
