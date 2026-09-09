@@ -177,8 +177,13 @@ class CurationSnapshot
 
   def import_address_corrections(rows)
     rows.count do |row|
-      location = find_raw_location(row.fetch('location'))
-      source_location = find_raw_location(row['source_location'])
+      location = find_raw_location(row.fetch('location'), required: false) || find_raw_location_for_correction(row)
+      unless location
+        warn "Skipping address correction for missing raw location #{row.fetch('location').inspect}"
+        next false
+      end
+
+      source_location = find_raw_location(row['source_location'], required: false)
 
       correction = AddressCorrection.find_or_initialize_by(
         location: location,
@@ -199,7 +204,12 @@ class CurationSnapshot
 
   def import_selected_geocoding_results(rows)
     rows.count do |row|
-      location = find_transformed_location(row.fetch('transformed_location'))
+      location = find_transformed_location(row.fetch('transformed_location'), required: false)
+      unless location
+        warn "Skipping selected geocoding result for missing transformed location #{row.fetch('transformed_location').inspect}"
+        next false
+      end
+
       result = upsert_geocoding_result(location, row.fetch('result'), selected: true)
       GeocodingResult.where(transformed_location: location).where.not(id: result.id).update_all(selected: false)
       location.use_geocoding_result!(result)
@@ -209,7 +219,12 @@ class CurationSnapshot
 
   def import_geocoding_reviews(rows)
     rows.count do |row|
-      location = find_transformed_location(row.fetch('transformed_location'))
+      location = find_transformed_location(row.fetch('transformed_location'), required: false)
+      unless location
+        warn "Skipping geocoding review for missing transformed location #{row.fetch('transformed_location').inspect}"
+        next false
+      end
+
       selected_result = upsert_geocoding_result(location, row['selected_geocoding_result'])
       manual_result = upsert_geocoding_result(location, row['manual_geocoding_result'])
 
@@ -243,22 +258,116 @@ class CurationSnapshot
     }
   end
 
-  def find_raw_location(identity)
+  def find_raw_location(identity, required: true)
     return unless identity
 
-    Location.find_by!(
+    scope = {
+      address_1: identity.fetch('address_1'),
+      address_2: identity['address_2']
+    }
+    location = Location.find_by(scope) || find_raw_location_by_normalized_identity(identity)
+    return location if location || !required
+
+    Location.find_by!(scope)
+  end
+
+  def find_raw_location_for_correction(row)
+    candidates = raw_location_candidates(
+      address_1: row.fetch('corrected_address_1'),
+      address_2: row['corrected_address_2']
+    )
+    return candidates.first if candidates.one?
+    return if candidates.empty?
+
+    original = row.fetch('location')
+    scored_candidates = candidates
+      .map { |candidate| [candidate, raw_location_correction_match_score(candidate, original, row)] }
+      .sort_by { |_candidate, score| -score }
+    best_candidate, best_score = scored_candidates.first
+    _second_candidate, second_score = scored_candidates[1]
+
+    best_score > second_score.to_i ? best_candidate : nil
+  end
+
+  def find_raw_location_by_normalized_identity(identity)
+    candidates = raw_location_candidates(
       address_1: identity.fetch('address_1'),
       address_2: identity['address_2']
     )
+    return candidates.first if candidates.one?
+
+    nil
+  end
+
+  def raw_location_candidates(address_1:, address_2:)
+    normalized_address_1 = normalized_raw_address_part(address_1)
+    normalized_address_2 = normalized_raw_address_2(address_2)
+
+    Location.all.select do |location|
+      normalized_raw_address_part(location.address_1) == normalized_address_1 &&
+        normalized_raw_address_2(location.address_2) == normalized_address_2
+    end
+  end
+
+  def raw_location_correction_match_score(location, original_identity, row)
+    score = 0
+    original_address_1 = normalized_raw_address_part(original_identity.fetch('address_1'))
+    corrected_address_1 = normalized_raw_address_part(row.fetch('corrected_address_1'))
+    location_address_1 = normalized_raw_address_part(location.address_1)
+
+    score += 100 if location_address_1 == original_address_1
+    score += 50 if location_address_1 == corrected_address_1
+    score += 25 if street_name_key(location.address_1) == street_name_key(row.fetch('corrected_address_1'))
+    score += location.address_1.to_s.length / 100.0
+    score
+  end
+
+  def normalized_raw_address_part(value)
+    value.to_s
+      .unicode_normalize(:nfkc)
+      .upcase
+      .tr('.', ' ')
+      .squeeze(' ')
+      .strip
+  end
+
+  def normalized_raw_address_2(value)
+    normalized_raw_address_part(value)
+      .sub(/\s+0\z/, '')
+      .gsub(/\bLOKAL\b/, 'LOK')
+      .gsub(/\bLOK\s+/, 'LOK ')
+      .squeeze(' ')
+      .strip
+  end
+
+  def street_name_key(value)
+    normalized_raw_address_part(value)
+      .gsub(/\A(?:ULICA|UL|ALEJA|AL|PLAC|PL|OSIEDLE|OS)\s+/, '')
+      .gsub(/\b(?:GENERAŁA|GEN)\b/, '')
+      .squeeze(' ')
+      .strip
   end
 
   def transformed_location_identity(location)
     TRANSFORMED_LOCATION_COLUMNS.index_with { |column| location.public_send(column) }
   end
 
-  def find_transformed_location(identity)
+  def find_transformed_location(identity, required: true)
     query = identity.slice(*TRANSFORMED_LOCATION_COLUMNS)
+    location = TransformedLocation.find_by(query) || find_transformed_location_by_geocoding_identity(identity)
+    return location if location || !required
+
     TransformedLocation.find_by!(query)
+  end
+
+  def find_transformed_location_by_geocoding_identity(identity)
+    query = identity
+      .slice(*(TRANSFORMED_LOCATION_COLUMNS - %w[raw_address_2 same_as]))
+      .compact
+    matches = TransformedLocation.where(query)
+    return matches.first if matches.one?
+
+    nil
   end
 
   def geocoding_result_payload(result)

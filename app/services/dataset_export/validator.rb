@@ -255,8 +255,10 @@ module DatasetExport
       latest_report = rows.find { |row| row.fetch('reported_at') == '2026-02-06T08:43:09Z' }
 
       if first_report
+        first_reported_at = Time.parse(first_report.fetch('reported_at'))
+        first_report_point_count = license_point_count_for_report(first_reported_at)
         add_check('reports_csv_first_report_license_count', first_report.fetch('license_count').to_i == 6706, expected: 6706, actual: first_report.fetch('license_count').to_i)
-        add_check('reports_csv_first_report_point_count', first_report.fetch('point_count').to_i == 2606, expected: 2606, actual: first_report.fetch('point_count').to_i)
+        add_check('reports_csv_first_report_point_count', first_report.fetch('point_count').to_i == first_report_point_count, expected: first_report_point_count, actual: first_report.fetch('point_count').to_i)
       end
 
       if latest_report
@@ -412,17 +414,15 @@ module DatasetExport
 
     def expected_address_correction_scope
       relation = AddressCorrection.all
-      return relation unless paths.reports_csv.exist?
+      exported_location_ids = AlcoholLicense.distinct
 
-      reports = CSV.read(paths.reports_csv, headers: true, encoding: 'UTF-8')
-      return relation unless reports.size == 1
+      if paths.reports_csv.exist?
+        reports = CSV.read(paths.reports_csv, headers: true, encoding: 'UTF-8')
+        exported_location_ids = exported_location_ids.where(reported_at: Time.parse(reports.first.fetch('reported_at'))) if reports.size == 1
+      end
 
-      latest_location_ids = AlcoholLicense
-        .where(reported_at: Time.parse(reports.first.fetch('reported_at')))
-        .distinct
-        .pluck(:location_id)
-
-      relation.where(location_id: latest_location_ids).where(source_location_id: [nil, *latest_location_ids])
+      exported_location_ids = exported_location_ids.pluck(:location_id)
+      relation.where(location_id: exported_location_ids).where(source_location_id: [nil, *exported_location_ids])
     end
 
     def expected_geocoding_result_count

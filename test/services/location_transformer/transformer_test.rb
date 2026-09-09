@@ -181,11 +181,22 @@ class LocationTransformer::TransformerTest < ActiveSupport::TestCase
     Street.create!(name_1: 'Rynek Kleparski')
     Street.create!(name_1: 'Przylasek')
     Street.create!(name_1: 'Nad Zalewem')
+    Street.create!(name_1: 'Dunin-Wąsowicza', name_2: 'rtm. Zbigniewa')
+    Street.create!(name_1: 'Kościuszki', name_2: 'Tadeusza')
+    Street.create!(name_1: 'Józefa')
+    Street.create!(name_1: 'Józefa', name_2: 'Księcia')
+    Street.create!(name_1: 'Osiedle Kalinowe')
+    Street.create!(name_1: 'Reduta')
 
     transformer = LocationTransformer::Transformer.new
     address_1_transformer = transformer.send(:address_1_transformer)
 
     examples = {
+      'DUNIN WĄSOWICZA' => 'rtm. Zbigniewa Dunin-Wąsowicza',
+      'GEN. TADEUSZA KOŚCIUSZKI' => 'Tadeusza Kościuszki',
+      'JÓZEFA' => 'Józefa',
+      'KALINOWE /MINI CENTRUM KALINEX/' => 'Osiedle Kalinowe',
+      'PARK REDUTA' => 'Reduta',
       'PLAC TARGOWY STARY KLEPARZ' => 'Rynek Kleparski',
       'PRZYLASEK RUSIECKI' => 'Przylasek',
       'TEREN PRZY ZALEWIE NOWOHUCKIM' => 'Nad Zalewem',
@@ -196,6 +207,24 @@ class LocationTransformer::TransformerTest < ActiveSupport::TestCase
       assert_equal canonical_name, address_1_transformer.transform_address_1(raw_address), raw_address
       assert_nil address_1_transformer.same_as_for(raw_address), raw_address
     end
+  end
+
+  test 'splits embedded building number from address_1 when address_2 contains unit' do
+    Street.create!(name_1: 'Osiedle Centrum C')
+
+    parsed_address = LocationTransformer::Transformer.new.send(:parse_address_parts, 'OSIEDLE CENTRUM C 6', 'LOK.U002')
+
+    assert_equal 'OSIEDLE CENTRUM C', parsed_address[:address_1]
+    assert_equal '6 LOK.U002', parsed_address[:address_2]
+  end
+
+  test 'does not split numeric words inside street names when address_2 is present' do
+    Street.create!(name_1: 'Osiedle 2 Pułku Lotniczego')
+
+    parsed_address = LocationTransformer::Transformer.new.send(:parse_address_parts, 'OSIEDLE 2 PUŁKU LOTNICZEGO', '1C/A')
+
+    assert_equal 'OSIEDLE 2 PUŁKU LOTNICZEGO', parsed_address[:address_1]
+    assert_equal '1C/A', parsed_address[:address_2]
   end
 
   test 'stores current street name in transformed location same_as for historical address' do

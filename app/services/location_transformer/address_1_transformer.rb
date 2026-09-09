@@ -16,6 +16,10 @@ class LocationTransformer::Address1Transformer
     return normalization_cache[address_1] if normalization_cache.key?(address_1)
 
     normalized_address = normalized_key(address_1)
+    source_match = source_street_corrections[normalized_address]
+
+    return normalization_cache[address_1] = source_match if source_match
+
     exact_match = street_index[normalized_address]
 
     return normalization_cache[address_1] = exact_match if exact_match
@@ -54,6 +58,13 @@ class LocationTransformer::Address1Transformer
   ].freeze
 
   SOURCE_STREET_CORRECTIONS = {
+    'Dunin Wąsowicza' => 'rtm. Zbigniewa Dunin-Wąsowicza',
+    'Gen. Tadeusza Kościuszki' => 'Tadeusza Kościuszki',
+    'Generała Tadeusza Kościuszki' => 'Tadeusza Kościuszki',
+    'Józefa' => 'Józefa',
+    'Kalinowe /Mini Centrum Kalinex/' => 'Osiedle Kalinowe',
+    'Kalinowe Mini Centrum Kalinex' => 'Osiedle Kalinowe',
+    'Park Reduta' => 'Reduta',
     'Plac Targowy Stary Kleparz' => 'Rynek Kleparski',
     'Przylasek Rusiecki' => 'Przylasek',
     'Teren Przy Zalewie Nowohuckim' => 'Nad Zalewem',
@@ -195,6 +206,10 @@ class LocationTransformer::Address1Transformer
         }
       end
     end
+  end
+
+  def source_street_corrections
+    @source_street_corrections ||= SOURCE_STREET_CORRECTIONS.transform_keys { |key| normalized_key(key) }
   end
 
   def primary_street_variants(street)

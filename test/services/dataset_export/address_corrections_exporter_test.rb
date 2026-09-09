@@ -41,6 +41,21 @@ class DatasetExport::AddressCorrectionsExporterTest < ActiveSupport::TestCase
   def seed_address_correction_records
     target = Location.create!(address_1: 'RYNEK', address_2: '1')
     source = Location.create!(address_1: 'RYNEK GŁÓWNY', address_2: '1')
+    business = Business.create!(name: 'Test business')
+    business_category = BusinessCategory.create!(name: 'detal')
+    license_category = LicenseCategory.create!(name: 'A', description: 'Alcohol up to 4.5%')
+    reported_at = Time.utc(2026, 1, 1)
+
+    [target, source].each_with_index do |location, index|
+      AlcoholLicense.create!(
+        id: index + 1,
+        location: location,
+        business: business,
+        business_category: business_category,
+        license_category: license_category,
+        reported_at: reported_at
+      )
+    end
 
     AddressCorrection.create!(
       location: target,
@@ -70,7 +85,11 @@ class DatasetExport::AddressCorrectionsExporterTest < ActiveSupport::TestCase
   end
 
   def clear_dataset_records
+    AlcoholLicense.delete_all
     AddressCorrection.delete_all
+    Business.delete_all
+    BusinessCategory.delete_all
+    LicenseCategory.delete_all
     Location.delete_all
   end
 end

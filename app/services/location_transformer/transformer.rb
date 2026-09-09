@@ -79,7 +79,18 @@ module LocationTransformer
       split_address_2 = split_street_from_address_2(address_1, address_2)
       return split_address_2 if split_address_2
 
-      return { address_1: address_1, address_2: address_2 } if address_2.present?
+      if address_2.present?
+        split_address_1 = split_embedded_address(address_1)
+
+        if split_address_1
+          return {
+            address_1: split_address_1[:address_1],
+            address_2: [split_address_1[:address_2], address_2].compact.join(' ')
+          }
+        end
+
+        return { address_1: address_1, address_2: address_2 }
+      end
 
       split_address_1 = split_embedded_address(address_1)
       split_address_1 || { address_1: address_1, address_2: address_2 }
@@ -111,6 +122,7 @@ module LocationTransformer
       words.each_with_index do |word, index|
         next unless word.match?(/\A\d+[[:alpha:]]?(?:\/.*)?\z/i)
         next if index.zero?
+        next if index < words.length - 1 && !word.include?('/')
 
         street_part = words[0...index].join(' ')
         address_2_part = words[index..].join(' ')

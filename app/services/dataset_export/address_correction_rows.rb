@@ -59,10 +59,14 @@ module DatasetExport
 
     def scope
       relation = AddressCorrection.includes(:location, :source_location).order(:id)
-      return relation unless latest_only
 
-      latest_location_ids = AlcoholLicense.where(reported_at: latest_reported_at).distinct.pluck(:location_id)
-      relation.where(location_id: latest_location_ids).where(source_location_id: [nil, *latest_location_ids])
+      exported_location_ids = AlcoholLicense.distinct
+      exported_location_ids = exported_location_ids.where(reported_at: latest_reported_at) if latest_only
+      exported_location_ids = exported_location_ids.pluck(:location_id)
+
+      relation
+        .where(location_id: exported_location_ids)
+        .where(source_location_id: [nil, *exported_location_ids])
     end
 
     def raw_location_id_for(location)
