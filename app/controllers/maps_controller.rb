@@ -73,6 +73,10 @@ class MapsController < ApplicationController
     send_file path, type: 'application/json', disposition: 'inline'
   end
 
+  def sim_areas_static
+    render json: sim_area_geometries
+  end
+
   private
 
   def requested_report
@@ -108,7 +112,6 @@ class MapsController < ApplicationController
       report_at: report_at,
       summary: report_at ? report_summary(report_at) : empty_summary,
       population: report_at ? population_snapshot(report_at) : empty_population_snapshot,
-      sim_areas: report_at ? sim_areas(points) : [],
       points: points
     }
   end
@@ -447,23 +450,15 @@ class MapsController < ApplicationController
     }
   end
 
-  def sim_areas(points)
-    counts = points.each_with_object(Hash.new(0)) do |point, memo|
-      code = point.fetch(:sim_area_code, nil)
-      memo[code] += 1 if code.present?
-    end
-
+  def sim_area_geometries
     Sim::Units.all.map do |unit|
       area_km2 = unit.fetch(:area_km2).to_f
-      premises = counts[unit.fetch(:code)]
 
       {
         code: unit.fetch(:code),
         name: unit.fetch(:name),
         district: unit.fetch(:district),
         area_km2: area_km2,
-        premises: premises,
-        premises_per_km2: area_km2.positive? ? (premises / area_km2).round(2) : 0,
         geometry: unit.fetch(:geometry)
       }
     end

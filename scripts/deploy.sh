@@ -118,9 +118,10 @@ restore_previous_release() {
 run_release_container() {
   local container_name="$1"
   shift
+  local -a podman_command
 
   sudo podman rm -f "${container_name}" >/dev/null 2>&1 || true
-  sudo podman run --rm --name="${container_name}" \
+  podman_command=(sudo podman run --rm --name="${container_name}" \
     --user=1000:1000 \
     --read-only \
     --memory=900m --memory-swap=900m --memory-reservation=384m \
@@ -135,12 +136,24 @@ run_release_container() {
     -v "${REMOTE_DIR}/log:/app/log:rw" \
     -v "${REMOTE_DIR}/tmp:/app/tmp:rw" \
     -v "${REMOTE_DIR}/storage:/app/storage:rw" \
-    "${RELEASE_IMAGE_NAME}" \
-    "$@"
+    "${RELEASE_IMAGE_NAME}")
+
+  if [ -n "${RUN_RELEASE_CONTAINER_TIMEOUT:-}" ]; then
+    timeout "${RUN_RELEASE_CONTAINER_TIMEOUT}" "${podman_command[@]}" "$@"
+  else
+    "${podman_command[@]}" "$@"
+  fi
 }
 
 run_database_migrations() {
   run_release_container "${SERVICE_NAME}-migrate" bundle exec rails db:migrate
+}
+
+report_count() {
+  run_release_container "${SERVICE_NAME}-report-count" bundle exec rails runner \
+    'ActiveRecord::Base.logger = nil; puts AlcoholLicense.where.not(reported_at: nil).distinct.count(:reported_at)' |
+    grep -E '^[0-9]+$' |
+    tail -n 1
 }
 
 smoke_check_once() {
@@ -263,7 +276,7 @@ warm_report_cache() {
       [ -n "${report_at}" ] || continue
       printf '  %s... ' "${report_at}"
       local attempt=1
-      while ! WARM_REPORT_AT="${report_at}" run_release_container "${SERVICE_NAME}-report-cache" bundle exec rails runner '
+      while ! WARM_REPORT_AT="${report_at}" RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_MAX_TIME}" run_release_container "${SERVICE_NAME}-report-cache" bundle exec rails runner '
         ActiveRecord::Base.logger = nil
         requested_at = Time.zone.parse(ENV.fetch("WARM_REPORT_AT")).utc
         controller = MapsController.new
@@ -286,6 +299,27 @@ warm_report_cache() {
       done
       printf 'ok\n'
     done
+}
+
+verify_report_cache() {
+  if [ "${WARM_REPORT_CACHE}" != "1" ]; then
+    return 0
+  fi
+
+  local cache_dir="${REMOTE_DIR}/storage/prod_alkomapa_data_local/data/cache/${RELEASE_NAME}"
+  local expected_count
+  local actual_count
+
+  expected_count="$(report_count)"
+  actual_count=0
+  if [ -d "${cache_dir}" ]; then
+    actual_count="$(find "${cache_dir}" -type f -name '*.json' | wc -l | tr -d '[:space:]')"
+  fi
+
+  if [ "${actual_count}" != "${expected_count}" ]; then
+    echo "Report cache warm-up incomplete: expected ${expected_count} JSON files, found ${actual_count} in ${cache_dir}" >&2
+    return 1
+  fi
 }
 
 compress_report_cache() {
@@ -321,6 +355,12 @@ deploy_release() {
 
   if ! warm_report_cache; then
     echo "Report cache warm-up failed; keeping previous image active" >&2
+    sudo systemctl status "${SERVICE_NAME}" --no-pager || true
+    exit 1
+  fi
+
+  if ! verify_report_cache; then
+    echo "Report cache verification failed; keeping previous image active" >&2
     sudo systemctl status "${SERVICE_NAME}" --no-pager || true
     exit 1
   fi

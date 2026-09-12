@@ -18,6 +18,7 @@
   data-raw-records-url="<%= public_path(map_raw_records_path) %>"
   data-statistics-url="<%= public_path(map_statistics_path) %>"
   data-statistics-static-url="<%= public_path(map_statistics_static_path) %>"
+  data-sim-areas-url="<%= public_path(map_sim_areas_path) %>"
   data-cache-version="<%= @data_cache_version %>"
   data-locale="<%= I18n.locale %>"
   data-i18n="<%= @map_i18n.to_json %>"
@@ -121,6 +122,7 @@
     var rawStaticUrl = page.dataset.rawStaticUrl;
     var statisticsUrl = page.dataset.statisticsUrl;
     var statisticsStaticUrl = page.dataset.statisticsStaticUrl;
+    var simAreasUrl = page.dataset.simAreasUrl;
     var cacheVersion = page.dataset.cacheVersion || 'development';
     var i18n = JSON.parse(page.dataset.i18n || '{}');
     var languageUrls = JSON.parse(page.dataset.languageUrls || '{}');
@@ -265,7 +267,9 @@
     var currentStatistics = null;
     var staticStatisticsData = null;
     var reportDataCache = {};
+    var simAreasPromise = null;
     var reportLoadRequestId = 0;
+    var pendingReportFetch = null;
     var pendingStatisticsFetch = null;
     var debounceTimer = null;
     var markerRenderFrame = null;
@@ -276,10 +280,10 @@
     var fittedInitialBounds = false;
 
     if (reportTimes.length) {
-      slider.min = String(reportTimes[0]);
-      slider.max = String(reportTimes[reportTimes.length - 1]);
+      slider.min = '0';
+      slider.max = String(reportTimes.length - 1);
       slider.step = '1';
-      slider.value = String(reportTimes[reportTimes.length - 1]);
+      slider.value = String(reportTimes.length - 1);
     }
 
     renderReportTicks();
@@ -328,28 +332,18 @@
     }
 
     function reportFromSlider() {
-      var value = Number(slider.value);
-      var index = nearestReportIndex(value);
+      var index = Math.round(Number(slider.value || 0));
+      index = Math.max(0, Math.min(reports.length - 1, index));
       return reports[index];
     }
 
-    function nearestReportIndex(value) {
-      var nearestIndex = 0;
-      var nearestDistance = Infinity;
-
-      reportTimes.forEach(function (time, index) {
-        var distance = Math.abs(time - value);
-        if (distance < nearestDistance) {
-          nearestDistance = distance;
-          nearestIndex = index;
-        }
-      });
-
-      return nearestIndex;
+    function reportIndex(report) {
+      var index = reports.indexOf(report);
+      return index === -1 ? Math.max(0, reports.length - 1) : index;
     }
 
     function snapSliderToReport(report) {
-      slider.value = String(Date.parse(report));
+      slider.value = String(reportIndex(report));
     }
 
     function renderReportTicks() {
@@ -360,12 +354,17 @@
 
       var firstYear = new Date(reports[0]).getFullYear();
       var lastYear = new Date(reports[reports.length - 1]).getFullYear();
-      var span = Math.max(1, lastYear - firstYear);
+      var span = Math.max(1, reports.length - 1);
       var labels = [];
 
       for (var year = firstYear; year <= lastYear; year += 1) {
+        var index = reports.findIndex(function (report) {
+          return new Date(report).getFullYear() >= year;
+        });
+        if (index === -1) index = reports.length - 1;
+
         labels.push(
-          '<span style="left:' + (((year - firstYear) / span) * 100).toFixed(3) + '%">' +
+          '<span style="left:' + ((index / span) * 100).toFixed(3) + '%">' +
             year +
           '</span>'
         );
@@ -1899,23 +1898,32 @@
       setLoadingStatus();
       renderSummaryLoading();
       var requestId = ++reportLoadRequestId;
+      if (pendingReportFetch) pendingReportFetch.abort();
+      pendingReportFetch = window.AbortController ? new AbortController() : null;
+      loadSimAreas().catch(function () {});
 
-      loadReportData(report)
+      loadReportData(report, { signal: pendingReportFetch && pendingReportFetch.signal })
         .then(function (data) {
           if (requestId !== reportLoadRequestId) return;
 
           currentPoints = data.points;
-          currentSimAreas = data.sim_areas || [];
           currentSummary = data.summary;
           currentPopulation = data.population;
-          renderSimControls();
-          updateVisibleState(false);
-          selectedReport.textContent = data.report_at ? reportLabel(data.report_at, false) : t('no_report');
-          clearLoadingStatus();
+          return loadSimAreas(data.sim_areas).then(function (simAreas) {
+            if (requestId !== reportLoadRequestId) return;
+
+            currentSimAreas = simAreas;
+            renderSimControls();
+            updateVisibleState(false);
+            selectedReport.textContent = data.report_at ? reportLabel(data.report_at, false) : t('no_report');
+            clearLoadingStatus();
+            if (requestId === reportLoadRequestId) pendingReportFetch = null;
+          });
         })
         .catch(function () {
           if (requestId !== reportLoadRequestId) return;
 
+          pendingReportFetch = null;
           setErrorStatus();
         });
     }
@@ -1938,6 +1946,24 @@
         });
 
       return reportDataCache[report];
+    }
+
+    function loadSimAreas(fallback) {
+      if (currentSimAreas.length) return Promise.resolve(currentSimAreas);
+      if (fallback && fallback.length) return Promise.resolve(fallback);
+      if (!simAreasUrl) return Promise.resolve([]);
+      if (!simAreasPromise) {
+        simAreasPromise = fetch(simAreasUrl + '?v=' + encodeURIComponent(cacheVersion), { cache: 'force-cache' })
+          .then(function (response) {
+            if (!response.ok) throw new Error('SIM areas request failed');
+            return response.json();
+          })
+          .catch(function (error) {
+            simAreasPromise = null;
+            throw error;
+          });
+      }
+      return simAreasPromise;
     }
 
     function reportDataUrl(report) {
@@ -1966,11 +1992,18 @@
       var report = reportFromSlider();
       snapSliderToReport(report);
       selectedReport.textContent = reportLabel(report, false);
+    }
+
+    function commitLoad() {
+      var report = reportFromSlider();
+      snapSliderToReport(report);
+      selectedReport.textContent = reportLabel(report, false);
       window.clearTimeout(debounceTimer);
-      debounceTimer = window.setTimeout(function () { loadReport(report); }, 120);
+      loadReport(report);
     }
 
     slider.addEventListener('input', scheduleLoad);
+    slider.addEventListener('change', commitLoad);
     filterInputs.forEach(function (input) {
       input.addEventListener('change', function () {
         updateVisibleState(false);

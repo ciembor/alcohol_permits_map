@@ -92,6 +92,9 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'a[href="https://github.com/ciembor/alcohol_permits_map"][target="_blank"][rel="noopener"]', text: 'Repozytorium'
     assert_includes response.body, 'data-language-urls'
     assert_includes response.body, 'data-cache-version'
+    assert_includes response.body, 'data-sim-areas-url'
+    assert_includes response.body, "slider.max = String(reportTimes.length - 1)"
+    assert_includes response.body, "slider.addEventListener('change', commitLoad)"
   end
 
   test 'renders map page in English' do
@@ -129,6 +132,7 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_operator population.fetch('districts').fetch('Dzielnica I Stare Miasto').fetch('area_km2'), :>, 0
     assert_equal 1_000, population.fetch('sim_units').fetch('I.1').fetch('total')
     assert_operator population.fetch('sim_units').fetch('I.1').fetch('area_km2'), :>, 0
+    assert_not body.key?('sim_areas')
     assert_equal 2, points.size
     assert_equal ['OTHER TEST', 'TEST'], points.map { |item| item.fetch('business') }.sort
     mixed_point = points.find { |item| item.fetch('business') == 'TEST' }
@@ -178,6 +182,21 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     body = JSON.parse(response.body)
     assert_equal '2025-02-27T14:05:43.000Z', body.fetch('report_at')
     assert_equal 1, body.fetch('summary').fetch('total')
+  end
+
+  test 'returns SIM area geometries separately from report payloads' do
+    get map_sim_areas_path
+
+    assert_response :success
+    body = JSON.parse(response.body)
+    kazimierz = body.find { |area| area.fetch('code') == 'I.8' }
+
+    assert kazimierz
+    assert_equal 'Kazimierz', kazimierz.fetch('name')
+    assert_equal 'Dzielnica I Stare Miasto', kazimierz.fetch('district')
+    assert_operator kazimierz.fetch('area_km2'), :>, 0
+    assert kazimierz.fetch('geometry').present?
+    assert_not kazimierz.key?('premises')
   end
 
   test 'materializes report cache on first request and reuses it afterwards' do

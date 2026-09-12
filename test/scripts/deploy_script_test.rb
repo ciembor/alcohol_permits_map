@@ -20,8 +20,25 @@ class DeployScriptTest < ActiveSupport::TestCase
     script = Rails.root.join('scripts/deploy.sh').read
 
     assert_includes script, 'WARM_REPORT_CACHE_ATTEMPTS="${WARM_REPORT_CACHE_ATTEMPTS:-3}"'
-    assert_includes script, 'while ! WARM_REPORT_AT="${report_at}" run_release_container'
+    assert_includes script, 'while ! WARM_REPORT_AT="${report_at}" RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_MAX_TIME}" run_release_container'
     assert_includes script, 'retry %s'
+  end
+
+  test 'report cache warmup applies per-report timeout' do
+    script = Rails.root.join('scripts/deploy.sh').read
+
+    assert_includes script, 'WARM_REPORT_CACHE_MAX_TIME="${WARM_REPORT_CACHE_MAX_TIME:-90}"'
+    assert_includes script, 'RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_MAX_TIME}"'
+    assert_includes script, 'timeout "${RUN_RELEASE_CONTAINER_TIMEOUT}" "${podman_command[@]}" "$@"'
+  end
+
+  test 'deploy verifies warmed map report cache before activating release' do
+    script = Rails.root.join('scripts/deploy.sh').read
+
+    assert_includes script, 'verify_report_cache()'
+    assert_includes script, 'expected_count="$(report_count)"'
+    assert_includes script, "actual_count=\"$(find \"${cache_dir}\" -type f -name '*.json' | wc -l | tr -d '[:space:]')\""
+    assert_match(/warm_report_cache.*verify_report_cache.*compress_report_cache/m, script)
   end
 
   test 'deploy precompresses warmed map report cache outside the app process' do

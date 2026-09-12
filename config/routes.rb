@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   get 'map/raw_records', to: 'maps#raw_records'
   get 'map/statistics', to: 'maps#statistics'
   get 'map/statistics_static', to: 'maps#statistics_static'
+  get 'map/sim_areas', to: 'maps#sim_areas_static'
   get 'geocoding_reviews', to: 'geocoding_reviews#index'
   get 'geocoding_reviews/categories', to: 'geocoding_reviews#categories'
   get 'geocoding_reviews/next', to: 'geocoding_reviews#next'
