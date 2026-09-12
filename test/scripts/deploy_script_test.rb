@@ -16,20 +16,30 @@ class DeployScriptTest < ActiveSupport::TestCase
     assert_includes workflow, 'WARM_REPORT_CACHE: "1"'
   end
 
-  test 'report cache warmup retries transient response failures' do
+  test 'report cache warmup retries transient failures in one runner' do
     script = Rails.root.join('scripts/deploy.sh').read
 
     assert_includes script, 'WARM_REPORT_CACHE_ATTEMPTS="${WARM_REPORT_CACHE_ATTEMPTS:-3}"'
-    assert_includes script, 'while ! WARM_REPORT_AT="${report_at}" RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_MAX_TIME}" run_release_container'
-    assert_includes script, 'retry %s'
+    assert_includes script, 'while ! RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_TIMEOUT}" run_release_container "${SERVICE_NAME}-report-cache"'
+    assert_includes script, 'Report cache warm-up failed; retry %s'
   end
 
-  test 'report cache warmup applies per-report timeout' do
+  test 'report cache warmup uses a single timeout for the batch runner' do
     script = Rails.root.join('scripts/deploy.sh').read
 
-    assert_includes script, 'WARM_REPORT_CACHE_MAX_TIME="${WARM_REPORT_CACHE_MAX_TIME:-90}"'
-    assert_includes script, 'RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_MAX_TIME}"'
+    assert_includes script, 'WARM_REPORT_CACHE_TIMEOUT="${WARM_REPORT_CACHE_TIMEOUT:-900}"'
+    assert_includes script, 'RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_TIMEOUT}"'
     assert_includes script, 'timeout "${RUN_RELEASE_CONTAINER_TIMEOUT}" "${podman_command[@]}" "$@"'
+  end
+
+  test 'report cache warmup builds all reports in one Rails process' do
+    script = Rails.root.join('scripts/deploy.sh').read
+
+    assert_includes script, 'reports = controller.send(:available_reports)'
+    assert_includes script, 'reports.each do |report|'
+    assert_includes script, 'Warmed #{reports.size} map report caches'
+    assert_no_match(/SERVICE_NAME}-reports/, script)
+    assert_no_match(/WARM_REPORT_AT/, script)
   end
 
   test 'deploy verifies warmed map report cache before activating release' do

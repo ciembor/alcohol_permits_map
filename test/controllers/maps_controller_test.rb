@@ -93,7 +93,8 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_includes response.body, 'data-language-urls'
     assert_includes response.body, 'data-cache-version'
     assert_includes response.body, 'data-sim-areas-url'
-    assert_includes response.body, "slider.max = String(reportTimes.length - 1)"
+    assert_includes response.body, "slider.max = String(reportTimes[reportTimes.length - 1])"
+    assert_includes response.body, 'function nearestReportIndex(value)'
     assert_includes response.body, "slider.addEventListener('change', commitLoad)"
   end
 

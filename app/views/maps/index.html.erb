@@ -280,10 +280,10 @@
     var fittedInitialBounds = false;
 
     if (reportTimes.length) {
-      slider.min = '0';
-      slider.max = String(reportTimes.length - 1);
+      slider.min = String(reportTimes[0]);
+      slider.max = String(reportTimes[reportTimes.length - 1]);
       slider.step = '1';
-      slider.value = String(reportTimes.length - 1);
+      slider.value = String(reportTimes[reportTimes.length - 1]);
     }
 
     renderReportTicks();
@@ -332,18 +332,28 @@
     }
 
     function reportFromSlider() {
-      var index = Math.round(Number(slider.value || 0));
-      index = Math.max(0, Math.min(reports.length - 1, index));
+      var value = Number(slider.value);
+      var index = nearestReportIndex(value);
       return reports[index];
     }
 
-    function reportIndex(report) {
-      var index = reports.indexOf(report);
-      return index === -1 ? Math.max(0, reports.length - 1) : index;
+    function nearestReportIndex(value) {
+      var nearestIndex = 0;
+      var nearestDistance = Infinity;
+
+      reportTimes.forEach(function (time, index) {
+        var distance = Math.abs(time - value);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearestIndex = index;
+        }
+      });
+
+      return nearestIndex;
     }
 
     function snapSliderToReport(report) {
-      slider.value = String(reportIndex(report));
+      slider.value = String(Date.parse(report));
     }
 
     function renderReportTicks() {
@@ -354,17 +364,12 @@
 
       var firstYear = new Date(reports[0]).getFullYear();
       var lastYear = new Date(reports[reports.length - 1]).getFullYear();
-      var span = Math.max(1, reports.length - 1);
+      var span = Math.max(1, lastYear - firstYear);
       var labels = [];
 
       for (var year = firstYear; year <= lastYear; year += 1) {
-        var index = reports.findIndex(function (report) {
-          return new Date(report).getFullYear() >= year;
-        });
-        if (index === -1) index = reports.length - 1;
-
         labels.push(
-          '<span style="left:' + ((index / span) * 100).toFixed(3) + '%">' +
+          '<span style="left:' + (((year - firstYear) / span) * 100).toFixed(3) + '%">' +
             year +
           '</span>'
         );

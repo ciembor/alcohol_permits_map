@@ -9,7 +9,7 @@ PUBLIC_BASE_URL="${PUBLIC_BASE_URL:-}"
 HEALTHCHECK_ATTEMPTS="${HEALTHCHECK_ATTEMPTS:-30}"
 HEALTHCHECK_SLEEP_SECONDS="${HEALTHCHECK_SLEEP_SECONDS:-2}"
 WARM_REPORT_CACHE="${WARM_REPORT_CACHE:-1}"
-WARM_REPORT_CACHE_MAX_TIME="${WARM_REPORT_CACHE_MAX_TIME:-90}"
+WARM_REPORT_CACHE_TIMEOUT="${WARM_REPORT_CACHE_TIMEOUT:-900}"
 WARM_REPORT_CACHE_ATTEMPTS="${WARM_REPORT_CACHE_ATTEMPTS:-3}"
 DEPLOY_ACTION="${1:-${DEPLOY_ACTION:-deploy}}"
 RELEASE_NAME="${RELEASE_NAME:-$(git rev-parse --short HEAD)}"
@@ -71,7 +71,7 @@ ssh "${REMOTE_HOST}" \
   HEALTHCHECK_ATTEMPTS='${HEALTHCHECK_ATTEMPTS}' \
   HEALTHCHECK_SLEEP_SECONDS='${HEALTHCHECK_SLEEP_SECONDS}' \
   WARM_REPORT_CACHE='${WARM_REPORT_CACHE}' \
-  WARM_REPORT_CACHE_MAX_TIME='${WARM_REPORT_CACHE_MAX_TIME}' \
+  WARM_REPORT_CACHE_TIMEOUT='${WARM_REPORT_CACHE_TIMEOUT}' \
   WARM_REPORT_CACHE_ATTEMPTS='${WARM_REPORT_CACHE_ATTEMPTS}' \
   bash -s -- '${DEPLOY_ACTION}'" <<'REMOTE'
 set -euo pipefail
@@ -128,7 +128,6 @@ run_release_container() {
     --cpus=0.75 --pids-limit=192 \
     --env-file "${REMOTE_DIR}/.env.local" \
     -e ALKOMAPA_DATA_CACHE_VERSION="${RELEASE_NAME}" \
-    -e WARM_REPORT_AT="${WARM_REPORT_AT:-}" \
     -e RAILS_ENV=production \
     -e RAILS_LOG_TO_STDOUT=1 \
     -e RAILS_SERVE_STATIC_FILES=1 \
@@ -269,36 +268,38 @@ warm_report_cache() {
 
   echo "Warming map report cache for release ${RELEASE_NAME}"
 
-  run_release_container "${SERVICE_NAME}-reports" bundle exec rails runner \
-    'ActiveRecord::Base.logger = nil; puts AlcoholLicense.where.not(reported_at: nil).distinct.order(:reported_at).pluck(:reported_at).map { |report| report.utc.iso8601 }' |
-    grep -E '^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$' |
-    while IFS= read -r report_at; do
-      [ -n "${report_at}" ] || continue
-      printf '  %s... ' "${report_at}"
-      local attempt=1
-      while ! WARM_REPORT_AT="${report_at}" RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_MAX_TIME}" run_release_container "${SERVICE_NAME}-report-cache" bundle exec rails runner '
-        ActiveRecord::Base.logger = nil
-        requested_at = Time.zone.parse(ENV.fetch("WARM_REPORT_AT")).utc
-        controller = MapsController.new
-        report = controller.send(:available_reports).find { |available_report| available_report.to_i == requested_at.to_i }
-        raise "Report not found: #{requested_at.iso8601}" unless report
-        path = controller.send(:report_cache_path, report)
-        unless File.file?(path)
-          json = JSON.generate(controller.send(:report_payload, report))
-          controller.send(:write_report_cache, path, json)
-        end
-      '; do
-        if [ "${attempt}" -ge "${WARM_REPORT_CACHE_ATTEMPTS}" ]; then
-          echo "failed"
-          return 1
-        fi
+  local attempt=1
+  while ! RUN_RELEASE_CONTAINER_TIMEOUT="${WARM_REPORT_CACHE_TIMEOUT}" run_release_container "${SERVICE_NAME}-report-cache" bundle exec rails runner '
+    ActiveRecord::Base.logger = nil
+    controller = MapsController.new
+    reports = controller.send(:available_reports)
 
-        printf 'retry %s... ' "${attempt}"
-        attempt=$((attempt + 1))
-        sleep 2
-      done
-      printf 'ok\n'
-    done
+    reports.each do |report|
+      print "  #{report.utc.iso8601}... "
+      STDOUT.flush
+
+      path = controller.send(:report_cache_path, report)
+      if File.file?(path)
+        puts "cached"
+        next
+      end
+
+      json = JSON.generate(controller.send(:report_payload, report))
+      controller.send(:write_report_cache, path, json)
+      puts "ok"
+    end
+
+    puts "Warmed #{reports.size} map report caches"
+  '; do
+    if [ "${attempt}" -ge "${WARM_REPORT_CACHE_ATTEMPTS}" ]; then
+      echo "Report cache warm-up failed"
+      return 1
+    fi
+
+    printf 'Report cache warm-up failed; retry %s...\n' "${attempt}"
+    attempt=$((attempt + 1))
+    sleep 2
+  done
 }
 
 verify_report_cache() {
