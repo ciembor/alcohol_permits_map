@@ -742,6 +742,18 @@ body {
   white-space: nowrap;
 }
 
+.map-license {
+  color: #17202a;
+  font-size: 13px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.map-license:hover,
+.map-license:focus-visible {
+  text-decoration: underline;
+}
+
 .map-resource-link {
   align-items: center;
   color: #17202a;

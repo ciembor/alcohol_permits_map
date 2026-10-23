@@ -11,8 +11,8 @@ module DatasetExport
     TITLE = 'Krakow alcohol licenses and sales points, 2010-2026'.freeze
     CREATOR = 'Maciej Ciemborowicz'.freeze
     CREATOR_ORCID = 'https://orcid.org/0009-0009-6877-9931'.freeze
-    DATASET_DOI = '10.5281/zenodo.21895077'.freeze
-    DATASET_DOI_URL = 'https://doi.org/10.5281/zenodo.21895077'.freeze
+    DATASET_DOI = '10.5281/zenodo.23601757'.freeze
+    DATASET_DOI_URL = 'https://doi.org/10.5281/zenodo.23601757'.freeze
     DESCRIPTION = 'A curated, geocoded dataset of alcohol-sale license records and derived sales points in Krakow, Poland, 2010-2026.'.freeze
     KEYWORDS = ['alcohol licenses', 'Krakow', 'geocoding', 'administrative data', 'open data', 'urban studies', 'spatial data'].freeze
 

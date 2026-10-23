@@ -1,6 +1,6 @@
 # Alcohol licenses in Kraków
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22673824.svg)](https://doi.org/10.5281/zenodo.22673824)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23601757.svg)](https://doi.org/10.5281/zenodo.23601757)
 
 [![Alcohol-sale licenses map in Kraków](docs/images/latest-alcohol-sales-points-map.png)](https://dobra-noc-krakow.pl/alkomapa/)
 
@@ -13,7 +13,7 @@ release prepared for Zenodo.
 ## Dataset
 
 The versioned open-data package is available on Zenodo:
-[https://doi.org/10.5281/zenodo.22673824](https://doi.org/10.5281/zenodo.22673824).
+[https://doi.org/10.5281/zenodo.23601757](https://doi.org/10.5281/zenodo.23601757).
 It contains the publication-ready CSV and GeoJSON files, including license
 records, raw and normalized locations, sales points, license-to-point
 memberships, geocoding and review audit tables, SIM-unit boundaries,

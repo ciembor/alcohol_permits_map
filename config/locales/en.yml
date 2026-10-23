@@ -35,6 +35,7 @@ en:
     population_unit: "registered residents"
     dataset_link: "Dataset"
     dataset_link_label: "Dataset on Zenodo"
+    license_link_label: "Licensed under Creative Commons Attribution 4.0 International"
     repository_link: "Repository"
     repository_link_label: "Repository on GitHub"
     metric:

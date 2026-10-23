@@ -88,7 +88,8 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_select 'h1', text: /Zezwolenia na sprzedaż/
     assert_select 'a[href="https://maciej-ciemborowicz.eu"][target="_blank"][rel="noopener"]'
     assert_select 'a[href="https://www.facebook.com/DobraNocKrakow"][target="_blank"][rel="noopener"]'
-    assert_select 'a[href="https://zenodo.org/records/21895077"][target="_blank"][rel="noopener"]', text: 'Zbiór Danych'
+    assert_select 'a[href="https://creativecommons.org/licenses/by/4.0/"][target="_blank"][rel="license noopener"]', text: 'CC BY 4.0'
+    assert_select 'a[href="https://zenodo.org/records/23601757"][target="_blank"][rel="noopener"]', text: 'Zbiór Danych'
     assert_select 'a[href="https://github.com/ciembor/alcohol_permits_map"][target="_blank"][rel="noopener"]', text: 'Repozytorium'
     assert_includes response.body, 'data-language-urls'
     assert_includes response.body, 'data-cache-version'
@@ -104,7 +105,8 @@ class MapsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select 'html[lang="en"]'
     assert_select 'h1', text: /Alcohol-sale licenses/
-    assert_select 'a[href="https://zenodo.org/records/21895077"]', text: 'Dataset'
+    assert_select 'a[href="https://creativecommons.org/licenses/by/4.0/"]', text: 'CC BY 4.0'
+    assert_select 'a[href="https://zenodo.org/records/23601757"]', text: 'Dataset'
     assert_select 'a[href="https://github.com/ciembor/alcohol_permits_map"]', text: 'Repository'
     assert_includes response.body, 'Premises density'
     assert_includes response.body, 'data-language-urls'
